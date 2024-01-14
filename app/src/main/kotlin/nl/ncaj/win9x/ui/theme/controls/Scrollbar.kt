@@ -197,7 +197,7 @@ fun HorizontalScrollbar(
             onClick = {
                 coroutineScope.launch { scrollState.scrollTo(scrollState.value - 10) }
             },
-            borders = { innerButtonBorders() },
+            borders = innerButtonBorders(),
             modifier = Modifier.width(15.dp)
         ) {
             Image(
@@ -231,7 +231,7 @@ fun HorizontalScrollbar(
             onClick = {
                 coroutineScope.launch { scrollState.scrollTo(scrollState.value + 10) }
             },
-            borders = { innerButtonBorders() },
+            borders = innerButtonBorders(),
             modifier = Modifier.width(15.dp)
         ) {
             Image(
@@ -273,7 +273,7 @@ fun VerticalScrollbar(
             onClick = {
                 coroutineScope.launch { scrollState.scrollTo(scrollState.value - 10) }
             },
-            borders = { innerButtonBorders() },
+            borders = innerButtonBorders(),
             modifier = Modifier.requiredHeight(15.dp)
         ) {
             Image(
@@ -307,7 +307,7 @@ fun VerticalScrollbar(
             onClick = {
                 coroutineScope.launch { scrollState.scrollTo(scrollState.value + 10) }
             },
-            borders = { innerButtonBorders() },
+            borders = innerButtonBorders(),
             modifier = Modifier.requiredHeight(15.dp)
         ) {
             Image(

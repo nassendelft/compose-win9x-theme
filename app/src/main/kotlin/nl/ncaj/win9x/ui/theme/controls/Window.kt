@@ -192,7 +192,7 @@ private fun TitleButton(
         modifier = Modifier.size(14.dp),
         enabled = enabled,
         defaultPadding = PaddingValues(),
-        borders = { innerButtonBorders() }
+        borders = innerButtonBorders(),
     ) {
         Image(
             painter = painterResource(id = resourceId),

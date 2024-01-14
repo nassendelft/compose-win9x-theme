@@ -29,6 +29,7 @@ import nl.ncaj.win9x.ui.theme.controls.SliderPreview
 import nl.ncaj.win9x.ui.theme.controls.TextBoxPreview
 import nl.ncaj.win9x.ui.theme.controls.TreeViewPreview
 import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.controls.OptionSetButtonPreview
 import nl.ncaj.win9x.ui.theme.controls.ProgressIndicatorPreview
 import nl.ncaj.win9x.ui.theme.controls.ScrollableHost
 import nl.ncaj.win9x.ui.theme.controls.SpinBoxPreview
@@ -88,40 +89,44 @@ fun ControlsPreview() {
                     Row {
                         ButtonPreview()
                         Spacer(modifier = Modifier.width(12.dp))
-                        CheckboxPreview()
+                        OptionSetButtonPreview()
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row {
                         OptionButtonPreview()
                         Spacer(modifier = Modifier.width(12.dp))
-                        TextBoxPreview()
+                        CheckboxPreview()
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row {
                         GroupingPreview()
                         Spacer(modifier = Modifier.width(12.dp))
-                        SliderPreview()
+                        TextBoxPreview()
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row {
                         DropDownListBoxPreview()
                         Spacer(modifier = Modifier.width(12.dp))
-                        ScrollbarPreview()
+                        SliderPreview()
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row {
                         ListBoxPreview()
                         Spacer(modifier = Modifier.width(12.dp))
-                        TreeViewPreview()
+                        ScrollbarPreview()
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row {
                         SpinBoxPreview()
                         Spacer(modifier = Modifier.width(12.dp))
-                        TabsPreview()
+                        TreeViewPreview()
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    ProgressIndicatorPreview()
+                    Row {
+                        TabsPreview()
+                        Spacer(modifier = Modifier.width(12.dp))
+                        ProgressIndicatorPreview()
+                    }
                 }
             }
         }

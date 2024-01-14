@@ -3,6 +3,8 @@ package nl.ncaj.win9x.ui.theme
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -12,72 +14,12 @@ import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.debugInspectorInfo
 
-
 fun Modifier.checkeredBackground(
     color1: Color = Color.Unspecified,
     color2: Color = Color.Unspecified,
-    size: Float = 5f
-): Modifier = composed {
-    then(
-        CheckeredBackgroundElement(
-            if (color1 == Color.Unspecified) Win98Theme.colorScheme.buttonFace else color1,
-            if (color2 == Color.Unspecified) Win98Theme.colorScheme.buttonHighlight else color2,
-            size,
-            inspectorInfo = {
-                debugInspectorInfo {
-                    name = "CheckeredBackground"
-                    properties["color1"] = color1
-                    properties["color2"] = color2
-                    properties["size"] = size
-                }
-            }
-        )
-    )
-}
-
-private class CheckeredBackgroundElement(
-    private val color1: Color,
-    private val color2: Color,
-    private val size: Float,
-    private val inspectorInfo: InspectorInfo.() -> Unit
-) : ModifierNodeElement<CheckeredBackgroundNode>() {
-    override fun create() = CheckeredBackgroundNode(color1, color2, size)
-
-    override fun update(node: CheckeredBackgroundNode) {
-        node.color1 = color1
-        node.color2 = color2
-        node.sizeBlock = size
-    }
-
-    override fun InspectorInfo.inspectableProperties() = inspectorInfo()
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as CheckeredBackgroundElement
-
-        if (color1 != other.color1) return false
-        if (color2 != other.color2) return false
-        if (size != other.size) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = color1.hashCode()
-        result = 31 * result + color2.hashCode()
-        result = 31 * result + size.hashCode()
-        return result
-    }
-}
-
-private class CheckeredBackgroundNode(
-    var color1: Color,
-    var color2: Color,
-    var sizeBlock: Float
-) : DrawModifierNode, Modifier.Node() {
-
-    override fun ContentDrawScope.draw() {
+    sizeBlock: Float = 5f
+): Modifier = drawWithCache {
+    onDrawBehind {
         val columns = (size.width / sizeBlock).toInt()
         val rows = (size.height / sizeBlock).toInt()
 
@@ -105,6 +47,5 @@ private class CheckeredBackgroundNode(
                 )
             }
         }
-        drawContent()
     }
 }

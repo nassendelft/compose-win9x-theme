@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import nl.ncaj.win9x.ui.theme.controls.Win98ButtonBorders
 
 object SelectionIndication: Indication {
 
@@ -85,4 +87,48 @@ internal fun DrawScope.drawDashFocus(padding: Dp = Dp.Unspecified) {
             pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f), 0f)
         )
     )
+}
+
+internal class ButtonIndication(
+    private val borders: Win98ButtonBorders,
+    private val enabled: Boolean,
+) : Indication {
+
+    private class ButtonIndicationInstance(
+        private val isFocused: State<Boolean>,
+        private val isPressed: State<Boolean>,
+        private val enabled: Boolean,
+        private val borders: Win98ButtonBorders,
+    ) : IndicationInstance {
+        override fun ContentDrawScope.drawIndication() {
+            if (isPressed.value && enabled) {
+                drawWin98Border(
+                    borders.pressed.outerStartTop,
+                    borders.pressed.innerStartTop,
+                    borders.pressed.outerEndBottom,
+                    borders.pressed.innerEndBottom,
+                    borders.pressed.borderWidth
+                )
+            } else {
+                drawWin98Border(
+                    borders.normal.outerStartTop,
+                    borders.normal.innerStartTop,
+                    borders.normal.outerEndBottom,
+                    borders.normal.innerEndBottom,
+                    borders.normal.borderWidth
+                )
+            }
+            drawContent()
+            if (isFocused.value) drawDashFocus(3.dp)
+        }
+    }
+
+    @Composable
+    override fun rememberUpdatedInstance(interactionSource: InteractionSource): IndicationInstance {
+        val isFocused = interactionSource.collectIsFocusedAsState()
+        val isPressed = interactionSource.collectIsPressedAsState()
+        return remember(interactionSource) {
+            ButtonIndicationInstance(isFocused, isPressed, enabled, borders)
+        }
+    }
 }

@@ -56,7 +56,7 @@ fun SpinBox(
                 Button(
                     onClick = onIncrease,
                     modifier = Modifier.size(15.dp, 12.dp),
-                    borders = { innerButtonBorders() }
+                    borders = innerButtonBorders(),
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_arrow_down),
@@ -69,7 +69,7 @@ fun SpinBox(
                 Button(
                     onClick = onDecrease,
                     modifier = Modifier.size(15.dp, 12.dp),
-                    borders = { innerButtonBorders() }
+                    borders = innerButtonBorders(),
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_arrow_down),

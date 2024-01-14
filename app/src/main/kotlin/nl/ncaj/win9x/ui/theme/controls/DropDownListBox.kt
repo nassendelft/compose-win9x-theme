@@ -91,7 +91,7 @@ fun DropDownListBox(
                     onClick = { onExpandChange(!expanded) },
                     interactionSource = interactionSource,
                     modifier = Modifier.width(14.dp),
-                    borders = { innerButtonBorders() }
+                    borders = innerButtonBorders()
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_arrow_down),
