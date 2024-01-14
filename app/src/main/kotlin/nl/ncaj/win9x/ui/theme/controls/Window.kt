@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.R
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 import nl.ncaj.win9x.ui.theme.windowBorder
 
@@ -74,7 +73,7 @@ fun TitleBar(
 ) {
     Row(
         modifier = modifier
-            .background(Win98Theme.colorScheme.activeCaption)
+            .background(Win9xTheme.colorScheme.activeCaption)
             .height(18.dp)
             .defaultMinSize(minWidth = 100.dp)
             .padding(horizontal = 2.dp),
@@ -83,7 +82,7 @@ fun TitleBar(
         icon?.invoke()
         Text(
             text = title,
-            style = Win98Theme.typography.caption,
+            style = Win9xTheme.typography.caption,
             modifier = Modifier.padding(horizontal = 2.dp)
         )
         Spacer(Modifier.weight(1f))
@@ -144,9 +143,9 @@ fun Window(
 ) {
     Column(
         modifier = modifier
-            .background(Win98Theme.colorScheme.buttonFace)
+            .background(Win9xTheme.colorScheme.buttonFace)
             .windowBorder()
-            .padding(Win98Theme.borderWidthDp + 2.dp)
+            .padding(Win9xTheme.borderWidthDp + 2.dp)
             .defaultMinSize(minHeight = 100.dp)
     ) {
         TitleBar(title) {

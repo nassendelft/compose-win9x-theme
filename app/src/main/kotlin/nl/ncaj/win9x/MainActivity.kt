@@ -18,7 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.controls.ButtonPreview
 import nl.ncaj.win9x.ui.theme.controls.CheckboxPreview
 import nl.ncaj.win9x.ui.theme.controls.DropDownListBoxPreview
@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
 fun ControlsPreview() {
     val verticalScroll = rememberScrollState()
     val horizontalScroll = rememberScrollState()
-    Win98Theme {
+    Win9xTheme {
         Window(
             title = "Components",
             modifier = Modifier.fillMaxSize(),

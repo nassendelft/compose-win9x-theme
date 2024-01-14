@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nl.ncaj.win9x.ui.theme.DashFocusIndication.Companion.DashFocusIndicationNoPadding
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
 @Composable
@@ -122,8 +122,8 @@ class TreeViewScope internal constructor(
                     Box(
                         modifier = Modifier
                             .size(12.dp)
-                            .background(Win98Theme.colorScheme.buttonHighlight)
-                            .border(1.dp, Win98Theme.colorScheme.buttonShadow)
+                            .background(Win9xTheme.colorScheme.buttonHighlight)
+                            .border(1.dp, Win9xTheme.colorScheme.buttonShadow)
                             .clickable(
                                 interactionSource = interactionSource,
                                 indication = null,
@@ -133,7 +133,7 @@ class TreeViewScope internal constructor(
                     ) {
                         Text(
                             text = if (expanded) "-" else "+",
-                            style = Win98Theme.typography.default.copy(fontSize = 11.sp),
+                            style = Win9xTheme.typography.default.copy(fontSize = 11.sp),
                             modifier = Modifier.offset(0.5.dp, (-0.5).dp)
                         )
                     }
@@ -176,7 +176,7 @@ fun TreeView(
             .background(Color.White)
             .width(IntrinsicSize.Max)
             .sunkenBorder()
-            .padding(Win98Theme.borderWidthDp + 4.dp),
+            .padding(Win9xTheme.borderWidthDp + 4.dp),
         content = {
             TreeViewScope(
                 columnScope = this,
@@ -193,7 +193,7 @@ private val dashPathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f), 0f)
 private fun DashedVerticalLine(
     modifier: Modifier = Modifier,
 ) {
-    val dashColor = Win98Theme.colorScheme.buttonShadow
+    val dashColor = Win9xTheme.colorScheme.buttonShadow
     Canvas(modifier) {
         drawLine(
             color = dashColor,
@@ -208,7 +208,7 @@ private fun DashedVerticalLine(
 private fun DashedHorizontalLine(
     modifier: Modifier = Modifier,
 ) {
-    val dashColor = Win98Theme.colorScheme.buttonShadow
+    val dashColor = Win9xTheme.colorScheme.buttonShadow
     Canvas(modifier) {
         drawLine(
             color = dashColor,

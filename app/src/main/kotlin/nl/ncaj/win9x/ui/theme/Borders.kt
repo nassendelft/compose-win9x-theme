@@ -6,82 +6,77 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.node.DrawModifierNode
-import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.platform.InspectorInfo
-import androidx.compose.ui.platform.debugInspectorInfo
 
 internal fun Modifier.groupingBorder() = composed {
-    win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonShadow,
-        innerStartTop = Win98Theme.colorScheme.buttonHighlight,
-        outerEndBottom = Win98Theme.colorScheme.buttonHighlight,
-        innerEndBottom = Win98Theme.colorScheme.buttonShadow,
-        borderWidth = Win98Theme.borderWidthPx,
+    win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonShadow,
+        innerStartTop = Win9xTheme.colorScheme.buttonHighlight,
+        outerEndBottom = Win9xTheme.colorScheme.buttonHighlight,
+        innerEndBottom = Win9xTheme.colorScheme.buttonShadow,
+        borderWidth = Win9xTheme.borderWidthPx,
     )
 }
 
 internal fun Modifier.windowBorder() = composed {
-    win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonFace,
-        innerStartTop = Win98Theme.colorScheme.buttonHighlight,
-        outerEndBottom = Win98Theme.colorScheme.windowFrame,
-        innerEndBottom = Win98Theme.colorScheme.buttonShadow,
-        borderWidth = Win98Theme.borderWidthPx,
+    win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonFace,
+        innerStartTop = Win9xTheme.colorScheme.buttonHighlight,
+        outerEndBottom = Win9xTheme.colorScheme.windowFrame,
+        innerEndBottom = Win9xTheme.colorScheme.buttonShadow,
+        borderWidth = Win9xTheme.borderWidthPx,
     )
 }
 
 internal fun Modifier.sunkenBorder() = composed {
-    win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonShadow,
-        innerStartTop = Win98Theme.colorScheme.windowFrame,
-        outerEndBottom = Win98Theme.colorScheme.buttonHighlight,
-        innerEndBottom = Win98Theme.colorScheme.buttonFace,
-        borderWidth = Win98Theme.borderWidthPx
+    win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonShadow,
+        innerStartTop = Win9xTheme.colorScheme.windowFrame,
+        outerEndBottom = Win9xTheme.colorScheme.buttonHighlight,
+        innerEndBottom = Win9xTheme.colorScheme.buttonFace,
+        borderWidth = Win9xTheme.borderWidthPx
     )
 }
 
 internal fun Modifier.buttonNormalBorder() = composed {
-    win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonHighlight,
-        innerStartTop = Win98Theme.colorScheme.buttonFace,
-        outerEndBottom = Win98Theme.colorScheme.buttonShadow,
-        innerEndBottom = Win98Theme.colorScheme.windowFrame,
-        borderWidth = Win98Theme.borderWidthPx
+    win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonHighlight,
+        innerStartTop = Win9xTheme.colorScheme.buttonFace,
+        outerEndBottom = Win9xTheme.colorScheme.buttonShadow,
+        innerEndBottom = Win9xTheme.colorScheme.windowFrame,
+        borderWidth = Win9xTheme.borderWidthPx
     )
 }
 
 internal fun Modifier.buttonPressedBorder() = composed {
-    win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonShadow,
-        innerStartTop = Win98Theme.colorScheme.windowFrame,
-        outerEndBottom = Win98Theme.colorScheme.buttonHighlight,
-        innerEndBottom = Win98Theme.colorScheme.buttonFace,
-        borderWidth = Win98Theme.borderWidthPx
+    win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonShadow,
+        innerStartTop = Win9xTheme.colorScheme.windowFrame,
+        outerEndBottom = Win9xTheme.colorScheme.buttonHighlight,
+        innerEndBottom = Win9xTheme.colorScheme.buttonFace,
+        borderWidth = Win9xTheme.borderWidthPx
     )
 }
 
 fun Modifier.statusBarBorder() = composed {
-    win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonShadow,
-        outerEndBottom = Win98Theme.colorScheme.buttonHighlight,
-        borderWidth = Win98Theme.borderWidthPx
+    win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonShadow,
+        outerEndBottom = Win9xTheme.colorScheme.buttonHighlight,
+        borderWidth = Win9xTheme.borderWidthPx
     )
 }
 
-fun Modifier.win98Border(
-    win98Border: Win98Border
-) = this.win98Border(
-    outerStartTop = win98Border.outerStartTop,
-    innerStartTop = win98Border.innerStartTop,
-    outerEndBottom = win98Border.outerEndBottom,
-    innerEndBottom = win98Border.innerEndBottom,
-    borderWidth = win98Border.borderWidth
+fun Modifier.win9xBorder(
+    win9xBorder: Win9xBorder
+) = this.win9xBorder(
+    outerStartTop = win9xBorder.outerStartTop,
+    innerStartTop = win9xBorder.innerStartTop,
+    outerEndBottom = win9xBorder.outerEndBottom,
+    innerEndBottom = win9xBorder.innerEndBottom,
+    borderWidth = win9xBorder.borderWidth
 )
 
-internal fun Modifier.win98Border(
+internal fun Modifier.win9xBorder(
     outerStartTop: Color,
     outerEndBottom: Color,
     innerStartTop: Color? = null,
@@ -89,11 +84,11 @@ internal fun Modifier.win98Border(
     borderWidth: Float,
 ) = this.drawWithCache {
     onDrawBehind {
-        drawWin98Border(outerStartTop, innerStartTop, outerEndBottom, innerEndBottom, borderWidth)
+        drawWin9xBorder(outerStartTop, innerStartTop, outerEndBottom, innerEndBottom, borderWidth)
     }
 }
 
-internal fun DrawScope.drawWin98Border(
+internal fun DrawScope.drawWin9xBorder(
     outerStartTop: Color,
     innerStartTop: Color?,
     outerEndBottom: Color,
@@ -159,7 +154,7 @@ internal fun DrawScope.drawWin98Border(
     }
 }
 
-class Win98Border(
+class Win9xBorder(
     val outerStartTop: Color,
     val outerEndBottom: Color,
     val innerStartTop: Color? = null,
@@ -172,5 +167,5 @@ class Win98Border(
         innerStartTop: Color? = this.innerStartTop,
         innerEndBottom: Color? = this.innerEndBottom,
         borderWidth: Float = this.borderWidth
-    ) = Win98Border(outerStartTop, outerEndBottom, innerStartTop, innerEndBottom, borderWidth)
+    ) = Win9xBorder(outerStartTop, outerEndBottom, innerStartTop, innerEndBottom, borderWidth)
 }

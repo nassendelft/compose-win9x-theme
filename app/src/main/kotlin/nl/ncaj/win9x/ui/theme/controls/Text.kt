@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import nl.ncaj.win9x.R
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 
 internal object TypographyTokens {
     private val msSansSerifFamily = FontFamily(
@@ -42,7 +42,7 @@ fun Text(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    style: TextStyle = if (enabled) Win98Theme.typography.default else Win98Theme.typography.disabled,
+    style: TextStyle = if (enabled) Win9xTheme.typography.default else Win9xTheme.typography.disabled,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,

@@ -81,9 +81,9 @@ class Typography(
 )
 
 @Composable
-fun Win98Theme(
-    colorScheme: ColorScheme = Win98Theme.colorScheme,
-    typography: Typography = Win98Theme.typography,
+fun Win9xTheme(
+    colorScheme: ColorScheme = Win9xTheme.colorScheme,
+    typography: Typography = Win9xTheme.typography,
     content: @Composable () -> Unit
 ) {
     val rememberedColorScheme = remember {
@@ -103,7 +103,7 @@ fun Win98Theme(
 internal val LocalColorScheme = staticCompositionLocalOf { ColorScheme() }
 internal val LocalTypography = staticCompositionLocalOf { Typography() }
 
-object Win98Theme {
+object Win9xTheme {
     val colorScheme: ColorScheme
         @Composable
         @ReadOnlyComposable

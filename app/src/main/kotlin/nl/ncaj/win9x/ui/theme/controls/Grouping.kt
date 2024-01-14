@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.groupingBorder
 
 @Composable
@@ -48,7 +48,7 @@ fun Grouping(
         (if (textSize == IntSize.Zero || textSize.height == 0) 0 else textSize.height / 2).toDp()
     }
 
-    val borderWidth = Win98Theme.borderWidthPx
+    val borderWidth = Win9xTheme.borderWidthPx
 
     val shape = GenericShape { size, _ ->
         lineTo(xOffsetPx, 0f)

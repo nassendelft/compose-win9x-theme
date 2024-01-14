@@ -25,7 +25,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
 @Composable
@@ -62,7 +62,7 @@ fun TextBox(
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        textStyle = if (enabled) Win98Theme.typography.default else Win98Theme.typography.disabled,
+        textStyle = if (enabled) Win9xTheme.typography.default else Win9xTheme.typography.disabled,
         modifier = modifier,
         enabled = enabled,
         readOnly = readOnly,
@@ -78,9 +78,9 @@ fun TextBox(
         decorationBox = { innerTextField ->
             Box(
                 modifier = Modifier
-                    .background(if (enabled) Win98Theme.colorScheme.buttonHighlight else Win98Theme.colorScheme.buttonFace)
+                    .background(if (enabled) Win9xTheme.colorScheme.buttonHighlight else Win9xTheme.colorScheme.buttonFace)
                     .sunkenBorder()
-                    .padding(Win98Theme.borderWidthDp)
+                    .padding(Win9xTheme.borderWidthDp)
             ) {
                 Row {
                     Box(

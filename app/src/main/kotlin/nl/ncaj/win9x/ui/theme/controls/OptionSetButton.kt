@@ -22,10 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.ui.theme.ButtonIndication
 import nl.ncaj.win9x.ui.theme.DashFocusIndication
-import nl.ncaj.win9x.ui.theme.SelectionIndication
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.buttonNormalBorder
 import nl.ncaj.win9x.ui.theme.buttonPressedBorder
 import nl.ncaj.win9x.ui.theme.checkeredBackground
@@ -69,10 +67,10 @@ fun OptionSetButton(
             .then(
                 if (set) {
                     Modifier.checkeredBackground(
-                        Win98Theme.colorScheme.buttonFace,
-                        Win98Theme.colorScheme.buttonHighlight
+                        Win9xTheme.colorScheme.buttonFace,
+                        Win9xTheme.colorScheme.buttonHighlight
                     )
-                } else Modifier.background(Win98Theme.colorScheme.buttonFace)
+                } else Modifier.background(Win9xTheme.colorScheme.buttonFace)
             )
             .then(
                 if (set || isPressed) Modifier.buttonPressedBorder()

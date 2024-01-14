@@ -20,8 +20,8 @@ import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.ui.theme.Win98Theme
-import nl.ncaj.win9x.ui.theme.win98Border
+import nl.ncaj.win9x.ui.theme.Win9xTheme
+import nl.ncaj.win9x.ui.theme.win9xBorder
 
 @Composable
 @Preview
@@ -41,23 +41,23 @@ fun ProgressIndicator(
     Box(
         modifier
             .defaultMinSize(100.dp, 20.dp)
-            .background(Win98Theme.colorScheme.buttonFace)
+            .background(Win9xTheme.colorScheme.buttonFace)
             .progressIndicatorBorder()
-            .padding(Win98Theme.borderWidthDp + 1.dp)
+            .padding(Win9xTheme.borderWidthDp + 1.dp)
             .progressIndicator(0.5f)
     )
 }
 
 internal fun Modifier.progressIndicatorBorder() = composed {
-    win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonShadow,
-        outerEndBottom = Win98Theme.colorScheme.buttonHighlight,
-        borderWidth = Win98Theme.borderWidthPx,
+    win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonShadow,
+        outerEndBottom = Win9xTheme.colorScheme.buttonHighlight,
+        borderWidth = Win9xTheme.borderWidthPx,
     )
 }
 
 private fun Modifier.progressIndicator(progress: Float) = composed {
-    val progressColor = Win98Theme.colorScheme.selection
+    val progressColor = Win9xTheme.colorScheme.selection
     this.then(
         ProgressIndicatorElement(
             color = progressColor,

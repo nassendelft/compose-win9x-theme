@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import nl.ncaj.win9x.ui.theme.Win98Theme
-import nl.ncaj.win9x.ui.theme.win98Border
+import nl.ncaj.win9x.ui.theme.Win9xTheme
+import nl.ncaj.win9x.ui.theme.win9xBorder
 import kotlin.math.max
 
 @Preview
@@ -87,7 +87,7 @@ fun TabHost(
                     contentAlignment = Alignment.TopCenter,
                     modifier = Modifier
                         .tabBorder(offset)
-                        .padding(Win98Theme.borderWidthDp + 4.dp)
+                        .padding(Win9xTheme.borderWidthDp + 4.dp)
                         .then(if (selectedTabIndex == i) Modifier.zIndex(1f) else Modifier)
                         .clickable { onTabSelected(i) },
                     content = tab
@@ -95,7 +95,7 @@ fun TabHost(
             }
             Box(
                 Modifier
-                    .background(Win98Theme.colorScheme.buttonFace)
+                    .background(Win9xTheme.colorScheme.buttonFace)
                     .tabsContentBorder()
                     .padding(4.dp)
                     .zIndex(1f)
@@ -151,21 +151,21 @@ fun TabHost(
 }
 
 private fun Modifier.tabsContentBorder() = composed {
-    win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonHighlight,
-        innerStartTop = Win98Theme.colorScheme.buttonFace,
-        innerEndBottom = Win98Theme.colorScheme.buttonShadow,
-        outerEndBottom = Win98Theme.colorScheme.windowFrame,
-        borderWidth = Win98Theme.borderWidthPx,
+    win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonHighlight,
+        innerStartTop = Win9xTheme.colorScheme.buttonFace,
+        innerEndBottom = Win9xTheme.colorScheme.buttonShadow,
+        outerEndBottom = Win9xTheme.colorScheme.windowFrame,
+        borderWidth = Win9xTheme.borderWidthPx,
     )
 }
 
 private fun Modifier.tabBorder(offset: Dp): Modifier = composed {
-    val outerStartTop = Win98Theme.colorScheme.buttonHighlight
-    val outerEndBottom = Win98Theme.colorScheme.windowFrame
-    val innerEndBottom = Win98Theme.colorScheme.buttonShadow
-    val background = Win98Theme.colorScheme.buttonFace
-    val borderWidth = Win98Theme.borderWidthPx
+    val outerStartTop = Win9xTheme.colorScheme.buttonHighlight
+    val outerEndBottom = Win9xTheme.colorScheme.windowFrame
+    val innerEndBottom = Win9xTheme.colorScheme.buttonShadow
+    val background = Win9xTheme.colorScheme.buttonFace
+    val borderWidth = Win9xTheme.borderWidthPx
     val offsetPx = with(LocalDensity.current) { offset.toPx() }
     this.then(
         TabBorderBackgroundElement(

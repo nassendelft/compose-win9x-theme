@@ -1,6 +1,5 @@
 package nl.ncaj.win9x.ui.theme.controls
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,8 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorProducer
@@ -41,7 +37,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.SelectionIndication
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.windowBorder
 import kotlin.math.roundToInt
 
@@ -288,9 +284,9 @@ private fun MenuContent(
     Column(
         modifier = modifier
             .width(IntrinsicSize.Max)
-            .background(Win98Theme.colorScheme.buttonFace)
+            .background(Win9xTheme.colorScheme.buttonFace)
             .windowBorder()
-            .padding(Win98Theme.borderWidthDp),
+            .padding(Win9xTheme.borderWidthDp),
         content = { scope.items.forEach { item -> item.content() } }
     )
 }

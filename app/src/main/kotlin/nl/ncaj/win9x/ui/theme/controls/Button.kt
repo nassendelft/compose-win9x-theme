@@ -25,8 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.ButtonIndication
-import nl.ncaj.win9x.ui.theme.Win98Border
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xBorder
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 
 @Composable
 @Preview
@@ -52,8 +52,8 @@ fun ButtonPreview() {
 fun Button(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    borders: Win98ButtonBorders = defaultButtonBorders(),
-    background: Color = Win98Theme.colorScheme.buttonFace,
+    borders: Win9xButtonBorders = defaultButtonBorders(),
+    background: Color = Win9xTheme.colorScheme.buttonFace,
     enabled: Boolean = true,
     defaultPadding: PaddingValues = PaddingValues(4.dp),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -78,48 +78,48 @@ fun Button(
     }
 }
 
-class Win98ButtonBorders(
-    val normal: Win98Border,
-    val pressed: Win98Border
+class Win9xButtonBorders(
+    val normal: Win9xBorder,
+    val pressed: Win9xBorder
 ) {
     fun copy(
-        normal: Win98Border = this.normal,
-        pressed: Win98Border = this.pressed
-    ) = Win98ButtonBorders(normal, pressed)
+        normal: Win9xBorder = this.normal,
+        pressed: Win9xBorder = this.pressed
+    ) = Win9xButtonBorders(normal, pressed)
 }
 
 @Composable
-internal fun defaultButtonBorders() = Win98ButtonBorders(
-    normal = Win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonHighlight,
-        innerStartTop = Win98Theme.colorScheme.buttonFace,
-        outerEndBottom = Win98Theme.colorScheme.buttonShadow,
-        innerEndBottom = Win98Theme.colorScheme.windowFrame,
-        borderWidth = Win98Theme.borderWidthPx
+internal fun defaultButtonBorders() = Win9xButtonBorders(
+    normal = Win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonHighlight,
+        innerStartTop = Win9xTheme.colorScheme.buttonFace,
+        outerEndBottom = Win9xTheme.colorScheme.buttonShadow,
+        innerEndBottom = Win9xTheme.colorScheme.windowFrame,
+        borderWidth = Win9xTheme.borderWidthPx
     ),
-    pressed = Win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonShadow,
-        innerStartTop = Win98Theme.colorScheme.windowFrame,
-        outerEndBottom = Win98Theme.colorScheme.buttonHighlight,
-        innerEndBottom = Win98Theme.colorScheme.buttonFace,
-        borderWidth = Win98Theme.borderWidthPx
+    pressed = Win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonShadow,
+        innerStartTop = Win9xTheme.colorScheme.windowFrame,
+        outerEndBottom = Win9xTheme.colorScheme.buttonHighlight,
+        innerEndBottom = Win9xTheme.colorScheme.buttonFace,
+        borderWidth = Win9xTheme.borderWidthPx
     )
 )
 
 @Composable
-internal fun innerButtonBorders() = Win98ButtonBorders(
-    normal = Win98Border(
-        outerStartTop = Win98Theme.colorScheme.buttonFace,
-        innerStartTop = Win98Theme.colorScheme.buttonHighlight,
-        outerEndBottom = Win98Theme.colorScheme.windowFrame,
-        innerEndBottom = Win98Theme.colorScheme.buttonShadow,
-        borderWidth = Win98Theme.borderWidthPx
+internal fun innerButtonBorders() = Win9xButtonBorders(
+    normal = Win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.buttonFace,
+        innerStartTop = Win9xTheme.colorScheme.buttonHighlight,
+        outerEndBottom = Win9xTheme.colorScheme.windowFrame,
+        innerEndBottom = Win9xTheme.colorScheme.buttonShadow,
+        borderWidth = Win9xTheme.borderWidthPx
     ),
-    pressed = Win98Border(
-        outerStartTop = Win98Theme.colorScheme.windowFrame,
-        innerStartTop = Win98Theme.colorScheme.buttonShadow,
-        outerEndBottom = Win98Theme.colorScheme.buttonFace,
-        innerEndBottom = Win98Theme.colorScheme.buttonHighlight,
-        borderWidth = Win98Theme.borderWidthPx
+    pressed = Win9xBorder(
+        outerStartTop = Win9xTheme.colorScheme.windowFrame,
+        innerStartTop = Win9xTheme.colorScheme.buttonShadow,
+        outerEndBottom = Win9xTheme.colorScheme.buttonFace,
+        innerEndBottom = Win9xTheme.colorScheme.buttonHighlight,
+        borderWidth = Win9xTheme.borderWidthPx
     )
 )

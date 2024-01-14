@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.R
-import nl.ncaj.win9x.ui.theme.Win98Theme
-import nl.ncaj.win9x.ui.theme.win98Border
+import nl.ncaj.win9x.ui.theme.Win9xTheme
+import nl.ncaj.win9x.ui.theme.win9xBorder
 import kotlin.math.max
 import kotlin.math.min
 
@@ -92,12 +92,12 @@ fun Slider(
             modifier = Modifier
                 .requiredHeight(3.dp)
                 .offset(y = (-5).dp)
-                .win98Border(
-                    outerStartTop = Win98Theme.colorScheme.buttonShadow,
-                    innerStartTop = Win98Theme.colorScheme.windowFrame,
-                    innerEndBottom = Win98Theme.colorScheme.buttonFace,
-                    outerEndBottom = Win98Theme.colorScheme.buttonHighlight,
-                    borderWidth = Win98Theme.borderWidthPx
+                .win9xBorder(
+                    outerStartTop = Win9xTheme.colorScheme.buttonShadow,
+                    innerStartTop = Win9xTheme.colorScheme.windowFrame,
+                    innerEndBottom = Win9xTheme.colorScheme.buttonFace,
+                    outerEndBottom = Win9xTheme.colorScheme.buttonHighlight,
+                    borderWidth = Win9xTheme.borderWidthPx
                 )
         )
         Image(

@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.SelectionIndication
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
 @Composable
@@ -72,7 +72,7 @@ fun DropDownListBox(
         Row(
             modifier = Modifier
                 .onSizeChanged { containerSizePx = it }
-                .background(if (enabled) Win98Theme.colorScheme.buttonHighlight else Win98Theme.colorScheme.buttonFace)
+                .background(if (enabled) Win9xTheme.colorScheme.buttonHighlight else Win9xTheme.colorScheme.buttonFace)
                 .sunkenBorder(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -82,9 +82,9 @@ fun DropDownListBox(
             )
             Box(
                 Modifier.padding(
-                    top = Win98Theme.borderWidthDp,
-                    bottom = Win98Theme.borderWidthDp,
-                    end = Win98Theme.borderWidthDp
+                    top = Win9xTheme.borderWidthDp,
+                    bottom = Win9xTheme.borderWidthDp,
+                    end = Win9xTheme.borderWidthDp
                 )
             ) {
                 Button(
@@ -109,8 +109,8 @@ fun DropDownListBox(
                 Column(
                     modifier = Modifier
                         .width(containerWidth)
-                        .background(Win98Theme.colorScheme.buttonHighlight)
-                        .border(BorderStroke(1.dp, Win98Theme.colorScheme.windowFrame))
+                        .background(Win9xTheme.colorScheme.buttonHighlight)
+                        .border(BorderStroke(1.dp, Win9xTheme.colorScheme.windowFrame))
                 ) {
                     DropDownMenuScope().content()
                 }

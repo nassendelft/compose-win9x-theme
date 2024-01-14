@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.DashFocusIndication.Companion.DashFocusIndicationNoPadding
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
 @Composable
@@ -74,7 +74,7 @@ fun Checkbox(
         Box(
             modifier = Modifier
                 .defaultMinSize(13.dp, 13.dp)
-                .background(if (enabled) Win98Theme.colorScheme.buttonHighlight else Win98Theme.colorScheme.buttonFace)
+                .background(if (enabled) Win9xTheme.colorScheme.buttonHighlight else Win9xTheme.colorScheme.buttonFace)
                 .sunkenBorder(),
             contentAlignment = Alignment.Center
         ) {

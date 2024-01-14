@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
 @Composable
@@ -86,7 +86,7 @@ class ListBoxScope(private val columnScope: ColumnScope) {
                     )
                     .fillMaxWidth()
                     .then(
-                        if (isSelected) Modifier.background(Win98Theme.colorScheme.selection)
+                        if (isSelected) Modifier.background(Win9xTheme.colorScheme.selection)
                         else Modifier
                     )
                     .padding(4.dp),
@@ -113,7 +113,7 @@ fun ListBox(
             .background(Color.White)
             .width(IntrinsicSize.Max)
             .sunkenBorder()
-            .padding(Win98Theme.borderWidthDp + 2.dp)
+            .padding(Win9xTheme.borderWidthDp + 2.dp)
     ) {
         ListBoxScope(this).content()
     }

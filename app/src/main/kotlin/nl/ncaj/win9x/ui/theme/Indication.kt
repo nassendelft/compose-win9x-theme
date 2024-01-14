@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.ui.theme.controls.Win98ButtonBorders
+import nl.ncaj.win9x.ui.theme.controls.Win9xButtonBorders
 
 object SelectionIndication: Indication {
 
@@ -41,7 +41,7 @@ object SelectionIndication: Indication {
         val isHovered = interactionSource.collectIsHoveredAsState()
         val isFocused = interactionSource.collectIsFocusedAsState()
         val isPressed = interactionSource.collectIsPressedAsState()
-        val color = Win98Theme.colorScheme.selection
+        val color = Win9xTheme.colorScheme.selection
         return remember(interactionSource) {
             SelectionIndication(isHovered, isFocused, isPressed, color)
         }
@@ -90,7 +90,7 @@ internal fun DrawScope.drawDashFocus(padding: Dp = Dp.Unspecified) {
 }
 
 internal class ButtonIndication(
-    private val borders: Win98ButtonBorders,
+    private val borders: Win9xButtonBorders,
     private val enabled: Boolean,
 ) : Indication {
 
@@ -98,11 +98,11 @@ internal class ButtonIndication(
         private val isFocused: State<Boolean>,
         private val isPressed: State<Boolean>,
         private val enabled: Boolean,
-        private val borders: Win98ButtonBorders,
+        private val borders: Win9xButtonBorders,
     ) : IndicationInstance {
         override fun ContentDrawScope.drawIndication() {
             if (isPressed.value && enabled) {
-                drawWin98Border(
+                drawWin9xBorder(
                     borders.pressed.outerStartTop,
                     borders.pressed.innerStartTop,
                     borders.pressed.outerEndBottom,
@@ -110,7 +110,7 @@ internal class ButtonIndication(
                     borders.pressed.borderWidth
                 )
             } else {
-                drawWin98Border(
+                drawWin9xBorder(
                     borders.normal.outerStartTop,
                     borders.normal.innerStartTop,
                     borders.normal.outerEndBottom,

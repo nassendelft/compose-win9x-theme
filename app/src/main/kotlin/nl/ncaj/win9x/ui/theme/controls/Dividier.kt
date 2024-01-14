@@ -5,18 +5,18 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 
 @Composable
 fun Divider(
     modifier: Modifier = Modifier
 ) {
-    val topLineColor = Win98Theme.colorScheme.buttonShadow
-    val bottomLineColor = Win98Theme.colorScheme.buttonHighlight
+    val topLineColor = Win9xTheme.colorScheme.buttonShadow
+    val bottomLineColor = Win9xTheme.colorScheme.buttonHighlight
 
     Canvas(
         modifier = modifier
-            .defaultMinSize(minHeight = Win98Theme.borderWidthDp)
+            .defaultMinSize(minHeight = Win9xTheme.borderWidthDp)
     ) {
         drawLine(
             color = topLineColor,

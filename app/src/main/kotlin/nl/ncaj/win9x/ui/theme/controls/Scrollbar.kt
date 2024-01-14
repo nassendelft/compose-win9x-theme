@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import nl.ncaj.win9x.R
-import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.checkeredBackground
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 import nl.ncaj.win9x.ui.theme.windowBorder
@@ -67,14 +67,14 @@ fun ScrollbarPreview() {
             modifier = Modifier
                 .sizeIn(maxHeight = 150.dp, maxWidth = 150.dp)
                 .sunkenBorder()
-                .padding(Win98Theme.borderWidthDp),
+                .padding(Win9xTheme.borderWidthDp),
             horizontalScrollState,
             verticalScrollState,
         ) {
             Text(
                 text = "Some text that is repeated multiple times\n".repeat(10),
                 modifier = Modifier
-                    .background(Win98Theme.colorScheme.buttonHighlight)
+                    .background(Win9xTheme.colorScheme.buttonHighlight)
                     .padding(4.dp)
                     .horizontalScroll(horizontalScrollState)
                     .verticalScroll(verticalScrollState)
@@ -214,15 +214,15 @@ fun HorizontalScrollbar(
                 .fillMaxHeight()
                 .onSizeChanged { trackSize = it }
                 .checkeredBackground(
-                    Win98Theme.colorScheme.buttonFace,
-                    Win98Theme.colorScheme.buttonHighlight,
+                    Win9xTheme.colorScheme.buttonFace,
+                    Win9xTheme.colorScheme.buttonHighlight,
                 ),
         ) {
             Box(
                 modifier
                     .fillMaxHeight()
                     .offset { IntOffset(x = thumbOffset, y = 0) }
-                    .background(Win98Theme.colorScheme.buttonFace)
+                    .background(Win9xTheme.colorScheme.buttonFace)
                     .width(40.dp)
                     .onSizeChanged { thumbSize = it }
                     .windowBorder()
@@ -293,15 +293,15 @@ fun VerticalScrollbar(
                 .fillMaxWidth()
                 .onSizeChanged { trackSize = it }
                 .checkeredBackground(
-                    Win98Theme.colorScheme.buttonFace,
-                    Win98Theme.colorScheme.buttonHighlight,
+                    Win9xTheme.colorScheme.buttonFace,
+                    Win9xTheme.colorScheme.buttonHighlight,
                 ),
         ) {
             Box(
                 modifier
                     .fillMaxWidth()
                     .offset { IntOffset(x = 0, y = thumbOffset) }
-                    .background(Win98Theme.colorScheme.buttonFace)
+                    .background(Win9xTheme.colorScheme.buttonFace)
                     .requiredHeight(40.dp)
                     .onSizeChanged { thumbSize = it }
                     .windowBorder()
