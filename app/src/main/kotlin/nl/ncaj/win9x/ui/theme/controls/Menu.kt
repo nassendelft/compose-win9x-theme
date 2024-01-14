@@ -74,29 +74,7 @@ class MenuItem(
     internal val content: @Composable () -> Unit,
 )
 
-private val dividerMenuItem = MenuItem {
-    val topLineColor = Win98Theme.colorScheme.buttonShadow
-    val bottomLineColor = Win98Theme.colorScheme.buttonHighlight
-
-    Canvas(
-        modifier = Modifier
-            .height(Win98Theme.borderWidthDp)
-            .fillMaxWidth()
-    ) {
-        drawLine(
-            color = topLineColor,
-            start = Offset(0f, size.height / 4),
-            end = Offset(size.width, size.height / 4),
-            strokeWidth = size.height / 2
-        )
-        drawLine(
-            color = bottomLineColor,
-            start = Offset(0f, size.height - (size.height / 4)),
-            end = Offset(size.width, size.height - (size.height / 4)),
-            strokeWidth = size.height / 2
-        )
-    }
-}
+private val dividerMenuItem = MenuItem { Divider() }
 
 class MenuScope {
     internal val items = mutableListOf<MenuItem>()
