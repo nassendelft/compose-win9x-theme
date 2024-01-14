@@ -29,6 +29,7 @@ import nl.ncaj.win9x.ui.theme.controls.SliderPreview
 import nl.ncaj.win9x.ui.theme.controls.TextBoxPreview
 import nl.ncaj.win9x.ui.theme.controls.TreeViewPreview
 import nl.ncaj.win9x.ui.theme.Win98Theme
+import nl.ncaj.win9x.ui.theme.controls.MenuButtonPreview
 import nl.ncaj.win9x.ui.theme.controls.OptionSetButtonPreview
 import nl.ncaj.win9x.ui.theme.controls.ProgressIndicatorPreview
 import nl.ncaj.win9x.ui.theme.controls.ScrollableHost
@@ -90,6 +91,8 @@ fun ControlsPreview() {
                         ButtonPreview()
                         Spacer(modifier = Modifier.width(12.dp))
                         OptionSetButtonPreview()
+                        Spacer(modifier = Modifier.width(12.dp))
+                        MenuButtonPreview()
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Row {
