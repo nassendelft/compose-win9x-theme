@@ -55,6 +55,24 @@ fun ControlsPreview() {
             title = "Components",
             modifier = Modifier.fillMaxSize(),
             windowState = WindowState {},
+            menuBar = {
+                entry("Item 1") {
+                    label("Sub menu item") {}
+                }
+                entry("Item 2") {
+                    label("Sub menu item") {}
+                    divider()
+                    cascade("Cascade Item") {
+                        label("Command") {}
+                        cascade("Sub Cascade Item") {
+                            label("Command") {}
+                            cascade("Sub Cascade Item") {
+                                label("Command") {}
+                            }
+                        }
+                    }
+                }
+            }
         ) {
             ScrollableHost(
                 horizontalScrollState = horizontalScroll,

@@ -39,7 +39,21 @@ fun WindowPreview() {
         ),
         onMinimizeRequested = {}
     )
-    Window("Title", windowState) {
+    Window(
+        title = "Title",
+        windowState = windowState,
+        menuBar = {
+            entry("Item1") {
+                label("Sub menu item 1") {}
+            }
+            entry("Item2") {
+                label("Sub menu item 1") {}
+                cascade("Sub menu item 2") {
+                    label("Cascade menu item 1") {}
+                }
+            }
+        }
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -123,6 +137,7 @@ fun Window(
     title: String,
     windowState: WindowState,
     modifier: Modifier = Modifier,
+    menuBar: (MenuBarScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     Column(
@@ -157,6 +172,9 @@ fun Window(
                 enabled = windowState.closeEnabled
             )
         }
+
+        menuBar?.let { MenuBar(content = it) }
+
         Box(modifier = Modifier.padding(top = 2.dp)) {
             content()
         }
