@@ -15,8 +15,8 @@ import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.debugInspectorInfo
 
 fun Modifier.checkeredBackground(
-    color1: Color = Color.Unspecified,
-    color2: Color = Color.Unspecified,
+    color1: Color,
+    color2: Color,
     sizeBlock: Float = 5f
 ): Modifier = drawWithCache {
     onDrawBehind {

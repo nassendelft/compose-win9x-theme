@@ -39,6 +39,7 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -52,6 +53,7 @@ import nl.ncaj.win9x.ui.theme.windowBorder
 import kotlin.math.max
 import kotlin.math.roundToInt
 
+@Preview
 @Composable
 fun ScrollbarPreview() {
     val horizontalScrollState = rememberScrollState()
@@ -211,7 +213,10 @@ fun HorizontalScrollbar(
                 .weight(1f)
                 .fillMaxHeight()
                 .onSizeChanged { trackSize = it }
-                .checkeredBackground(),
+                .checkeredBackground(
+                    Win98Theme.colorScheme.buttonFace,
+                    Win98Theme.colorScheme.buttonHighlight,
+                ),
         ) {
             Box(
                 modifier
@@ -287,7 +292,10 @@ fun VerticalScrollbar(
                 .weight(1f)
                 .fillMaxWidth()
                 .onSizeChanged { trackSize = it }
-                .checkeredBackground(),
+                .checkeredBackground(
+                    Win98Theme.colorScheme.buttonFace,
+                    Win98Theme.colorScheme.buttonHighlight,
+                ),
         ) {
             Box(
                 modifier
