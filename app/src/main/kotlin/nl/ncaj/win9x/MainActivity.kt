@@ -18,23 +18,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import nl.ncaj.win9x.ui.theme.Win98Theme
 import nl.ncaj.win9x.ui.theme.controls.ButtonPreview
 import nl.ncaj.win9x.ui.theme.controls.CheckboxPreview
 import nl.ncaj.win9x.ui.theme.controls.DropDownListBoxPreview
 import nl.ncaj.win9x.ui.theme.controls.GroupingPreview
 import nl.ncaj.win9x.ui.theme.controls.ListBoxPreview
-import nl.ncaj.win9x.ui.theme.controls.OptionButtonPreview
-import nl.ncaj.win9x.ui.theme.controls.ScrollbarPreview
-import nl.ncaj.win9x.ui.theme.controls.SliderPreview
-import nl.ncaj.win9x.ui.theme.controls.TextBoxPreview
-import nl.ncaj.win9x.ui.theme.controls.TreeViewPreview
-import nl.ncaj.win9x.ui.theme.Win98Theme
 import nl.ncaj.win9x.ui.theme.controls.MenuButtonPreview
+import nl.ncaj.win9x.ui.theme.controls.OptionButtonPreview
 import nl.ncaj.win9x.ui.theme.controls.OptionSetButtonPreview
 import nl.ncaj.win9x.ui.theme.controls.ProgressIndicatorPreview
 import nl.ncaj.win9x.ui.theme.controls.ScrollableHost
+import nl.ncaj.win9x.ui.theme.controls.ScrollbarPreview
+import nl.ncaj.win9x.ui.theme.controls.SliderPreview
 import nl.ncaj.win9x.ui.theme.controls.SpinBoxPreview
 import nl.ncaj.win9x.ui.theme.controls.TabsPreview
+import nl.ncaj.win9x.ui.theme.controls.Text
+import nl.ncaj.win9x.ui.theme.controls.TextBoxPreview
+import nl.ncaj.win9x.ui.theme.controls.TreeViewPreview
 import nl.ncaj.win9x.ui.theme.controls.Window
 import nl.ncaj.win9x.ui.theme.controls.WindowState
 
@@ -74,11 +75,19 @@ fun ControlsPreview() {
                         }
                     }
                 }
+            },
+            statusBar = {
+                segment(weight = 0.3f) {
+                    Text("Status description 1")
+                }
+                segment(weight = 0.7f) {
+                    Text("Status description 2")
+                }
             }
         ) {
             ScrollableHost(
                 horizontalScrollState = horizontalScroll,
-                verticalScrollState = verticalScroll
+                verticalScrollState = verticalScroll,
             ) {
                 Column(
                     Modifier

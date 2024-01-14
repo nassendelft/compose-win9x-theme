@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -138,6 +139,7 @@ fun Window(
     windowState: WindowState,
     modifier: Modifier = Modifier,
     menuBar: (MenuBarScope.() -> Unit)? = null,
+    statusBar: (StatusBarScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     Column(
@@ -175,8 +177,15 @@ fun Window(
 
         menuBar?.let { MenuBar(content = it) }
 
-        Box(modifier = Modifier.padding(top = 2.dp)) {
+        Spacer(modifier = Modifier.height(2.dp))
+
+        Box(Modifier.weight(1f)) {
             content()
+        }
+
+        statusBar?.let {
+            Spacer(modifier = Modifier.height(2.dp))
+            StatusBar(content = it)
         }
     }
 }

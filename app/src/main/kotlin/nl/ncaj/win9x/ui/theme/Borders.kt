@@ -63,6 +63,14 @@ internal fun Modifier.buttonPressedBorder() = composed {
     )
 }
 
+fun Modifier.statusBarBorder() = composed {
+    win98Border(
+        outerStartTop = Win98Theme.colorScheme.buttonShadow,
+        outerEndBottom = Win98Theme.colorScheme.buttonHighlight,
+        borderWidth = Win98Theme.borderWidthPx
+    )
+}
+
 fun Modifier.win98Border(
     win98Border: Win98Border
 ) = this.win98Border(
