@@ -1,7 +1,6 @@
 package nl.ncaj.win9x.ui.theme
 
 import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import nl.ncaj.win9x.R
 

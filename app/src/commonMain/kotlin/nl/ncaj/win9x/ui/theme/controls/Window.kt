@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -23,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.Win9xTheme
-import nl.ncaj.win9x.ui.theme.icCrossPainter
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 import nl.ncaj.win9x.ui.theme.windowBorder
 
