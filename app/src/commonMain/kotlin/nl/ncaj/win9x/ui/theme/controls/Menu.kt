@@ -31,19 +31,19 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.SelectionIndication
 import nl.ncaj.win9x.ui.theme.Win9xTheme
+import nl.ncaj.win9x.ui.theme.icArrowDownDisabledPainter
+import nl.ncaj.win9x.ui.theme.icArrowDownPainter
+import nl.ncaj.win9x.ui.theme.icCheckmarkPainter
+import nl.ncaj.win9x.ui.theme.icOptionButtonPainter
 import nl.ncaj.win9x.ui.theme.windowBorder
 import kotlin.math.roundToInt
 
-@Preview
 @Composable
-fun MenuPreview() {
+internal fun MenuPreview() {
     Menu {
         label("Command") {}
         divider()
@@ -99,7 +99,7 @@ class MenuScope {
                 leadingIcon = {
                     if (checked) {
                         Image(
-                            painter = painterResource(id = R.drawable.ic_checkmark),
+                            painter = icCheckmarkPainter(),
                             contentDescription = "checked",
                             colorFilter = ColorFilter.tint(
                                 if (enabled) Color.Black else Color(0xFF808080)
@@ -127,7 +127,7 @@ class MenuScope {
                 leadingIcon = {
                     if (checked) {
                         Image(
-                            painter = painterResource(id = R.drawable.ic_option_button),
+                            painter = icOptionButtonPainter(),
                             contentDescription = "checked",
                             colorFilter = ColorFilter.tint(
                                 if (enabled) Color.Black else Color(0xFF808080)
@@ -146,18 +146,18 @@ class MenuScope {
         enabled: Boolean = true,
         content: MenuScope.() -> Unit,
     ) {
-        val imageId = if (enabled) R.drawable.ic_arrow_down else R.drawable.ic_arrow_down_disabled
         val scope = MenuScope().apply(content)
 
         val menuItem = MenuItem(scope) {
             var yPosition by remember { mutableFloatStateOf(0f) }
+            val image = if (enabled) icArrowDownPainter() else icArrowDownDisabledPainter()
             Label(
                 modifier = Modifier.onGloballyPositioned { yPosition = it.positionInParent().y },
                 label = label,
                 enabled = enabled,
                 trailingIcon = {
                     Image(
-                        painter = painterResource(id = imageId),
+                        painter = image,
                         contentDescription = "checked",
                         modifier = Modifier.rotate(-90f),
                     )

@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.DashFocusIndication
 import nl.ncaj.win9x.ui.theme.Win9xTheme
@@ -29,8 +28,7 @@ import nl.ncaj.win9x.ui.theme.buttonPressedBorder
 import nl.ncaj.win9x.ui.theme.checkeredBackground
 
 @Composable
-@Preview
-fun OptionSetButtonPreview() {
+internal fun OptionSetButtonPreview() {
     var set by remember { mutableStateOf(false) }
     Column {
         Text("- Option Set Button -")

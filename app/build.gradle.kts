@@ -6,6 +6,7 @@ plugins {
 
 kotlin {
     androidTarget()
+    jvm()
 
     sourceSets {
         val commonMain by getting {
@@ -13,12 +14,16 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.ui)
-                implementation(compose.preview)
             }
         }
         val androidMain by getting {
             dependencies {
                 implementation(libs.activity.compose)
+            }
+        }
+        val jvmMain by getting {
+            dependencies {
+                implementation("org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.7.89.1")
             }
         }
     }
@@ -49,4 +54,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    sourceSets["main"].res.srcDirs("src/commonMain/resources")
 }

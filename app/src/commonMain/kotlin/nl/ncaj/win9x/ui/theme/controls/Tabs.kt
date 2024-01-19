@@ -28,7 +28,6 @@ import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.debugInspectorInfo
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -37,9 +36,8 @@ import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.win9xBorder
 import kotlin.math.max
 
-@Preview
 @Composable
-fun TabsPreview() {
+internal fun TabsPreview() {
     var selectedTabIndex by remember { mutableIntStateOf(1) }
 
     Column {

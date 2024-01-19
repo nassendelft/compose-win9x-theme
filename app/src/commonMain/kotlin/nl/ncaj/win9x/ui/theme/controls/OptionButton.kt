@@ -22,15 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.DashFocusIndication.Companion.DashFocusIndicationNoPadding
+import nl.ncaj.win9x.ui.theme.bgOptionButtonDisabledPainter
+import nl.ncaj.win9x.ui.theme.bgOptionButtonPainter
+import nl.ncaj.win9x.ui.theme.icOptionButtonPainter
 
 @Composable
-@Preview
-fun OptionButtonPreview() {
+internal fun OptionButtonPreview() {
     var checked by remember { mutableStateOf(true) }
     Column {
         Text("- Option Buttons -")
@@ -71,12 +70,12 @@ fun OptionButton(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = if (enabled) R.drawable.bg_option_button else R.drawable.bg_option_button_disabled),
+                painter = if (enabled) bgOptionButtonPainter() else bgOptionButtonDisabledPainter(),
                 contentDescription = "",
             )
             if (checked) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_option_button),
+                    painter = icOptionButtonPainter(),
                     contentDescription = "checked",
                     colorFilter = ColorFilter.tint(if (enabled) Color.Black else Color(0xFF808080))
                 )

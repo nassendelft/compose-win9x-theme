@@ -1,7 +1,6 @@
 package nl.ncaj.win9x.ui.theme.controls
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -20,14 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.SelectionIndication
 
-@Preview
 @Composable
-fun MenuBarPreview() {
+internal fun MenuBarPreview() {
     MenuBar {
         entry("Item1") {
             label("Sub menu item 1") {}

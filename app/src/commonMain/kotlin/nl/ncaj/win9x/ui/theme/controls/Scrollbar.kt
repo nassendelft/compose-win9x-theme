@@ -38,24 +38,21 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.checkeredBackground
+import nl.ncaj.win9x.ui.theme.icArrowDownPainter
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 import nl.ncaj.win9x.ui.theme.windowBorder
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-@Preview
 @Composable
-fun ScrollbarPreview() {
+internal fun ScrollbarPreview() {
     val horizontalScrollState = rememberScrollState()
     val verticalScrollState = rememberScrollState()
 
@@ -203,7 +200,7 @@ fun HorizontalScrollbar(
             modifier = Modifier.width(15.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_arrow_down),
+                painter = icArrowDownPainter(),
                 contentDescription = "",
                 modifier = Modifier.rotate(90f)
             )
@@ -240,7 +237,7 @@ fun HorizontalScrollbar(
             modifier = Modifier.width(15.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_arrow_down),
+                painter = icArrowDownPainter(),
                 contentDescription = "",
                 modifier = Modifier.rotate(-90f)
             )
@@ -282,7 +279,7 @@ fun VerticalScrollbar(
             modifier = Modifier.requiredHeight(15.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_arrow_down),
+                painter = icArrowDownPainter(),
                 contentDescription = "",
                 modifier = Modifier.rotate(180f)
             )
@@ -319,7 +316,7 @@ fun VerticalScrollbar(
             modifier = Modifier.requiredHeight(15.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_arrow_down),
+                painter = icArrowDownPainter(),
                 contentDescription = ""
             )
         }

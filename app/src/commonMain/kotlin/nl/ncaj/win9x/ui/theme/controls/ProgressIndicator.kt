@@ -18,14 +18,12 @@ import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.debugInspectorInfo
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.win9xBorder
 
 @Composable
-@Preview
-fun ProgressIndicatorPreview() {
+internal fun ProgressIndicatorPreview() {
     Column {
         Text("- Progress Indicator -")
         Spacer(modifier = Modifier.height(2.dp))

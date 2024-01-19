@@ -1,6 +1,5 @@
 package nl.ncaj.win9x.ui.theme.controls
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.focusable
@@ -27,25 +26,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.Win9xTheme
+import nl.ncaj.win9x.ui.theme.icSliderThumbWindowPainter
 import nl.ncaj.win9x.ui.theme.win9xBorder
 import kotlin.math.max
 import kotlin.math.min
 
-@Preview
 @Composable
 fun SliderPreview() {
     Column {
         Text("- Slider -")
         Spacer(modifier = Modifier.height(2.dp))
 
-        Slider(modifier = Modifier, steps = 4, onStep = { Log.d("test", "$it") })
+        Slider(modifier = Modifier, steps = 4, onStep = { })
     }
 }
 
@@ -101,7 +97,7 @@ fun Slider(
                 )
         )
         Image(
-            painterResource(R.drawable.ic_slider_thumb),
+            icSliderThumbWindowPainter(),
             contentDescription = "Thumb for slider",
             modifier = Modifier
                 .wrapContentSize()

@@ -20,17 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.ButtonIndication
 import nl.ncaj.win9x.ui.theme.Win9xBorder
 import nl.ncaj.win9x.ui.theme.Win9xTheme
+import nl.ncaj.win9x.ui.theme.icCrossPainter
 
 @Composable
-@Preview
-fun ButtonPreview() {
+internal fun ButtonPreview() {
     Column {
         Text("- Button -")
         Spacer(modifier = Modifier.height(2.dp))
@@ -43,7 +40,7 @@ fun ButtonPreview() {
         }
         Spacer(modifier = Modifier.height(2.dp))
         Button(onClick = {}, Modifier.size(20.dp)) {
-            Image(painter = painterResource(id = R.drawable.ic_cross), contentDescription = "")
+            Image(painter = icCrossPainter(), contentDescription = "")
         }
     }
 }

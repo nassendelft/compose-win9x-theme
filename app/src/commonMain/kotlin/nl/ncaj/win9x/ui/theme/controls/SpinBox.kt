@@ -13,14 +13,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.R
+import nl.ncaj.win9x.ui.theme.icArrowDownPainter
 
-@Preview
 @Composable
-fun SpinBoxPreview() {
+internal fun SpinBoxPreview() {
     val decimalRegex = """[^0-9]""".toRegex()
     var value by remember { mutableIntStateOf(1) }
 
@@ -59,7 +56,7 @@ fun SpinBox(
                     borders = innerButtonBorders(),
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_arrow_down),
+                        painter = icArrowDownPainter(),
                         contentDescription = "",
                         modifier = Modifier
                             .rotate(180f)
@@ -72,7 +69,7 @@ fun SpinBox(
                     borders = innerButtonBorders(),
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_arrow_down),
+                        painter = icArrowDownPainter(),
                         contentDescription = "",
                         modifier = Modifier.wrapContentSize()
                     )

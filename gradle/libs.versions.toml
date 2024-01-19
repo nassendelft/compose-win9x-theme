@@ -2,7 +2,7 @@
 agp = "8.3.0-alpha11"
 kotlin = "1.9.21"
 activity-compose = "1.8.2"
-compose = "1.5.11"
+compose = "1.6.0-alpha01"
 
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }

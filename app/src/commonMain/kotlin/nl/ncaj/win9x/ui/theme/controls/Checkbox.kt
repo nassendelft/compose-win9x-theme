@@ -24,17 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.DashFocusIndication.Companion.DashFocusIndicationNoPadding
 import nl.ncaj.win9x.ui.theme.Win9xTheme
+import nl.ncaj.win9x.ui.theme.icCheckmarkPainter
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
 @Composable
-@Preview
-fun CheckboxPreview() {
+internal fun CheckboxPreview() {
     var checked by remember { mutableStateOf(true) }
     Column {
         Text("- Check boxes -")
@@ -80,7 +77,7 @@ fun Checkbox(
         ) {
             if (checked) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_checkmark),
+                    painter = icCheckmarkPainter(),
                     contentDescription = "checked",
                     colorFilter = ColorFilter.tint(if (enabled) Color.Black else Color(0xFF808080)),
                 )

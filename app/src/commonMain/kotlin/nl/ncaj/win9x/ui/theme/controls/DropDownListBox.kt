@@ -24,20 +24,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.SelectionIndication
 import nl.ncaj.win9x.ui.theme.Win9xTheme
+import nl.ncaj.win9x.ui.theme.icArrowDownPainter
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
-@Preview
 @Composable
-fun DropDownListBoxPreview() {
+internal fun DropDownListBoxPreview() {
     var expanded by remember { mutableStateOf(false) }
     Column {
         Text("- Spin box -")
@@ -96,7 +93,7 @@ fun DropDownListBox(
                     borders = innerButtonBorders()
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_arrow_down),
+                        painter = icArrowDownPainter(),
                         contentDescription = "",
                         modifier = Modifier.wrapContentSize()
                     )

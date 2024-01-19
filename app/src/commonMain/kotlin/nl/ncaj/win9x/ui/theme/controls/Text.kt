@@ -9,18 +9,14 @@ import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import nl.ncaj.win9x.R
 import nl.ncaj.win9x.ui.theme.Win9xTheme
+import nl.ncaj.win9x.ui.theme.msSansSerifFamilyBold
+import nl.ncaj.win9x.ui.theme.msSansSerifFamilyNormal
 
 internal object TypographyTokens {
-    private val msSansSerifFamily = FontFamily(
-        Font(R.font.ms_sans_serif_regular, FontWeight.Normal),
-        Font(R.font.ms_sans_serif_bold, FontWeight.Bold)
-    )
+    private val msSansSerifFamily = FontFamily(msSansSerifFamilyNormal, msSansSerifFamilyBold)
 
     val defaultTextStyle = TextStyle(
         color = Color(0xFF1A1A1A),

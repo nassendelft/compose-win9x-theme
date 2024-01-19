@@ -11,15 +11,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import kotlin.math.roundToInt
 
-@Preview
 @Composable
-fun PopupPreview() {
+internal fun PopupPreview() {
     var showPopupAt by remember { mutableStateOf(IntOffset.Zero) }
 
     Box(
