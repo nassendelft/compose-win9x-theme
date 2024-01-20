@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.ButtonIndication
 import nl.ncaj.win9x.ui.theme.Win9xBorder
 import nl.ncaj.win9x.ui.theme.Win9xTheme
-import nl.ncaj.win9x.ui.theme.icCrossPainter
+import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 
 @Composable
 internal fun ButtonPreview() {
@@ -40,7 +40,10 @@ internal fun ButtonPreview() {
         }
         Spacer(modifier = Modifier.height(2.dp))
         Button(onClick = {}, Modifier.size(20.dp)) {
-            Image(painter = icCrossPainter(), contentDescription = "")
+            Image(
+                painter = rememberVectorResourcePainter("vector_images/ic_cross.xml"),
+                contentDescription = ""
+            )
         }
     }
 }

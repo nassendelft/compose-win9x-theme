@@ -24,9 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.DashFocusIndication.Companion.DashFocusIndicationNoPadding
-import nl.ncaj.win9x.ui.theme.bgOptionButtonDisabledPainter
-import nl.ncaj.win9x.ui.theme.bgOptionButtonPainter
-import nl.ncaj.win9x.ui.theme.icOptionButtonPainter
+import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 
 @Composable
 internal fun OptionButtonPreview() {
@@ -56,7 +54,9 @@ fun OptionButton(
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
-
+    val background =
+        if (enabled) rememberVectorResourcePainter("vector_images/bg_option_button.xml")
+        else rememberVectorResourcePainter("vector_images/bg_option_button_disabled.xml")
     Row(
         modifier = modifier
             .onFocusChanged { isFocused = it.isFocused }
@@ -66,16 +66,17 @@ fun OptionButton(
                 onClick = { onCheckChange(!checked) }
             )
     ) {
+
         Box(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = if (enabled) bgOptionButtonPainter() else bgOptionButtonDisabledPainter(),
+                painter = background,
                 contentDescription = "",
             )
             if (checked) {
                 Image(
-                    painter = icOptionButtonPainter(),
+                    painter = rememberVectorResourcePainter("vector_images/ic_option_button.xml"),
                     contentDescription = "checked",
                     colorFilter = ColorFilter.tint(if (enabled) Color.Black else Color(0xFF808080))
                 )

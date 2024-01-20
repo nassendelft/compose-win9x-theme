@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import nl.ncaj.win9x.ui.theme.SelectionIndication
 import nl.ncaj.win9x.ui.theme.Win9xTheme
-import nl.ncaj.win9x.ui.theme.icArrowDownPainter
+import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
 @Composable
@@ -93,7 +93,7 @@ fun DropDownListBox(
                     borders = innerButtonBorders()
                 ) {
                     Image(
-                        painter = icArrowDownPainter(),
+                        painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
                         contentDescription = "",
                         modifier = Modifier.wrapContentSize()
                     )

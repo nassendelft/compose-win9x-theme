@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.Win9xTheme
-import nl.ncaj.win9x.ui.theme.icSliderThumbWindowPainter
+import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 import nl.ncaj.win9x.ui.theme.win9xBorder
 import kotlin.math.max
 import kotlin.math.min
@@ -97,7 +97,7 @@ fun Slider(
                 )
         )
         Image(
-            icSliderThumbWindowPainter(),
+            painter = rememberVectorResourcePainter("vector_images/ic_slider_thumb.xml"),
             contentDescription = "Thumb for slider",
             modifier = Modifier
                 .wrapContentSize()

@@ -13,10 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import nl.ncaj.win9x.ui.theme.icCrossPainter
-import nl.ncaj.win9x.ui.theme.icMaximizePainter
-import nl.ncaj.win9x.ui.theme.icMinimizePainter
-import nl.ncaj.win9x.ui.theme.icRestoreWindowPainter
+import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -63,26 +60,26 @@ fun Window(
                     },
                 ) {
                     TitleButton(
-                        painter = icMinimizePainter(),
+                        painter = rememberVectorResourcePainter("vector_images/ic_minimize.xml"),
                         contentDescription = "minimize window",
                         onClick = { windowState.isMinimized = true }
                     )
                     if (windowState.placement == WindowPlacement.Maximized) {
                         TitleButton(
-                            painter = icRestoreWindowPainter(),
+                            painter = rememberVectorResourcePainter("vector_images/ic_restore_window.xml"),
                             contentDescription = "restore window size",
                             onClick = { windowState.placement = WindowPlacement.Floating }
                         )
                     } else {
                         TitleButton(
-                            painter = icMaximizePainter(),
+                            painter = rememberVectorResourcePainter("vector_images/ic_maximize.xml"),
                             contentDescription = "maximize window",
                             onClick = { windowState.placement = WindowPlacement.Maximized }
                         )
                     }
                     Spacer(Modifier.width(1.dp))
                     TitleButton(
-                        painter = icCrossPainter(),
+                        painter = rememberVectorResourcePainter("vector_images/ic_cross.xml"),
                         contentDescription = "Close window",
                         onClick = onCloseRequested,
                         enabled = closeEnabled

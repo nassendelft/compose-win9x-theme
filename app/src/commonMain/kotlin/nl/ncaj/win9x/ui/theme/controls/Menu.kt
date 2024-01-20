@@ -35,10 +35,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.SelectionIndication
 import nl.ncaj.win9x.ui.theme.Win9xTheme
-import nl.ncaj.win9x.ui.theme.icArrowDownDisabledPainter
-import nl.ncaj.win9x.ui.theme.icArrowDownPainter
-import nl.ncaj.win9x.ui.theme.icCheckmarkPainter
-import nl.ncaj.win9x.ui.theme.icOptionButtonPainter
+import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 import nl.ncaj.win9x.ui.theme.windowBorder
 import kotlin.math.roundToInt
 
@@ -99,7 +96,7 @@ class MenuScope {
                 leadingIcon = {
                     if (checked) {
                         Image(
-                            painter = icCheckmarkPainter(),
+                            painter = rememberVectorResourcePainter("vector_images/ic_checkmark.xml"),
                             contentDescription = "checked",
                             colorFilter = ColorFilter.tint(
                                 if (enabled) Color.Black else Color(0xFF808080)
@@ -127,7 +124,7 @@ class MenuScope {
                 leadingIcon = {
                     if (checked) {
                         Image(
-                            painter = icOptionButtonPainter(),
+                            painter = rememberVectorResourcePainter("vector_images/bg_option_button.xml"),
                             contentDescription = "checked",
                             colorFilter = ColorFilter.tint(
                                 if (enabled) Color.Black else Color(0xFF808080)
@@ -150,7 +147,9 @@ class MenuScope {
 
         val menuItem = MenuItem(scope) {
             var yPosition by remember { mutableFloatStateOf(0f) }
-            val image = if (enabled) icArrowDownPainter() else icArrowDownDisabledPainter()
+            val image =
+                if (enabled) rememberVectorResourcePainter("vector_images/ic_arrow_down.xml")
+                else rememberVectorResourcePainter("vector_images/ic_arrow_down_disabled.xml")
             Label(
                 modifier = Modifier.onGloballyPositioned { yPosition = it.positionInParent().y },
                 label = label,

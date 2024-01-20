@@ -14,7 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.ui.theme.icArrowDownPainter
+import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 
 @Composable
 internal fun SpinBoxPreview() {
@@ -56,7 +56,7 @@ fun SpinBox(
                     borders = innerButtonBorders(),
                 ) {
                     Image(
-                        painter = icArrowDownPainter(),
+                        painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
                         contentDescription = "",
                         modifier = Modifier
                             .rotate(180f)
@@ -69,7 +69,7 @@ fun SpinBox(
                     borders = innerButtonBorders(),
                 ) {
                     Image(
-                        painter = icArrowDownPainter(),
+                        painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
                         contentDescription = "",
                         modifier = Modifier.wrapContentSize()
                     )

@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.DashFocusIndication.Companion.DashFocusIndicationNoPadding
 import nl.ncaj.win9x.ui.theme.Win9xTheme
-import nl.ncaj.win9x.ui.theme.icCheckmarkPainter
+import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
 @Composable
@@ -77,7 +77,7 @@ fun Checkbox(
         ) {
             if (checked) {
                 Image(
-                    painter = icCheckmarkPainter(),
+                    painter = rememberVectorResourcePainter("vector_images/ic_checkmark.xml"),
                     contentDescription = "checked",
                     colorFilter = ColorFilter.tint(if (enabled) Color.Black else Color(0xFF808080)),
                 )

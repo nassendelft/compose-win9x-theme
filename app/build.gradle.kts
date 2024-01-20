@@ -1,3 +1,7 @@
+import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -7,28 +11,50 @@ plugins {
 kotlin {
     androidTarget()
     jvm()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser {
+            commonWebpackConfig {
+                outputFileName = "win9xExample.js"
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf()).apply {
+                        // Serve sources to debug inside browser
+                        add(project.projectDir.path)
+                        add(project.projectDir.path + "/wasmJsMain")
+                        add(project.projectDir.path + "/commonMain")
+                    }
+                }
+            }
+        }
+        binaries.executable()
+    }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.ui)
-            }
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.ui)
+            @OptIn(ExperimentalComposeLibrary::class)
+            implementation(compose.components.resources)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.activity.compose)
-            }
+        androidMain.dependencies {
+            implementation(libs.activity.compose)
         }
-        val jvmMain by getting {
-            dependencies {
-                implementation("org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.7.89.1")
-            }
+        jvmMain.dependencies {
+//            implementation(compose.desktop.currentOs)
+            implementation("org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.7.89.1")
         }
     }
 
     jvmToolchain(17)
+
+    dependencies {
+        debugImplementation(libs.compose.ui.tooling)
+    }
+}
+
+compose.experimental {
+    web.application {}
 }
 
 android {
@@ -55,5 +81,5 @@ android {
         }
     }
 
-    sourceSets["main"].res.srcDirs("src/commonMain/resources")
+    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 }

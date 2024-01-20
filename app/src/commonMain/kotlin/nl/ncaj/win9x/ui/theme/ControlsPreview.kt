@@ -26,7 +26,6 @@ import nl.ncaj.win9x.ui.theme.controls.OptionSetButtonPreview
 import nl.ncaj.win9x.ui.theme.controls.ProgressIndicatorPreview
 import nl.ncaj.win9x.ui.theme.controls.ScrollableHost
 import nl.ncaj.win9x.ui.theme.controls.ScrollbarPreview
-import nl.ncaj.win9x.ui.theme.controls.SliderPreview
 import nl.ncaj.win9x.ui.theme.controls.SpinBoxPreview
 import nl.ncaj.win9x.ui.theme.controls.TabsPreview
 import nl.ncaj.win9x.ui.theme.controls.Text
@@ -112,8 +111,8 @@ fun ControlsOverview(
             Spacer(modifier = Modifier.height(12.dp))
             Row {
                 DropDownListBoxPreview()
-                Spacer(modifier = Modifier.width(12.dp))
-                SliderPreview()
+//                Spacer(modifier = Modifier.width(12.dp))
+//                SliderPreview()
             }
             Spacer(modifier = Modifier.height(12.dp))
             Row {

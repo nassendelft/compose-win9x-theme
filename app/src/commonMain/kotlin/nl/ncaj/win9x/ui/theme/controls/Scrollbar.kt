@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.checkeredBackground
-import nl.ncaj.win9x.ui.theme.icArrowDownPainter
+import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 import nl.ncaj.win9x.ui.theme.windowBorder
 import kotlin.math.max
@@ -200,7 +200,7 @@ fun HorizontalScrollbar(
             modifier = Modifier.width(15.dp)
         ) {
             Image(
-                painter = icArrowDownPainter(),
+                painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
                 contentDescription = "",
                 modifier = Modifier.rotate(90f)
             )
@@ -237,7 +237,7 @@ fun HorizontalScrollbar(
             modifier = Modifier.width(15.dp)
         ) {
             Image(
-                painter = icArrowDownPainter(),
+                painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
                 contentDescription = "",
                 modifier = Modifier.rotate(-90f)
             )
@@ -279,7 +279,7 @@ fun VerticalScrollbar(
             modifier = Modifier.requiredHeight(15.dp)
         ) {
             Image(
-                painter = icArrowDownPainter(),
+                painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
                 contentDescription = "",
                 modifier = Modifier.rotate(180f)
             )
@@ -316,7 +316,7 @@ fun VerticalScrollbar(
             modifier = Modifier.requiredHeight(15.dp)
         ) {
             Image(
-                painter = icArrowDownPainter(),
+                painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
                 contentDescription = ""
             )
         }
