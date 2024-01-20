@@ -25,11 +25,10 @@ object SelectionIndication: Indication {
     private class SelectionIndication(
         private val isHovered: State<Boolean>,
         private val isFocused: State<Boolean>,
-        private val isPressed: State<Boolean>,
         private val color: Color
     ) : IndicationInstance {
         override fun ContentDrawScope.drawIndication() {
-            if(isHovered.value || isFocused.value || isPressed.value) {
+            if(isHovered.value || isFocused.value) {
                 drawRect(color, size = size)
             }
             drawContent()
@@ -40,10 +39,9 @@ object SelectionIndication: Indication {
     override fun rememberUpdatedInstance(interactionSource: InteractionSource): IndicationInstance {
         val isHovered = interactionSource.collectIsHoveredAsState()
         val isFocused = interactionSource.collectIsFocusedAsState()
-        val isPressed = interactionSource.collectIsPressedAsState()
         val color = Win9xTheme.colorScheme.selection
         return remember(interactionSource) {
-            SelectionIndication(isHovered, isFocused, isPressed, color)
+            SelectionIndication(isHovered, isFocused, color)
         }
     }
 }

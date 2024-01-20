@@ -3,8 +3,10 @@ package nl.ncaj.win9x.ui.theme.controls
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -80,7 +82,17 @@ class MenuScope {
         leadingIcon: @Composable (() -> Unit)? = null,
         trailingIcon: @Composable (() -> Unit)? = null,
         onClick: () -> Unit,
-    ) = items.add(MenuItem { Label(label, Modifier, enabled, leadingIcon, trailingIcon, onClick) })
+    ) = items.add(
+        MenuItem {
+            Label(
+                label = label,
+                enabled = enabled,
+                leadingIcon = leadingIcon,
+                trailingIcon = trailingIcon,
+                onClick = onClick
+            )
+        }
+    )
 
     fun checkBox(
         label: String,
@@ -150,8 +162,14 @@ class MenuScope {
             val image =
                 if (enabled) rememberVectorResourcePainter("vector_images/ic_arrow_down.xml")
                 else rememberVectorResourcePainter("vector_images/ic_arrow_down_disabled.xml")
+
+            val mutableInteractionSource = remember { MutableInteractionSource() }
+            val isFocused by mutableInteractionSource.collectIsFocusedAsState()
+            val isHovered by mutableInteractionSource.collectIsHoveredAsState()
+
             Label(
                 modifier = Modifier.onGloballyPositioned { yPosition = it.positionInParent().y },
+                mutableInteractionSource = mutableInteractionSource,
                 label = label,
                 enabled = enabled,
                 trailingIcon = {
@@ -159,6 +177,9 @@ class MenuScope {
                         painter = image,
                         contentDescription = "checked",
                         modifier = Modifier.rotate(-90f),
+                        colorFilter = if (isFocused || isHovered) ColorFilter.tint(
+                            Color.White
+                        ) else null
                     )
                 },
                 onClick = {
@@ -176,14 +197,14 @@ class MenuScope {
     private fun Label(
         label: String,
         modifier: Modifier = Modifier,
+        mutableInteractionSource: MutableInteractionSource = remember { MutableInteractionSource() },
         enabled: Boolean = true,
         leadingIcon: @Composable (() -> Unit)? = null,
         trailingIcon: @Composable (() -> Unit)? = null,
         onClick: () -> Unit
     ) {
-        val mutableInteractionSource = remember { MutableInteractionSource() }
         val isFocused by mutableInteractionSource.collectIsFocusedAsState()
-        val isPressed by mutableInteractionSource.collectIsPressedAsState()
+        val isHovered by mutableInteractionSource.collectIsHoveredAsState()
 
         Row(
             modifier = modifier
@@ -204,7 +225,7 @@ class MenuScope {
             Text(
                 text = label,
                 enabled = enabled,
-                color = if (isFocused || isPressed) ColorProducer { Color.White } else null
+                color = if (isHovered || isFocused) ColorProducer { Color.White } else null
             )
             Spacer(modifier = Modifier.weight(1f))
             Box(
@@ -245,7 +266,7 @@ fun Menu(
             var index = 0
             while (currentMenu != null) {
                 placeables[index].place(position)
-                position += IntOffset(placeables[index].width, currentMenu?.cascadeItemOffset ?: 0)
+                position += IntOffset(placeables[index].width-4, currentMenu?.cascadeItemOffset ?: 0)
                 currentMenu = currentMenu?.let { scope ->
                     if (scope.showCascadeMenu) scope.items.firstNotNullOfOrNull { it.subMenu } else null
                 }
