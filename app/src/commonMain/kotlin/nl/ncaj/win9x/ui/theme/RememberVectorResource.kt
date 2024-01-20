@@ -13,7 +13,9 @@ import org.jetbrains.compose.resources.rememberImageVector
 import org.jetbrains.compose.resources.resource
 
 private object EmptyPainter : Painter() {
-    override val intrinsicSize = Size.Zero
+
+    // use size of 1 because when trying to draw size of zero it returns an error
+    override val intrinsicSize = Size(1f, 1f)
     override fun DrawScope.onDraw() = Unit
 }
 

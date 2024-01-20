@@ -3,6 +3,8 @@ package nl.ncaj.win9x
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import nl.ncaj.win9x.ui.theme.ControlsPreview
 
 class MainActivity : ComponentActivity() {
@@ -12,4 +14,10 @@ class MainActivity : ComponentActivity() {
             ControlsPreview()
         }
     }
+}
+
+@Preview
+@Composable
+fun AndroidPreview() {
+    ControlsPreview()
 }
