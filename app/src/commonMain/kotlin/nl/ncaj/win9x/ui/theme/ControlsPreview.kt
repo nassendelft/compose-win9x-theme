@@ -1,6 +1,5 @@
 package nl.ncaj.win9x.ui.theme
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,11 +32,10 @@ import nl.ncaj.win9x.ui.theme.controls.Text
 import nl.ncaj.win9x.ui.theme.controls.TextBoxPreview
 import nl.ncaj.win9x.ui.theme.controls.TreeViewPreview
 import nl.ncaj.win9x.ui.theme.controls.Window
+import nl.ncaj.win9x.ui.theme.controls.rememberScrollbarState
 
 @Composable
 internal fun ControlsPreview() {
-    val verticalScroll = rememberScrollState()
-    val horizontalScroll = rememberScrollState()
     Win9xTheme {
         Window(
             title = "Components",
@@ -69,25 +67,22 @@ internal fun ControlsPreview() {
                 }
             }
         ) {
-            ControlsOverview(horizontalScroll, verticalScroll)
+            ControlsOverview()
         }
     }
 }
 
 @Composable
-fun ControlsOverview(
-    horizontalScroll: ScrollState = rememberScrollState(),
-    verticalScroll: ScrollState = rememberScrollState()
-) {
-    ScrollableHost(
-        horizontalScrollState = horizontalScroll,
-        verticalScrollState = verticalScroll,
-    ) {
+fun ControlsOverview() {
+    val verticalScroll = rememberScrollState()
+    val horizontalScroll = rememberScrollState()
+    val scrollbarState = rememberScrollbarState(horizontalScroll, verticalScroll)
+
+    ScrollableHost(scrollbarState = scrollbarState) {
         Column(
             Modifier
                 .fillMaxWidth()
                 .verticalScroll(verticalScroll)
-                .widthIn(200.dp)
                 .padding(12.dp)
         ) {
             Row {
