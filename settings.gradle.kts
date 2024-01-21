@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "win9x"
-include(":app")
+include(":win9x-theme")
