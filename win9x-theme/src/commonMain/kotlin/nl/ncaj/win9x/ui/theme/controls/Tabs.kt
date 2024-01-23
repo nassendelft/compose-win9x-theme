@@ -138,10 +138,14 @@ private class TabMeasurePolicy(
             if (constraints.hasBoundedHeight) constraints.maxHeight - maxIntrinsicHeightTabs
             else Constraints.Infinity
 
-        val contentConstraints = Constraints.fixed(
-            max(fullWidthTabs, constraints.minWidth),
-            min(maxHeightContent, constraints.maxHeight)
-        )
+        val contentConstraints = if (constraints.hasBoundedHeight) {
+            Constraints.fixed(
+                max(fullWidthTabs, constraints.minWidth),
+                min(maxHeightContent, constraints.maxHeight)
+            )
+        } else {
+            Constraints.fixedWidth(max(fullWidthTabs, constraints.minWidth))
+        }
         val contentPlaceable = measurables.last().measure(contentConstraints)
 
         return layout(
