@@ -21,10 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.ui.theme.ButtonIndication
 import nl.ncaj.win9x.ui.theme.Win9xBorder
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
+import nl.ncaj.win9x.ui.theme.win9xBorder
 
 @Composable
 internal fun ButtonPreview() {
@@ -56,7 +56,7 @@ fun Button(
     background: Color = Win9xTheme.colorScheme.buttonFace,
     enabled: Boolean = true,
     defaultPadding: PaddingValues = PaddingValues(4.dp),
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    interactionSource: MutableInteractionSource = remember(enabled) { MutableInteractionSource() },
     content: @Composable () -> Unit
 ) {
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -67,15 +67,19 @@ fun Button(
             .background(background)
             .clickable(
                 interactionSource = interactionSource,
-                indication = ButtonIndication(borders, enabled),
+                indication = null,
+                enabled = enabled,
                 onClick = onClick,
+            )
+            .then(
+                if (enabled && isPressed) Modifier.win9xBorder(borders.pressed)
+                else Modifier.win9xBorder(borders.normal)
             )
             .padding(defaultPadding)
             .then(if (enabled && isPressed) Modifier.offset(1.dp, 1.dp) else Modifier),
         contentAlignment = Alignment.Center,
-    ) {
-        content()
-    }
+        content = { content() }
+    )
 }
 
 class Win9xButtonBorders(
