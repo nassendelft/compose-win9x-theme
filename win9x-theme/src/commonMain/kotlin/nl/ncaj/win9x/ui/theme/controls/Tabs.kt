@@ -18,16 +18,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.node.DrawModifierNode
-import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasurePolicy
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -35,6 +34,7 @@ import androidx.compose.ui.zIndex
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.win9xBorder
 import kotlin.math.max
+import kotlin.math.min
 
 @Composable
 internal fun TabsPreview() {
@@ -73,9 +73,14 @@ fun TabHost(
     modifier: Modifier = Modifier,
     tabs: TabScope.() -> Unit,
     content: @Composable () -> Unit
-) {
+) = with(LocalDensity.current) {
     val offset = 1.dp
     val scope = TabScope().apply(tabs)
+
+    val measurePolicy = remember(selectedTabIndex) {
+        TabMeasurePolicy(selectedTabIndex, offset.roundToPx())
+    }
+
     Layout(
         modifier = modifier
             .defaultMinSize(minHeight = 50.dp),
@@ -100,19 +105,28 @@ fun TabHost(
             ) {
                 content()
             }
-        }
-    ) { measurables, constraints ->
-        val offsetPx = offset.roundToPx()
+        },
+        measurePolicy = measurePolicy
+    )
+}
+
+private class TabMeasurePolicy(
+    private val selectedTabIndex: Int,
+    private val offset: Int
+) : MeasurePolicy {
+    override fun MeasureScope.measure(
+        measurables: List<Measurable>,
+        constraints: Constraints
+    ): MeasureResult {
         val tabMeasurables = measurables.subList(0, measurables.size - 1)
 
         val maxIntrinsicHeightTabs =
-            (tabMeasurables.maxOfOrNull { it.maxIntrinsicHeight(constraints.maxHeight) }
-                ?: 0) + offsetPx
+            offset + tabMeasurables.maxOf { it.maxIntrinsicHeight(constraints.maxWidth) }
 
         val placeables = tabMeasurables.mapIndexed { index, measurable ->
             val width =
                 measurable.maxIntrinsicWidth(constraints.maxHeight) +
-                        (if (selectedTabIndex == index) offsetPx * 2 else 0)
+                        (if (selectedTabIndex == index) offset * 2 else 0)
 
             val tabConstraints = Constraints.fixed(width, maxIntrinsicHeightTabs)
 
@@ -124,24 +138,23 @@ fun TabHost(
             if (constraints.hasBoundedHeight) constraints.maxHeight - maxIntrinsicHeightTabs
             else Constraints.Infinity
 
-        val contentConstraints = constraints.copy(
-            maxHeight = max(maxHeightContent, constraints.minHeight),
-            minWidth = fullWidthTabs,
-            maxWidth = max(fullWidthTabs, constraints.maxWidth)
+        val contentConstraints = Constraints.fixed(
+            max(fullWidthTabs, constraints.minWidth),
+            min(maxHeightContent, constraints.maxHeight)
         )
         val contentPlaceable = measurables.last().measure(contentConstraints)
 
-        layout(
+        return layout(
             contentPlaceable.width,
-            placeables.maxOf { it.height } + contentPlaceable.height - (offsetPx * 2),
+            placeables.maxOf { it.height } + contentPlaceable.height - (offset * 2),
         ) {
-            contentPlaceable.place(0, maxIntrinsicHeightTabs - offsetPx)
+            contentPlaceable.place(0, maxIntrinsicHeightTabs - offset)
 
-            var x = offsetPx
+            var x = offset
             placeables.forEachIndexed { index, placeable ->
-                var xOffset = if (index == selectedTabIndex) x - offsetPx else x
-                xOffset = if (index > selectedTabIndex) x - offsetPx * 2 else xOffset
-                placeable.place(xOffset, if (index == selectedTabIndex) 0 else offsetPx)
+                var xOffset = if (index == selectedTabIndex) x - offset else x
+                xOffset = if (index > selectedTabIndex) x - offset * 2 else xOffset
+                placeable.place(xOffset, if (index == selectedTabIndex) 0 else offset)
                 x += placeable.width
             }
         }
@@ -165,90 +178,7 @@ private fun Modifier.tabBorder(offset: Dp): Modifier = composed {
     val background = Win9xTheme.colorScheme.buttonFace
     val borderWidth = Win9xTheme.borderWidthPx
     val offsetPx = with(LocalDensity.current) { offset.toPx() }
-    this.then(
-        TabBorderBackgroundElement(
-            outerStartTop = outerStartTop,
-            outerEndBottom = outerEndBottom,
-            innerEndBottom = innerEndBottom,
-            background = background,
-            borderWidth = borderWidth,
-            offset = offsetPx,
-            inspectorInfo = {
-                debugInspectorInfo {
-                    name = "TabBorder"
-                }
-            }
-        )
-    )
-}
-
-private class TabBorderBackgroundElement(
-    private val outerStartTop: Color,
-    private val outerEndBottom: Color,
-    private val innerEndBottom: Color,
-    private val background: Color,
-    private val borderWidth: Float,
-    private val offset: Float,
-    private val inspectorInfo: InspectorInfo.() -> Unit
-) : ModifierNodeElement<TabBorderBackgroundNode>() {
-    override fun create() = TabBorderBackgroundNode(
-        outerStartTop,
-        outerEndBottom,
-        innerEndBottom,
-        background,
-        borderWidth,
-        offset
-    )
-
-    override fun update(node: TabBorderBackgroundNode) {
-        node.outerStartTop = outerStartTop
-        node.outerEndBottom = outerEndBottom
-        node.innerEndBottom = innerEndBottom
-        node.background = background
-        node.borderWidth = borderWidth
-        node.offset = offset
-    }
-
-    override fun InspectorInfo.inspectableProperties() = inspectorInfo()
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null) return false
-        if (this::class != other::class) return false
-
-        other as TabBorderBackgroundElement
-
-        if (outerStartTop != other.outerStartTop) return false
-        if (outerEndBottom != other.outerEndBottom) return false
-        if (innerEndBottom != other.innerEndBottom) return false
-        if (background != other.background) return false
-        if (borderWidth != other.borderWidth) return false
-        if (offset != other.offset) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = outerStartTop.hashCode()
-        result = 31 * result + outerEndBottom.hashCode()
-        result = 31 * result + innerEndBottom.hashCode()
-        result = 31 * result + background.hashCode()
-        result = 31 * result + borderWidth.hashCode()
-        result = 31 * result + offset.hashCode()
-        return result
-    }
-}
-
-private class TabBorderBackgroundNode(
-    var outerStartTop: Color,
-    var outerEndBottom: Color,
-    var innerEndBottom: Color,
-    var background: Color,
-    var borderWidth: Float,
-    var offset: Float,
-) : DrawModifierNode, Modifier.Node() {
-
-    override fun ContentDrawScope.draw() {
+    this.drawBehind {
         val strokeWidth = borderWidth / 2
         val halfStrokeWidth = strokeWidth / 2
 
@@ -271,7 +201,7 @@ private class TabBorderBackgroundNode(
         drawLine(
             color = outerStartTop,
             start = Offset(halfStrokeWidth, strokeWidth + halfStrokeWidth),
-            end = Offset(halfStrokeWidth, size.height - offset),
+            end = Offset(halfStrokeWidth, size.height - offsetPx),
             strokeWidth = strokeWidth
         )
 
@@ -306,7 +236,7 @@ private class TabBorderBackgroundNode(
         drawLine(
             color = outerEndBottom,
             start = Offset(size.width - halfStrokeWidth, strokeWidth + strokeWidth),
-            end = Offset(size.width - halfStrokeWidth, size.height - offset),
+            end = Offset(size.width - halfStrokeWidth, size.height - offsetPx),
             strokeWidth = strokeWidth
         )
 
@@ -320,6 +250,6 @@ private class TabBorderBackgroundNode(
             end = Offset(size.width - strokeWidth - halfStrokeWidth, size.height),
             strokeWidth = strokeWidth
         )
-        drawContent()
     }
 }
+
