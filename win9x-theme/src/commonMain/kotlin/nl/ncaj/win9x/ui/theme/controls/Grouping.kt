@@ -2,11 +2,7 @@ package nl.ncaj.win9x.ui.theme.controls
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,17 +19,6 @@ import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.groupingBorder
 
-@Composable
-internal fun GroupingPreview() {
-    Column {
-        Text("- Grouping -")
-        Spacer(modifier = Modifier.height(2.dp))
-
-        Grouping("Group") {
-            Spacer(Modifier.size(90.dp, height = 20.dp))
-        }
-    }
-}
 
 @Composable
 fun Grouping(

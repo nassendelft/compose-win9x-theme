@@ -23,21 +23,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.SelectionIndication
 
-@Composable
-internal fun MenuBarPreview() {
-    MenuBar {
-        entry("Item1") {
-            label("Sub menu item 1") {}
-        }
-        entry("Item2") {
-            label("Sub menu item 1") {}
-            cascade("Sub menu item 2") {
-                label("Cascade menu item 1") {}
-            }
-        }
-    }
-}
-
 class MenuBarItem(
     internal val title: String,
     internal val enabled: Boolean,

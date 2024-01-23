@@ -258,21 +258,21 @@ fun ScrollableHost(
                     val offset =
                         if (showVerticalScroll) verticalMeasurable.maxIntrinsicWidth(maxWidth)
                         else 0
-                    horizontalMeasurable.measure(constraints.copy(maxWidth = maxWidth - offset))
+                    horizontalMeasurable.measure(Constraints.fixedWidth(maxWidth - offset))
                 } else null
 
                 val verticalScrollPlaceable = if (showVerticalScroll) {
                     val offset =
                         if (showHorizontalScroll) horizontalMeasurable.maxIntrinsicHeight(maxHeight)
                         else 0
-                    verticalMeasurable.measure(constraints.copy(maxHeight = maxHeight - offset))
+                    verticalMeasurable.measure(Constraints.fixedHeight(maxHeight - offset))
                 } else null
 
                 val verticalWidth = verticalScrollPlaceable?.width ?: 0
                 val horizontalHeight = horizontalScrollPlaceable?.height ?: 0
-                val contentConstraints = constraints.copy(
-                    maxWidth = maxWidth - verticalWidth,
-                    maxHeight = maxHeight - horizontalHeight,
+                val contentConstraints = Constraints.fixed(
+                    width = maxWidth - verticalWidth,
+                    height = maxHeight - horizontalHeight,
                 )
 
                 val contentPlaceable = contentMeasurable.measure(contentConstraints)

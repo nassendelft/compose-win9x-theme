@@ -4,17 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -35,28 +28,6 @@ import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.win9xBorder
 import kotlin.math.max
 import kotlin.math.min
-
-@Composable
-internal fun TabsPreview() {
-    var selectedTabIndex by remember { mutableIntStateOf(1) }
-
-    Column {
-        Text("- Tabs -")
-        Spacer(modifier = Modifier.height(2.dp))
-
-        TabHost(
-            selectedTabIndex = selectedTabIndex,
-            onTabSelected = { selectedTabIndex = it },
-            tabs = { for (i in 0..2) tab { Text("Tab ${i + 1}") } },
-            content = {
-                Text(
-                    text = "Tab selected: ${selectedTabIndex + 1}",
-                    modifier = Modifier.widthIn(150.dp)
-                )
-            },
-        )
-    }
-}
 
 class TabScope {
     internal val tabs = mutableListOf<@Composable BoxScope.() -> Unit>()

@@ -8,7 +8,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 
-internal fun Modifier.groupingBorder() = composed {
+fun Modifier.groupingBorder() = composed {
     win9xBorder(
         outerStartTop = Win9xTheme.colorScheme.buttonShadow,
         innerStartTop = Win9xTheme.colorScheme.buttonHighlight,
@@ -18,7 +18,7 @@ internal fun Modifier.groupingBorder() = composed {
     )
 }
 
-internal fun Modifier.windowBorder() = composed {
+fun Modifier.windowBorder() = composed {
     win9xBorder(
         outerStartTop = Win9xTheme.colorScheme.buttonFace,
         innerStartTop = Win9xTheme.colorScheme.buttonHighlight,
@@ -28,7 +28,7 @@ internal fun Modifier.windowBorder() = composed {
     )
 }
 
-internal fun Modifier.sunkenBorder() = composed {
+fun Modifier.sunkenBorder() = composed {
     win9xBorder(
         outerStartTop = Win9xTheme.colorScheme.buttonShadow,
         innerStartTop = Win9xTheme.colorScheme.windowFrame,

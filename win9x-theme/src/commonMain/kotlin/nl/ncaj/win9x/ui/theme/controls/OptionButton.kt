@@ -7,10 +7,8 @@ import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,23 +24,6 @@ import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.DashFocusIndication.Companion.DashFocusIndicationNoPadding
 import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 
-@Composable
-internal fun OptionButtonPreview() {
-    var checked by remember { mutableStateOf(true) }
-    Column {
-        Text("- Option Buttons -")
-        Spacer(modifier = Modifier.height(2.dp))
-        OptionButton(checked = checked, onCheckChange = { checked = it }) {
-            Text("Default")
-        }
-        OptionButton(checked = false, onCheckChange = {}, enabled = false) {
-            Text("Disabled", enabled = false)
-        }
-        OptionButton(checked = true, onCheckChange = {}, enabled = false) {
-            Text("Disabled checked", enabled = false)
-        }
-    }
-}
 
 @Composable
 fun OptionButton(

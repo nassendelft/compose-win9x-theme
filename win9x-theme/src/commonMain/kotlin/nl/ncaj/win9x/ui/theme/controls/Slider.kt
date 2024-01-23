@@ -7,8 +7,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
@@ -34,15 +32,6 @@ import nl.ncaj.win9x.ui.theme.win9xBorder
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-@Composable
-fun SliderPreview() {
-    Column {
-        Text("- Slider -")
-        Spacer(modifier = Modifier.height(2.dp))
-
-        Slider(modifier = Modifier, steps = 4, onStep = { })
-    }
-}
 
 @Stable
 private class SliderState(

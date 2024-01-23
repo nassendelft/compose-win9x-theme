@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.compose)
 }
 
@@ -23,12 +23,8 @@ kotlin {
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
         }
-        androidMain.dependencies {
-            implementation(libs.activity.compose)
-        }
         jvmMain.dependencies {
-//            implementation(compose.desktop.currentOs)
-            implementation("org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.7.89.1")
+            implementation(compose.desktop.common)
         }
     }
 
@@ -49,16 +45,6 @@ android {
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 34
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-        }
     }
 
     packaging {

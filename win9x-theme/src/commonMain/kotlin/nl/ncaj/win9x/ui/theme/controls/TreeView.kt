@@ -38,33 +38,6 @@ import nl.ncaj.win9x.ui.theme.DashFocusIndication.Companion.DashFocusIndicationN
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
-@Composable
-internal fun TreeViewPreview() {
-    Column {
-        Text("- Tree view -")
-        Spacer(modifier = Modifier.height(2.dp))
-
-        TreeView(collapsable = true, showRelationship = true) {
-            Item(label = "Value")
-            Item(label = "Value 2", enabled = false)
-            Item(label = "Value 3") {
-                Item(label = "Value 3.1")
-                Item(label = "Value 3.2") {
-                    Item(label = "Value 3.2.1", enabled = false) {
-                        Item(label = "Value 3.2.1.1")
-                    }
-                    Item(label = "Value 3.2.2")
-                }
-                Item(label = "Value 3.3") {
-                    Item(label = "Value 3.3.1")
-                }
-                Item(label = "Value 3.4")
-                Item(label = "Value 3.5")
-            }
-        }
-    }
-}
-
 class TreeViewScope internal constructor(
     private val columnScope: ColumnScope,
     private val depth: Int = 0,
@@ -167,13 +140,14 @@ fun TreeView(
     modifier: Modifier = Modifier,
     collapsable: Boolean = true,
     showRelationship: Boolean = true,
+    withBorder: Boolean = true,
     content: @Composable TreeViewScope.() -> Unit
 ) {
     Column(
         modifier = modifier
             .background(Color.White)
             .width(IntrinsicSize.Max)
-            .sunkenBorder()
+            .then(if (withBorder) Modifier.sunkenBorder() else Modifier)
             .padding(Win9xTheme.borderWidthDp + 4.dp),
         content = {
             TreeViewScope(

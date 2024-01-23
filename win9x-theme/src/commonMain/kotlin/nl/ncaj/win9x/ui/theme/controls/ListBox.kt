@@ -29,37 +29,6 @@ import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
-@Composable
-internal fun ListBoxPreview() {
-    var selection by remember { mutableIntStateOf(0) }
-
-    Column {
-        Text("- List box -")
-        Spacer(modifier = Modifier.height(2.dp))
-
-        ListBox(
-            modifier = Modifier.widthIn(min = 100.dp)
-        ) {
-            Item(
-                label = "Value 1",
-                onSelected = { selection = 0 },
-                selected = selection == 0
-            )
-            Item(
-                label = "Value 2",
-                enabled = false,
-                onSelected = { selection = 1 },
-                selected = selection == 1
-            )
-            Item(
-                label = "Value 3",
-                onSelected = { selection = 3 },
-                selected = selection == 3
-            )
-        }
-    }
-}
-
 class ListBoxScope(private val columnScope: ColumnScope) {
     @Composable
     fun Item(

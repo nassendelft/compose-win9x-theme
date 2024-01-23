@@ -9,9 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -33,19 +31,6 @@ import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
-@Composable
-internal fun DropDownListBoxPreview() {
-    var expanded by remember { mutableStateOf(false) }
-    Column {
-        Text("- Spin box -")
-        Spacer(modifier = Modifier.height(2.dp))
-
-        DropDownListBox("value", expanded = expanded, onExpandChange = { expanded = it }) {
-            DropDownListBoxItem(text = "Value", onClick = { })
-            DropDownListBoxItem(text = "Value", onClick = { }, enabled = false)
-        }
-    }
-}
 
 @Composable
 fun DropDownListBox(

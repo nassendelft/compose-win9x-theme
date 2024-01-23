@@ -8,11 +8,9 @@ import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,24 +27,6 @@ import nl.ncaj.win9x.ui.theme.DashFocusIndication.Companion.DashFocusIndicationN
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 import nl.ncaj.win9x.ui.theme.sunkenBorder
-
-@Composable
-internal fun CheckboxPreview() {
-    var checked by remember { mutableStateOf(true) }
-    Column {
-        Text("- Check boxes -")
-        Spacer(modifier = Modifier.height(2.dp))
-        Checkbox(checked = checked, onCheckChange = { checked = it }) {
-            Text("Default")
-        }
-        Checkbox(checked = false, onCheckChange = {}, enabled = false) {
-            Text("Disabled", enabled = false)
-        }
-        Checkbox(checked = true, onCheckChange = {}, enabled = false) {
-            Text("Disabled checked", enabled = false)
-        }
-    }
-}
 
 @Composable
 fun Checkbox(

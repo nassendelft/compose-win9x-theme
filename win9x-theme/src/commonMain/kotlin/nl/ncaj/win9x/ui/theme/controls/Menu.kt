@@ -3,11 +3,9 @@ package nl.ncaj.win9x.ui.theme.controls
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -41,28 +39,6 @@ import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 import nl.ncaj.win9x.ui.theme.windowBorder
 import kotlin.math.roundToInt
 
-@Composable
-internal fun MenuPreview() {
-    Menu {
-        label("Command") {}
-        divider()
-        checkBox("Check Box", checked = true) {}
-        checkBox("Check Box Checked", checked = false) {}
-        checkBox("Check Box Disabled", checked = true, enabled = false) {}
-        divider()
-        optionButton("Option Button", checked = true) {}
-        optionButton("Option Button Checked", checked = false) {}
-        optionButton("Option Button Disabled", checked = true, enabled = false) {}
-        divider()
-        label("Unavailable Item", enabled = false) {}
-        cascade("Cascade Item") {
-            cascade("Sub Cascade Item") {
-                label("Command") {}
-            }
-        }
-        cascade("Cascade Item Disabled", enabled = false) {}
-    }
-}
 
 class MenuItem(
     internal val subMenu: MenuScope? = null,

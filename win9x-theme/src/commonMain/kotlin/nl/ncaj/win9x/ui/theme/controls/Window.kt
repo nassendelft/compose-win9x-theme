@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,38 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.Win9xTheme
-import nl.ncaj.win9x.ui.theme.sunkenBorder
 import nl.ncaj.win9x.ui.theme.windowBorder
-
-@Composable
-internal fun WindowPreview() {
-    Window(
-        title = "Title",
-        menuBar = {
-            entry("Item1") {
-                label("Sub menu item 1") {}
-            }
-            entry("Item2") {
-                label("Sub menu item 1") {}
-                cascade("Sub menu item 2") {
-                    label("Cascade menu item 1") {}
-                }
-            }
-        }
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .background(Color.White)
-                .sunkenBorder()
-        )
-    }
-}
 
 @Composable
 fun TitleBar(

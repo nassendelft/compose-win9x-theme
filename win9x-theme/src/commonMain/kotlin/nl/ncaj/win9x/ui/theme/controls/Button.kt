@@ -1,19 +1,14 @@
 package nl.ncaj.win9x.ui.theme.controls
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -23,30 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.Win9xBorder
 import nl.ncaj.win9x.ui.theme.Win9xTheme
-import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 import nl.ncaj.win9x.ui.theme.win9xBorder
-
-@Composable
-internal fun ButtonPreview() {
-    Column {
-        Text("- Button -")
-        Spacer(modifier = Modifier.height(2.dp))
-        Button(onClick = {}) {
-            Text("Default")
-        }
-        Spacer(modifier = Modifier.height(2.dp))
-        Button(onClick = {}, enabled = false) {
-            Text("Disabled", enabled = false)
-        }
-        Spacer(modifier = Modifier.height(2.dp))
-        Button(onClick = {}, Modifier.size(20.dp)) {
-            Image(
-                painter = rememberVectorResourcePainter("vector_images/ic_cross.xml"),
-                contentDescription = ""
-            )
-        }
-    }
-}
 
 @Composable
 fun Button(
