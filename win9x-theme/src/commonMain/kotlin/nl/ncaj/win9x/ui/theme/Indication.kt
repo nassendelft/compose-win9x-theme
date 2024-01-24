@@ -23,25 +23,21 @@ import nl.ncaj.win9x.ui.theme.controls.Win9xButtonBorders
 object SelectionIndication: Indication {
 
     private class SelectionIndication(
-        private val isHovered: State<Boolean>,
         private val isFocused: State<Boolean>,
         private val color: Color
     ) : IndicationInstance {
         override fun ContentDrawScope.drawIndication() {
-            if(isHovered.value || isFocused.value) {
-                drawRect(color, size = size)
-            }
+            if(isFocused.value) drawRect(color, size = size)
             drawContent()
         }
     }
 
     @Composable
     override fun rememberUpdatedInstance(interactionSource: InteractionSource): IndicationInstance {
-        val isHovered = interactionSource.collectIsHoveredAsState()
         val isFocused = interactionSource.collectIsFocusedAsState()
         val color = Win9xTheme.colorScheme.selection
         return remember(interactionSource) {
-            SelectionIndication(isHovered, isFocused, color)
+            SelectionIndication(isFocused, color)
         }
     }
 }

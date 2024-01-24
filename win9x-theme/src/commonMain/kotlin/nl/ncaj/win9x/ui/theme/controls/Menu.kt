@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -33,7 +34,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import nl.ncaj.win9x.ui.theme.SelectionIndication
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
 import nl.ncaj.win9x.ui.theme.windowBorder
@@ -153,9 +153,7 @@ class MenuScope {
                         painter = image,
                         contentDescription = "checked",
                         modifier = Modifier.rotate(-90f),
-                        colorFilter = if (isFocused || isHovered) ColorFilter.tint(
-                            Color.White
-                        ) else null
+                        colorFilter = if (isFocused || isHovered) ColorFilter.tint(Color.White) else null
                     )
                 },
                 onClick = {
@@ -180,16 +178,18 @@ class MenuScope {
         onClick: () -> Unit
     ) {
         val isFocused by mutableInteractionSource.collectIsFocusedAsState()
-        val isHovered by mutableInteractionSource.collectIsHoveredAsState()
+        val isHover by mutableInteractionSource.collectIsHoveredAsState()
+        val focusBackgroundColor = Win9xTheme.colorScheme.selection
 
         Row(
             modifier = modifier
                 .padding(horizontal = 1.dp, vertical = 3.dp)
                 .clickable(
                     interactionSource = mutableInteractionSource,
-                    indication = SelectionIndication,
+                    indication = null,
                     onClick = onClick
-                ),
+                )
+                .drawBehind { if (isFocused || isHover) drawRect(focusBackgroundColor, size = size) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -201,7 +201,7 @@ class MenuScope {
             Text(
                 text = label,
                 enabled = enabled,
-                color = if (isHovered || isFocused) ColorProducer { Color.White } else null
+                color = if (isFocused || isHover) ColorProducer { Color.White } else null
             )
             Spacer(modifier = Modifier.weight(1f))
             Box(
@@ -242,7 +242,10 @@ fun Menu(
             var index = 0
             while (currentMenu != null) {
                 placeables[index].place(position)
-                position += IntOffset(placeables[index].width-4, currentMenu?.cascadeItemOffset ?: 0)
+                position += IntOffset(
+                    placeables[index].width - 4,
+                    currentMenu?.cascadeItemOffset ?: 0
+                )
                 currentMenu = currentMenu?.let { scope ->
                     if (scope.showCascadeMenu) scope.items.firstNotNullOfOrNull { it.subMenu } else null
                 }
