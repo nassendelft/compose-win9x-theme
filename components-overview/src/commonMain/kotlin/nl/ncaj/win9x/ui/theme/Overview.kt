@@ -71,7 +71,11 @@ private fun ExampleItem(
     content: @Composable () -> Unit,
 ) {
     Box(Modifier.size(200.dp).padding(4.dp)) {
-        Grouping(label, modifier = Modifier.fillMaxSize()) {
+        Grouping(
+            label = label,
+            modifier = Modifier.fillMaxSize(),
+            labelAlignment = Alignment.CenterHorizontally
+        ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.matchParentSize(),
