@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -243,39 +244,55 @@ private fun SpinBoxExample() {
 
 @Composable
 private fun TreeViewExample() {
-    val horizontalScroll = rememberScrollState()
-    val verticalScroll = rememberScrollState()
-    val scrollbarState = rememberScrollbarState(horizontalScroll, verticalScroll)
-    ScrollableHost(
-        scrollbarState = scrollbarState,
-        modifier = Modifier.sunkenBorder()
-            .padding(Win9xTheme.borderWidthDp)
+    TreeView(
+        collapsable = true,
+        showRelationship = true,
+        modifier = Modifier.fillMaxSize()
     ) {
-        TreeView(
-            collapsable = true,
-            showRelationship = true,
-            withBorder = false,
-            modifier = Modifier
-                .horizontalScroll(horizontalScroll)
-                .verticalScroll(verticalScroll)
-        ) {
-            Item(label = "Value")
-            Item(label = "Value 2 (disabled)", enabled = false)
-            Item(label = "Value 3") {
-                Item(label = "Value 3.1")
-                Item(label = "Value 3.2") {
-                    Item(label = "Value 3.2.1 (disabled)", enabled = false) {
-                        Item(label = "Value 3.2.1.1")
+        item { Text("Value 1") }
+        item { Text("Value 2", enabled = false) }
+        item(
+            content = { Text("Value 3") },
+            children = {
+                item { Text("Value 3.1") }
+                item(
+                    content = { Text("Value 3.2") },
+                    children = {
+                        item(
+                            content = { Text("Value 3.2.1") },
+                            children = {
+                                item { Text("Value 3.2.1.1") }
+                                item(
+                                    content = { Text("Value 3.2.1.2") },
+                                    children = {
+                                        item { Text("Value 3.2.1.2.1") }
+                                    }
+                                )
+                            }
+                        )
+                        item(
+                            content = { Text("Value 3.2.2") },
+                            children = {
+                                item { Text("Value 3.2.2.1") }
+                                item(
+                                    content = { Text("Value 3.2.2.2") },
+                                    children = {
+                                        item { Text("Value 3.2.2.2.1") }
+                                    }
+                                )
+                            }
+                        )
                     }
-                    Item(label = "Value 3.2.2")
-                }
-                Item(label = "Value 3.3") {
-                    Item(label = "Value 3.3.1")
-                }
-                Item(label = "Value 3.4")
-                Item(label = "Value 3.5")
+                )
+                item { Text("Value 3.3") }
+                item(
+                    content = { Text("Value 3.4") },
+                    children = {
+                        item { Text("Value 3.4.1") }
+                    }
+                )
             }
-        }
+        )
     }
 }
 
