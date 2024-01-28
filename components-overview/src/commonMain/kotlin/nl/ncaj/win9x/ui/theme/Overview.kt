@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.controls.Button
 import nl.ncaj.win9x.ui.theme.controls.Checkbox
+import nl.ncaj.win9x.ui.theme.controls.DropDownComboBox
 import nl.ncaj.win9x.ui.theme.controls.DropDownListBox
 import nl.ncaj.win9x.ui.theme.controls.DropDownListBoxItem
 import nl.ncaj.win9x.ui.theme.controls.Grouping
@@ -75,6 +76,7 @@ fun Overview(modifier: Modifier = Modifier) {
         item { ExampleItem("Progress Indicator") { ProgressIndicatorExample() } }
         item { ExampleItem("Dropdown ListBox") { DropDownListBoxExample() } }
         item { ExampleItem("ComboBox") { ComboBoxExample() } }
+        item { ExampleItem("DropDownComboBox") { DropDownComboBoxExample() } }
     }
 }
 
@@ -408,6 +410,25 @@ private fun ComboBoxExample() {
                         selected = value == it
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DropDownComboBoxExample() {
+    var value by remember { mutableStateOf("") }
+    DropDownComboBox(
+        value = value,
+        onValueChange = { value = it }
+    ) {
+        listOf("Value 1", "Value 2", "Value 3").forEach {
+            item {
+                DropDownListBoxItem(
+                    label = it,
+                    onSelected = { value = it },
+                    selected = value == it
+                )
             }
         }
     }
