@@ -29,59 +29,60 @@ import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 
-class ListBoxScope(private val columnScope: ColumnScope) {
-    @Composable
-    fun Item(
-        label: String,
-        enabled: Boolean = true,
-        selected: Boolean = false,
-        onSelected: () -> Unit = {},
-        leadingIcon: @Composable (RowScope.() -> Unit)? = null,
-    ) {
-        val mutableInteractionSource = remember { MutableInteractionSource() }
-        val isPressed = mutableInteractionSource.collectIsPressedAsState()
-        val isHover = mutableInteractionSource.collectIsHoveredAsState()
-        val isFocused = mutableInteractionSource.collectIsFocusedAsState()
-        val isSelected = selected || isPressed.value || isHover.value || isFocused.value
+class ListBoxScope internal constructor() {
+    internal val items = mutableListOf<@Composable () -> Unit>()
 
-        columnScope.apply {
-            Row(
-                modifier = Modifier
-                    .clickable(
-                        enabled = enabled,
-                        onClick = onSelected,
-                    )
-                    .fillMaxWidth()
-                    .then(
-                        if (isSelected) Modifier.background(Win9xTheme.colorScheme.selection)
-                        else Modifier
-                    )
-                    .padding(4.dp),
-            ) {
-                leadingIcon?.invoke(this)?.also { Spacer(Modifier.width(4.dp)) }
-
-                Text(
-                    label,
-                    enabled = enabled,
-                    color = if (isSelected) ColorProducer { Color.White } else null
-                )
-            }
-        }
-    }
+    fun item(content: @Composable () -> Unit) = items.add(content)
 }
 
 @Composable
 fun ListBox(
     modifier: Modifier = Modifier,
-    content: @Composable ListBoxScope.() -> Unit
+    content: ListBoxScope.() -> Unit
 ) {
     Column(
         modifier = modifier
             .background(Color.White)
             .width(IntrinsicSize.Max)
             .sunkenBorder()
-            .padding(Win9xTheme.borderWidthDp + 2.dp)
+            .padding(Win9xTheme.borderWidthDp + 2.dp),
+        content = { ListBoxScope().apply(content).items.forEach { it() } }
+    )
+}
+
+@Composable
+fun DropDownListBoxItem(
+    label: String,
+    enabled: Boolean = true,
+    selected: Boolean = false,
+    onSelected: () -> Unit = {},
+    leadingIcon: @Composable (RowScope.() -> Unit)? = null,
+) {
+    val mutableInteractionSource = remember { MutableInteractionSource() }
+    val isPressed = mutableInteractionSource.collectIsPressedAsState()
+    val isHover = mutableInteractionSource.collectIsHoveredAsState()
+    val isFocused = mutableInteractionSource.collectIsFocusedAsState()
+    val isSelected = selected || isPressed.value || isHover.value || isFocused.value
+
+    Row(
+        modifier = Modifier
+            .clickable(
+                enabled = enabled,
+                onClick = onSelected,
+            )
+            .fillMaxWidth()
+            .then(
+                if (isSelected) Modifier.background(Win9xTheme.colorScheme.selection)
+                else Modifier
+            )
+            .padding(4.dp),
     ) {
-        ListBoxScope(this).content()
+        leadingIcon?.invoke(this)?.also { Spacer(Modifier.width(4.dp)) }
+
+        Text(
+            label,
+            enabled = enabled,
+            color = if (isSelected) ColorProducer { Color.White } else null
+        )
     }
 }

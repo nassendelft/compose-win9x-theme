@@ -193,24 +193,30 @@ private fun ListBoxExample() {
     var selection by remember { mutableIntStateOf(0) }
 
     ListBox(
-        modifier = Modifier.widthIn(min = 100.dp)
+        modifier = Modifier.fillMaxWidth(0.6f)
     ) {
-        Item(
-            label = "Value 1",
-            onSelected = { selection = 0 },
-            selected = selection == 0
-        )
-        Item(
-            label = "Value 2 (Disabled)",
-            enabled = false,
-            onSelected = { selection = 1 },
-            selected = selection == 1
-        )
-        Item(
-            label = "Value 3",
-            onSelected = { selection = 3 },
-            selected = selection == 3
-        )
+        item {
+            DropDownListBoxItem(
+                label = "Value 1",
+                onSelected = { selection = 0 },
+                selected = selection == 0
+            )
+        }
+        item {
+            DropDownListBoxItem(
+                label = "Value 2 (Disabled)",
+                enabled = false,
+                onSelected = { selection = 1 },
+                selected = selection == 1
+            )
+        }
+        item {
+            DropDownListBoxItem(
+                label = "Value 3",
+                onSelected = { selection = 3 },
+                selected = selection == 3
+            )
+        }
     }
 }
 
@@ -257,7 +263,7 @@ private fun SpinBoxExample() {
 private fun TreeViewExample() {
     val state = resource("png_images/directory_open.png").rememberImageBitmap()
     val icon = if (state is LoadState.Success<ImageBitmap>) {
-        remember(state.value) { BitmapPainter(state.value)  }
+        remember(state.value) { BitmapPainter(state.value) }
     } else null
     var collapsable by remember { mutableStateOf(true) }
     var showRelationship by remember { mutableStateOf(true) }
@@ -378,6 +384,10 @@ private fun DropDownListBoxExample() {
     ) {
         item { DropDownListBoxItem(text = "Value", onSelection = { currentValue = "Value" }) }
         item { DropDownListBoxItem(text = "Value (disabled)", onSelection = { }, enabled = false) }
-        item { DropDownListBoxItem(text = "Longer value", onSelection = { currentValue = "Longer value" }) }
+        item {
+            DropDownListBoxItem(
+                text = "Longer value",
+                onSelection = { currentValue = "Longer value" })
+        }
     }
 }
