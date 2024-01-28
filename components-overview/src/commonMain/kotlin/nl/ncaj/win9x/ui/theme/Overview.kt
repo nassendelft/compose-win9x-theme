@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.controls.Button
 import nl.ncaj.win9x.ui.theme.controls.Checkbox
 import nl.ncaj.win9x.ui.theme.controls.DropDownListBox
+import nl.ncaj.win9x.ui.theme.controls.DropDownListBoxItem
 import nl.ncaj.win9x.ui.theme.controls.Grouping
 import nl.ncaj.win9x.ui.theme.controls.ListBox
 import nl.ncaj.win9x.ui.theme.controls.MenuButton
@@ -369,9 +370,14 @@ private fun ProgressIndicatorExample() {
 private fun DropDownListBoxExample() {
     var expanded by remember { mutableStateOf(false) }
     var currentValue by remember { mutableStateOf("Value") }
-    DropDownListBox(currentValue, expanded = expanded, onExpandChange = { expanded = it }) {
-        DropDownListBoxItem(text = "Value", onClick = { currentValue = "Value" })
-        DropDownListBoxItem(text = "Value (disabled)", onClick = { }, enabled = false)
-        DropDownListBoxItem(text = "Longer value", onClick = { currentValue = "Longer value" })
+    DropDownListBox(
+        text = currentValue,
+        expanded = expanded,
+        onExpandChange = { expanded = it },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        item { DropDownListBoxItem(text = "Value", onSelection = { currentValue = "Value" }) }
+        item { DropDownListBoxItem(text = "Value (disabled)", onSelection = { }, enabled = false) }
+        item { DropDownListBoxItem(text = "Longer value", onSelection = { currentValue = "Longer value" }) }
     }
 }
