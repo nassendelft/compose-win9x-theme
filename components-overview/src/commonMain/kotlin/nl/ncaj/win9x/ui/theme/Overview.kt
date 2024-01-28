@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -73,6 +74,7 @@ fun Overview(modifier: Modifier = Modifier) {
         item { ExampleItem("Tabs") { TabsExample() } }
         item { ExampleItem("Progress Indicator") { ProgressIndicatorExample() } }
         item { ExampleItem("Dropdown ListBox") { DropDownListBoxExample() } }
+        item { ExampleItem("ComboBox") { ComboBoxExample() } }
     }
 }
 
@@ -388,6 +390,25 @@ private fun DropDownListBoxExample() {
             DropDownListBoxItem(
                 text = "Longer value",
                 onSelection = { currentValue = "Longer value" })
+        }
+    }
+}
+
+@Composable
+private fun ComboBoxExample() {
+    var value by remember { mutableStateOf("") }
+    Column(Modifier.width(IntrinsicSize.Max)) {
+        TextBox(value = value, onValueChange = { value = it })
+        ListBox(Modifier.fillMaxWidth()) {
+            listOf("Value 1", "Value 2", "Value 3").forEach {
+                item {
+                    DropDownListBoxItem(
+                        label = it,
+                        onSelected = { value = it },
+                        selected = value == it
+                    )
+                }
+            }
         }
     }
 }
