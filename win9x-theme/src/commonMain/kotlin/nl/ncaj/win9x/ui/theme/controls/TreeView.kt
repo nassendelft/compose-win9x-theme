@@ -4,8 +4,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutIdParentData
@@ -38,6 +42,7 @@ import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import nl.ncaj.win9x.ui.theme.DashFocusIndication
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.sunkenBorder
 import kotlin.math.max
@@ -57,6 +62,64 @@ class TreeViewScope internal constructor() {
         content: @Composable () -> Unit,
     ) {
         items.add(TreeViewItem(children, content))
+    }
+}
+
+@Composable
+fun TreeViewItem(
+    label: String,
+    modifier: Modifier = Modifier,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource = MutableInteractionSource(),
+    onClick: (() -> Unit)? = null,
+) {
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    Row(
+        modifier = modifier
+            .then(
+                if (onClick == null) Modifier
+                else {
+                    Modifier.clickable(
+                        enabled = enabled,
+                        indication = null,
+                        interactionSource = interactionSource,
+                        onClick = onClick
+                    )
+                }
+            )
+    ) {
+        leadingIcon?.let {
+            Box(
+                modifier = Modifier.size(17.dp),
+                content = { it.invoke() },
+                contentAlignment = Alignment.Center
+            )
+            Spacer(Modifier.width(4.dp))
+        }
+
+        val textStyle = when {
+            !enabled -> Win9xTheme.typography.disabled
+            isFocused -> Win9xTheme.typography.caption
+            else -> Win9xTheme.typography.default
+        }
+
+        Text(
+            text = label,
+            style = textStyle,
+            modifier = Modifier
+                .then(
+                    if(isFocused) Modifier.background(Win9xTheme.colorScheme.selection)
+                    else Modifier
+                )
+                .focusable(enabled, interactionSource)
+                .indication(
+                    indication = DashFocusIndication.DashFocusIndicationNoPadding,
+                    interactionSource = interactionSource
+                )
+                .padding(horizontal = 1.dp, vertical = 2.dp)
+        )
     }
 }
 
@@ -117,7 +180,10 @@ private fun TreeViewContent(
                 if (depth == 0) {
                     Box(Modifier.treeViewItem(index, depth), content = { curr.content() })
                 } else if (curr.children == null || !collapsable) {
-                    Row(Modifier.treeViewItem(index, depth)) {
+                    Row(
+                        modifier = Modifier.treeViewItem(index, depth),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         if (showRelationship) {
                             Spacer(Modifier.width(10.dp))
                             DashedHorizontalLine(Modifier.size(10.dp, 12.dp))
@@ -127,7 +193,10 @@ private fun TreeViewContent(
                         curr.content()
                     }
                 } else {
-                    Row(Modifier.treeViewItem(index, depth)) {
+                    Row(
+                        modifier = Modifier.treeViewItem(index, depth),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Spacer(Modifier.width(4.dp))
                         ExpandToggle(
                             expanded = expanded,
@@ -170,7 +239,14 @@ private fun TreeViewContent(
             val placeableVerticalLines = measurables.filter { it.layoutId == DashLineId }
                 .map { measurable ->
                     val depthPlaceables = placeableItems.drop(measurable.index)
-                        .dropLastWhile { it.second.depth != measurable.depth }
+                        .let { list ->
+                            var lastItem = 0
+                            for ((index, item) in list.withIndex()) {
+                                if (item.second.depth == measurable.depth) lastItem = index
+                                if (item.second.depth < measurable.depth) break
+                            }
+                            list.take(lastItem+1)
+                        }
                         .filter { it.first.height != Constraints.Infinity }
                     val lineHeight = depthPlaceables.sumOf { (placeable) -> placeable.height }
 

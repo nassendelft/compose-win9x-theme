@@ -1,16 +1,18 @@
 package nl.ncaj.win9x.ui.theme
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,6 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.unit.dp
 import nl.ncaj.win9x.ui.theme.controls.Button
 import nl.ncaj.win9x.ui.theme.controls.Checkbox
@@ -41,7 +45,12 @@ import nl.ncaj.win9x.ui.theme.controls.TabHost
 import nl.ncaj.win9x.ui.theme.controls.Text
 import nl.ncaj.win9x.ui.theme.controls.TextBox
 import nl.ncaj.win9x.ui.theme.controls.TreeView
+import nl.ncaj.win9x.ui.theme.controls.TreeViewItem
 import nl.ncaj.win9x.ui.theme.controls.rememberScrollbarState
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.LoadState
+import org.jetbrains.compose.resources.rememberImageBitmap
+import org.jetbrains.compose.resources.resource
 
 @Composable
 fun Overview(modifier: Modifier = Modifier) {
@@ -242,57 +251,94 @@ private fun SpinBoxExample() {
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun TreeViewExample() {
-    TreeView(
-        collapsable = true,
-        showRelationship = true,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        item { Text("Value 1") }
-        item { Text("Value 2", enabled = false) }
-        item(
-            content = { Text("Value 3") },
-            children = {
-                item { Text("Value 3.1") }
-                item(
-                    content = { Text("Value 3.2") },
-                    children = {
-                        item(
-                            content = { Text("Value 3.2.1") },
-                            children = {
-                                item { Text("Value 3.2.1.1") }
-                                item(
-                                    content = { Text("Value 3.2.1.2") },
-                                    children = {
-                                        item { Text("Value 3.2.1.2.1") }
-                                    }
-                                )
-                            }
-                        )
-                        item(
-                            content = { Text("Value 3.2.2") },
-                            children = {
-                                item { Text("Value 3.2.2.1") }
-                                item(
-                                    content = { Text("Value 3.2.2.2") },
-                                    children = {
-                                        item { Text("Value 3.2.2.2.1") }
-                                    }
-                                )
-                            }
-                        )
-                    }
-                )
-                item { Text("Value 3.3") }
-                item(
-                    content = { Text("Value 3.4") },
-                    children = {
-                        item { Text("Value 3.4.1") }
-                    }
-                )
-            }
+    val state = resource("png_images/directory_open.png").rememberImageBitmap()
+    val icon = if (state is LoadState.Success<ImageBitmap>) {
+        remember(state.value) { BitmapPainter(state.value)  }
+    } else null
+    var collapsable by remember { mutableStateOf(true) }
+    var showRelationship by remember { mutableStateOf(true) }
+
+    @Composable
+    fun Item(label: String, enabled: Boolean = true) {
+        TreeViewItem(
+            label = label,
+            enabled = enabled,
+            leadingIcon = { icon?.let { Image(it, contentDescription = "") } },
+            onClick = {}
         )
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        TreeView(
+            collapsable = collapsable,
+            showRelationship = showRelationship,
+            modifier = Modifier.fillMaxWidth().weight(1f),
+        ) {
+            item { Item("Value 1") }
+            item { Item("Value 2", enabled = false) }
+            item(
+                content = { Item("Value 3") },
+                children = {
+                    item { Item("Value 3.1") }
+                    item(
+                        content = { Item("Value 3.2") },
+                        children = {
+                            item(
+                                content = { Item("Value 3.2.1") },
+                                children = {
+                                    item { Item("Value 3.2.1.1") }
+                                    item(
+                                        content = { Item("Value 3.2.1.2") },
+                                        children = {
+                                            item { Item("Value 3.2.1.2.1") }
+                                            item { Item("Value 3.2.1.2.2") }
+                                        }
+                                    )
+                                    item { Item("Value 3.2.1.2") }
+                                }
+                            )
+                            item(
+                                content = { Item("Value 3.2.2") },
+                                children = {
+                                    item { Item("Value 3.2.2.1") }
+                                    item(
+                                        content = { Item("Value 3.2.2.2") },
+                                        children = {
+                                            item { Item("Value 3.2.2.2.1") }
+                                        }
+                                    )
+                                }
+                            )
+                        }
+                    )
+                    item { Item("Value 3.3") }
+                    item(
+                        content = { Item("Value 3.4") },
+                        children = {
+                            item { Item("Value 3.4.1") }
+                        }
+                    )
+                }
+            )
+        }
+        Row(
+            Modifier.padding(top = 4.dp)
+        ) {
+            Checkbox(
+                checked = collapsable,
+                onCheckChange = { collapsable = it },
+                label = { Text("Collapsable") }
+            )
+            Spacer(Modifier.width(4.dp))
+            Checkbox(
+                checked = showRelationship,
+                onCheckChange = { showRelationship = it },
+                label = { Text("Relationship") }
+            )
+        }
     }
 }
 
