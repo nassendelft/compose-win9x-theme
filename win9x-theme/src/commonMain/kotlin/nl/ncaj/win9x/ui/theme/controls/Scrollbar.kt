@@ -9,20 +9,14 @@ import androidx.compose.foundation.gestures.awaitHorizontalDragOrCancellation
 import androidx.compose.foundation.gestures.awaitVerticalDragOrCancellation
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -55,38 +50,9 @@ import kotlinx.coroutines.launch
 import nl.ncaj.win9x.ui.theme.Win9xTheme
 import nl.ncaj.win9x.ui.theme.checkeredBackground
 import nl.ncaj.win9x.ui.theme.rememberVectorResourcePainter
-import nl.ncaj.win9x.ui.theme.sunkenBorder
 import nl.ncaj.win9x.ui.theme.windowBorder
 import kotlin.math.roundToInt
 
-@Composable
-internal fun ScrollbarPreview() {
-    val horizontalScrollState = rememberScrollState()
-    val verticalScrollState = rememberScrollState()
-    val scrollbarAdapter = rememberScrollbarState(horizontalScrollState, verticalScrollState)
-
-    Column {
-        Text("- Scroll bars -")
-        Spacer(modifier = Modifier.height(2.dp))
-
-        ScrollableHost(
-            modifier = Modifier
-                .sizeIn(maxHeight = 150.dp, maxWidth = 150.dp)
-                .sunkenBorder()
-                .padding(Win9xTheme.borderWidthDp),
-            scrollbarState = scrollbarAdapter,
-        ) {
-            Text(
-                text = "Some text that is repeated multiple times\n".repeat(10),
-                modifier = Modifier
-                    .background(Win9xTheme.colorScheme.buttonHighlight)
-                    .padding(4.dp)
-                    .horizontalScroll(horizontalScrollState)
-                    .verticalScroll(verticalScrollState)
-            )
-        }
-    }
-}
 
 internal class ScrollbarAdapter(
     private val scrollState: ScrollState,
@@ -94,6 +60,9 @@ internal class ScrollbarAdapter(
     var parentSize by mutableStateOf(0)
 
     val scrollOffset: Double get() = scrollState.value.toDouble()
+
+    val canDecreaseScroll by derivedStateOf { scrollState.value != 0 }
+    val canIncreaseScroll by derivedStateOf { scrollState.value != scrollState.maxValue }
 
     suspend fun scrollTo(scrollOffset: Double) {
         scrollState.scrollTo(scrollOffset.roundToInt())
@@ -122,6 +91,7 @@ internal class SliderAdapter(
 ) {
 
     private val contentSize get() = adapter.contentSize
+
     private val visiblePart: Double
         get() {
             val contentSize = contentSize
@@ -228,12 +198,14 @@ fun ScrollableHost(
                 isVertical = false,
                 interactionSource = interactionSource,
                 reverseLayout = reverseLayout,
+                disableArrowButtonsIfNotScrollable = false,
             )
             Scrollbar(
                 adapter = scrollbarState.verticalScrollbarAdapter,
                 isVertical = true,
                 interactionSource = interactionSource,
-                reverseLayout = reverseLayout
+                reverseLayout = reverseLayout,
+                disableArrowButtonsIfNotScrollable = false,
             )
         },
         modifier = modifier,
@@ -312,12 +284,45 @@ fun ScrollableHost(
 }
 
 @Composable
+fun HorizontalScrollBar(
+    scrollState: ScrollState,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = MutableInteractionSource(),
+    reverseLayout: Boolean = false,
+    disableArrowButtonsIfNotScrollable: Boolean = true,
+) = Scrollbar(
+    modifier = modifier,
+    adapter = ScrollbarAdapter(scrollState),
+    interactionSource = interactionSource,
+    reverseLayout = reverseLayout,
+    isVertical = false,
+    disableArrowButtonsIfNotScrollable = disableArrowButtonsIfNotScrollable,
+)
+
+@Composable
+fun VerticalScrollBar(
+    scrollState: ScrollState,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = MutableInteractionSource(),
+    reverseLayout: Boolean = false,
+    disableArrowButtonsIfNotScrollable: Boolean = true,
+) = Scrollbar(
+    modifier = modifier,
+    adapter = ScrollbarAdapter(scrollState),
+    interactionSource = interactionSource,
+    reverseLayout = reverseLayout,
+    isVertical = true,
+    disableArrowButtonsIfNotScrollable = disableArrowButtonsIfNotScrollable,
+)
+
+@Composable
 private fun Scrollbar(
     modifier: Modifier = Modifier,
     adapter: ScrollbarAdapter,
     interactionSource: MutableInteractionSource,
     reverseLayout: Boolean,
     isVertical: Boolean,
+    disableArrowButtonsIfNotScrollable: Boolean,
 ) = with(LocalDensity.current) {
     val scope = rememberCoroutineScope()
 
@@ -355,19 +360,29 @@ private fun Scrollbar(
 
     Layout(
         modifier = modifier
-            .scrollOnPressTrack(isVertical, scroller)
             .checkeredBackground(
                 Win9xTheme.colorScheme.buttonFace,
                 Win9xTheme.colorScheme.buttonHighlight,
-            ),
+            )
+            .then(
+                if(scroller.trackPressed) Modifier.background(Color.Black.copy(alpha = 0.4f))
+                else Modifier
+            )
+            .scrollOnPressTrack(isVertical, scroller),
         content = {
             // decrease button
             Button(
                 onClick = { scope.launch { adapter.scrollBy(-10.0) } },
                 borders = innerButtonBorders(),
+                enabled = !disableArrowButtonsIfNotScrollable || adapter.canDecreaseScroll
             ) {
+                val image = if (disableArrowButtonsIfNotScrollable && !adapter.canDecreaseScroll) {
+                    "vector_images/ic_arrow_down_disabled.xml"
+                } else {
+                    "vector_images/ic_arrow_down.xml"
+                }
                 Image(
-                    painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
+                    painter = rememberVectorResourcePainter(image),
                     contentDescription = "Decrease scrolling",
                     modifier = Modifier.rotate(if (isVertical) 180f else 90f)
                 )
@@ -389,9 +404,15 @@ private fun Scrollbar(
             Button(
                 onClick = { scope.launch { adapter.scrollBy(10.0) } },
                 borders = innerButtonBorders(),
+                enabled = !disableArrowButtonsIfNotScrollable || adapter.canIncreaseScroll
             ) {
+                val image = if (disableArrowButtonsIfNotScrollable && !adapter.canIncreaseScroll) {
+                    "vector_images/ic_arrow_down_disabled.xml"
+                } else {
+                    "vector_images/ic_arrow_down.xml"
+                }
                 Image(
-                    painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
+                    painter = rememberVectorResourcePainter(image),
                     contentDescription = "Increase scrolling",
                     modifier = Modifier.rotate(if (isVertical) 0f else -90f)
                 )
@@ -513,13 +534,11 @@ private fun Modifier.scrollbarDrag(
 private fun Modifier.scrollOnPressTrack(
     isVertical: Boolean,
     scroller: Scroller,
-) = composed {
-    Modifier.pointerInput(scroller) {
-        detectScrollViaTrackGestures(
-            isVertical = isVertical,
-            scroller = scroller
-        )
-    }
+) = pointerInput(scroller) {
+    detectScrollViaTrackGestures(
+        isVertical = isVertical,
+        scroller = scroller
+    )
 }
 
 @Composable
@@ -554,6 +573,8 @@ private class Scroller(
      */
     private var job: Job? = null
 
+    var trackPressed by mutableStateOf(false)
+
     /**
      * Calculates the direction of scrolling towards the given offset (in pixels).
      */
@@ -572,8 +593,7 @@ private class Scroller(
     private suspend fun scrollTowardsCurrentOffset() {
         offset?.let {
             val currentDirection = directionOfScrollTowards(it)
-            if (currentDirection != direction)
-                return
+            if (currentDirection != direction) return
             with(sliderAdapter.adapter) {
                 scrollTo(scrollOffset + currentDirection * viewportSize)
             }
@@ -595,6 +615,11 @@ private class Scroller(
         }
     }
 
+    private fun offsetIsOnThumb(offset: Float): Boolean {
+        val pixelRange = thumbPixelRange(sliderAdapter, sliderSize)
+        return offset.roundToInt() in pixelRange
+    }
+
     /**
      * Invoked on the first press for a gesture.
      */
@@ -602,8 +627,10 @@ private class Scroller(
         this.offset = offset
         this.direction = directionOfScrollTowards(offset)
 
-        if (direction != 0)
+        if (direction != 0) {
+            if (!offsetIsOnThumb(offset)) trackPressed = true
             startScrolling()
+        }
     }
 
     /**
@@ -620,6 +647,7 @@ private class Scroller(
         job?.cancel()
         direction = 0
         offset = null
+        trackPressed = false
     }
 
     /**
@@ -645,7 +673,7 @@ private class Scroller(
  */
 private suspend fun PointerInputScope.detectScrollViaTrackGestures(
     isVertical: Boolean,
-    scroller: Scroller
+    scroller: Scroller,
 ) {
     fun Offset.onScrollAxis() = if (isVertical) y else x
 
@@ -654,11 +682,8 @@ private suspend fun PointerInputScope.detectScrollViaTrackGestures(
         scroller.onPress(down.position.onScrollAxis())
 
         while (true) {
-            val drag =
-                if (isVertical)
-                    awaitVerticalDragOrCancellation(down.id)
-                else
-                    awaitHorizontalDragOrCancellation(down.id)
+            val drag = if (isVertical) awaitVerticalDragOrCancellation(down.id)
+            else awaitHorizontalDragOrCancellation(down.id)
 
             if (drag == null) {
                 scroller.onGestureCancelled()

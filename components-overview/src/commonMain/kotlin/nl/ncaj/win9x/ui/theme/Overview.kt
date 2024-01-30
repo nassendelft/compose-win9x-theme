@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -197,7 +198,7 @@ private fun ListBoxExample() {
     var selection by remember { mutableIntStateOf(0) }
 
     ListBox(
-        modifier = Modifier.fillMaxWidth(0.6f)
+        modifier = Modifier.fillMaxSize(0.6f)
     ) {
         item {
             DropDownListBoxItem(
@@ -399,9 +400,9 @@ private fun DropDownListBoxExample() {
 @Composable
 private fun ComboBoxExample() {
     var value by remember { mutableStateOf("") }
-    Column(Modifier.width(IntrinsicSize.Max)) {
-        TextBox(value = value, onValueChange = { value = it })
-        ListBox(Modifier.fillMaxWidth()) {
+    Column(Modifier.fillMaxSize(0.6f)) {
+        TextBox(value = value, onValueChange = { value = it }, modifier = Modifier.fillMaxWidth())
+        ListBox(Modifier.fillMaxSize()) {
             listOf("Value 1", "Value 2", "Value 3").forEach {
                 item {
                     DropDownListBoxItem(

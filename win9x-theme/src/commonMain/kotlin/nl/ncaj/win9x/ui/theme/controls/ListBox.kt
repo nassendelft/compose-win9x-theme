@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -40,14 +42,22 @@ fun ListBox(
     modifier: Modifier = Modifier,
     content: ListBoxScope.() -> Unit
 ) {
-    Column(
+    val scrollState = rememberScrollState()
+    Row(
         modifier = modifier
             .background(Color.White)
-            .width(IntrinsicSize.Max)
             .sunkenBorder()
-            .padding(Win9xTheme.borderWidthDp + 2.dp),
-        content = { ListBoxScope().apply(content).items.forEach { it() } }
-    )
+            .padding(Win9xTheme.borderWidthDp)
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(2.dp)
+                .verticalScroll(scrollState),
+            content = { ListBoxScope().apply(content).items.forEach { it() } }
+        )
+        VerticalScrollBar(scrollState = scrollState)
+    }
 }
 
 @Composable
