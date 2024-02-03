@@ -1,18 +1,13 @@
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.CanvasBasedWindow
-import nl.ncaj.win9x.ui.theme.Overview
-import nl.ncaj.win9x.ui.theme.Win9xTheme
-import nl.ncaj.win9x.ui.theme.controls.Text
-import nl.ncaj.win9x.ui.theme.controls.Window
+import nl.ncaj.theme.win9x.Overview
+import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.controls.Text
+import nl.ncaj.theme.win9x.controls.Window
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = CanvasBasedWindow(canvasElementId = "ComposeTarget") {

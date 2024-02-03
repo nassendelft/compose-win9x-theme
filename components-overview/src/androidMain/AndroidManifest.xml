@@ -9,7 +9,7 @@
         tools:ignore="MissingApplicationIcon"
         tools:targetApi="31">
         <activity
-            android:name="nl.ncaj.win9x.MainActivity"
+            android:name="nl.ncaj.theme.win9x.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Win9x">
             <intent-filter>

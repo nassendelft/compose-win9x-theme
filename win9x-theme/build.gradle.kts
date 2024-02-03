@@ -1,14 +1,25 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.compose)
+    `maven-publish`
 }
 
+val publishVersionProp = findProperty("publishVersion")
+
+group = "nl.ncaj.theme.win9x"
+version = publishVersionProp?.toString()
+    ?: LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
+
 kotlin {
-    androidTarget()
+    androidTarget {
+        publishAllLibraryVariants()
+    }
     jvm()
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -40,7 +51,7 @@ compose.experimental {
 }
 
 android {
-    namespace = "nl.ncaj.win9x"
+    namespace = "nl.ncaj.theme.win9x"
     compileSdk = 34
 
     defaultConfig {

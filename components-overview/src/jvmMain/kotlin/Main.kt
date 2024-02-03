@@ -1,7 +1,7 @@
 import androidx.compose.ui.window.application
-import nl.ncaj.win9x.ui.theme.Overview
-import nl.ncaj.win9x.ui.theme.Win9xTheme
-import nl.ncaj.win9x.ui.theme.controls.Window
+import nl.ncaj.theme.win9x.Overview
+import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.controls.Window
 
 fun main() = application {
     Win9xTheme {
