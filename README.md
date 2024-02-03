@@ -25,11 +25,16 @@ fully represent the capabilities of the JVM target.
 ## Screenshots
 
 <table>
- <tr>
+  <tr>
+    <td >Android</td>
+    <td >JS Wasm</td>
+    <td >JVM</td>
+  </tr>
+  <tr>
     <td ><img src="screenshots/components_overview_android.png" alt="win9x theme components for android" width="200"/></td>
     <td ><img src="screenshots/components_overview_jswasm.png" alt="win9x theme components for jsWasm" width="200"/></td>
     <td ><img src="screenshots/components_overview_jvm.png" alt="win9x theme components for jvm" width="200"/></td>
- </tr>
+  </tr>
 </table>
 
 ## Getting Started
