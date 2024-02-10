@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorProducer
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -35,6 +36,8 @@ import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.icons.Icons
+import nl.ncaj.theme.win9x.icons.OptionButtonDot
 import nl.ncaj.theme.win9x.rememberVectorResourcePainter
 import nl.ncaj.theme.win9x.windowBorder
 import kotlin.math.roundToInt
@@ -112,7 +115,7 @@ class MenuScope {
                 leadingIcon = {
                     if (checked) {
                         Image(
-                            painter = rememberVectorResourcePainter("vector_images/bg_option_button.xml"),
+                            painter = rememberVectorPainter(Icons.OptionButtonDot),
                             contentDescription = "checked",
                             colorFilter = ColorFilter.tint(
                                 if (enabled) Color.Black else Color(0xFF808080)
