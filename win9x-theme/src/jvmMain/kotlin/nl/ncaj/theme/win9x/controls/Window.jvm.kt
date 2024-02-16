@@ -11,12 +11,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import nl.ncaj.theme.win9x.rememberVectorResourcePainter
+import nl.ncaj.theme.win9x.vector.Cross
+import nl.ncaj.theme.win9x.vector.Icons
+import nl.ncaj.theme.win9x.vector.Maximize
+import nl.ncaj.theme.win9x.vector.Minimize
+import nl.ncaj.theme.win9x.vector.RestoreWindow
 
 @Composable
 fun Window(
@@ -68,26 +73,26 @@ fun Window(
                     },
                 ) {
                     TitleButton(
-                        painter = rememberVectorResourcePainter("vector_images/ic_minimize.xml"),
+                        painter = rememberVectorPainter(Icons.Minimize),
                         contentDescription = "minimize window",
                         onClick = { windowState.isMinimized = true }
                     )
                     if (windowState.placement == WindowPlacement.Maximized) {
                         TitleButton(
-                            painter = rememberVectorResourcePainter("vector_images/ic_restore_window.xml"),
+                            painter = rememberVectorPainter(Icons.RestoreWindow),
                             contentDescription = "restore window size",
                             onClick = { windowState.placement = WindowPlacement.Floating }
                         )
                     } else {
                         TitleButton(
-                            painter = rememberVectorResourcePainter("vector_images/ic_maximize.xml"),
+                            painter = rememberVectorPainter(Icons.Maximize),
                             contentDescription = "maximize window",
                             onClick = { windowState.placement = WindowPlacement.Maximized }
                         )
                     }
                     Spacer(Modifier.width(1.dp))
                     TitleButton(
-                        painter = rememberVectorResourcePainter("vector_images/ic_cross.xml"),
+                        painter = rememberVectorPainter(Icons.Cross),
                         contentDescription = "Close window",
                         onClick = onCloseRequested,
                         enabled = closeEnabled

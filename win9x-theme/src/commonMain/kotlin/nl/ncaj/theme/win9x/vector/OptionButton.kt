@@ -1,10 +1,10 @@
-package nl.ncaj.theme.win9x.icons
+package nl.ncaj.theme.win9x.vector
 
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
-fun Icons.optionButton(
+internal fun Backgrounds.optionButton(
     backgroundColor: Color,
 ): ImageVector = win9xIcon(
     name = "OptionButton",
@@ -156,7 +156,7 @@ fun Icons.optionButton(
     }
 }
 
-val Icons.OptionButtonDot: ImageVector
+internal val Icons.OptionButtonDot: ImageVector
     get() {
         if (_optionButtonDot != null) {
             return _optionButtonDot!!

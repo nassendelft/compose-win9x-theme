@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
@@ -30,8 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.rememberVectorResourcePainter
 import nl.ncaj.theme.win9x.sunkenBorder
+import nl.ncaj.theme.win9x.vector.ArrowDown
+import nl.ncaj.theme.win9x.vector.Icons
 
 
 @Composable
@@ -73,7 +75,7 @@ fun DropDownListBox(
                 borders = innerButtonBorders()
             ) {
                 Image(
-                    painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
+                    painter = rememberVectorPainter(Icons.ArrowDown),
                     contentDescription = "",
                     modifier = Modifier.wrapContentSize()
                 )

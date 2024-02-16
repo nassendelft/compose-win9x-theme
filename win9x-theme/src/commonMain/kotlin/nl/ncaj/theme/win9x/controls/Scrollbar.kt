@@ -28,6 +28,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -49,7 +50,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.checkeredBackground
-import nl.ncaj.theme.win9x.rememberVectorResourcePainter
+import nl.ncaj.theme.win9x.vector.ArrowDown
+import nl.ncaj.theme.win9x.vector.ArrowDownDisabled
+import nl.ncaj.theme.win9x.vector.Icons
 import nl.ncaj.theme.win9x.windowBorder
 import kotlin.math.roundToInt
 
@@ -377,12 +380,12 @@ private fun Scrollbar(
                 enabled = !disableArrowButtonsIfNotScrollable || adapter.canDecreaseScroll
             ) {
                 val image = if (disableArrowButtonsIfNotScrollable && !adapter.canDecreaseScroll) {
-                    "vector_images/ic_arrow_down_disabled.xml"
+                    rememberVectorPainter(Icons.ArrowDownDisabled)
                 } else {
-                    "vector_images/ic_arrow_down.xml"
+                    rememberVectorPainter(Icons.ArrowDown)
                 }
                 Image(
-                    painter = rememberVectorResourcePainter(image),
+                    painter = image,
                     contentDescription = "Decrease scrolling",
                     modifier = Modifier.rotate(if (isVertical) 180f else 90f)
                 )
@@ -407,12 +410,12 @@ private fun Scrollbar(
                 enabled = !disableArrowButtonsIfNotScrollable || adapter.canIncreaseScroll
             ) {
                 val image = if (disableArrowButtonsIfNotScrollable && !adapter.canIncreaseScroll) {
-                    "vector_images/ic_arrow_down_disabled.xml"
+                    rememberVectorPainter(Icons.ArrowDownDisabled)
                 } else {
-                    "vector_images/ic_arrow_down.xml"
+                    rememberVectorPainter(Icons.ArrowDown)
                 }
                 Image(
-                    painter = rememberVectorResourcePainter(image),
+                    painter = image,
                     contentDescription = "Increase scrolling",
                     modifier = Modifier.rotate(if (isVertical) 0f else -90f)
                 )

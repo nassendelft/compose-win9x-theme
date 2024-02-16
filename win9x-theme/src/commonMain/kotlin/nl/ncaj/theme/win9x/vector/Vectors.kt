@@ -1,4 +1,4 @@
-package nl.ncaj.theme.win9x.icons
+package nl.ncaj.theme.win9x.vector
 
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -12,7 +12,8 @@ import androidx.compose.ui.graphics.vector.PathBuilder
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-object Icons
+internal object Icons
+internal object Backgrounds
 
 /**
  * Adds a vector path to this icon with defaults.
@@ -22,7 +23,7 @@ object Icons
  * @param pathFillType [PathFillType] for this path
  * @param pathBuilder builder lambda to add commands to this path
  */
-inline fun ImageVector.Builder.win9xPath(
+internal inline fun ImageVector.Builder.win9xPath(
     fillAlpha: Float = 1f,
     strokeAlpha: Float = 1f,
     pathFillType: PathFillType = DefaultFillType,
@@ -51,7 +52,7 @@ inline fun ImageVector.Builder.win9xPath(
  * @param size the size of the icon
  * @param block builder lambda to add paths to this vector asset
  */
-inline fun win9xIcon(
+internal inline fun win9xIcon(
     name: String,
     autoMirror: Boolean = false,
     size: Size = Size(24f, 24f),

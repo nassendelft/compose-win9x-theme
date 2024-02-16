@@ -2,7 +2,6 @@ package nl.ncaj.theme.win9x.controls
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,12 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.ColorPressIndication.Companion.colorIndication
 import nl.ncaj.theme.win9x.DashFocusIndication.Companion.DashFocusIndicationNoPadding
 import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.rememberVectorResourcePainter
 import nl.ncaj.theme.win9x.sunkenBorder
+import nl.ncaj.theme.win9x.vector.Checkmark
+import nl.ncaj.theme.win9x.vector.Icons
 
 @Composable
 fun Checkbox(
@@ -62,7 +63,7 @@ fun Checkbox(
         ) {
             if (checked) {
                 Image(
-                    painter = rememberVectorResourcePainter("vector_images/ic_checkmark.xml"),
+                    painter = rememberVectorPainter(Icons.Checkmark),
                     contentDescription = "checked",
                     colorFilter = ColorFilter.tint(if (enabled) Color.Black else Color(0xFF808080)),
                 )

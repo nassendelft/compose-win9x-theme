@@ -22,9 +22,10 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.DashFocusIndication.Companion.DashFocusIndicationNoPadding
 import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.icons.Icons
-import nl.ncaj.theme.win9x.icons.OptionButtonDot
-import nl.ncaj.theme.win9x.icons.optionButton
+import nl.ncaj.theme.win9x.vector.Backgrounds
+import nl.ncaj.theme.win9x.vector.Icons
+import nl.ncaj.theme.win9x.vector.OptionButtonDot
+import nl.ncaj.theme.win9x.vector.optionButton
 
 
 @Composable
@@ -54,7 +55,7 @@ fun OptionButton(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = rememberVectorPainter(Icons.optionButton(backgroundColor)),
+                painter = rememberVectorPainter(Backgrounds.optionButton(backgroundColor)),
                 contentDescription = "",
             )
             if (checked) {

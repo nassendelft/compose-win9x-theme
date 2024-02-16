@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextLayoutResult
@@ -30,7 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.rememberVectorResourcePainter
+import nl.ncaj.theme.win9x.vector.ArrowDown
+import nl.ncaj.theme.win9x.vector.Icons
 
 @Composable
 fun DropDownComboBox(
@@ -75,7 +77,7 @@ fun DropDownComboBox(
                     borders = innerButtonBorders()
                 ) {
                     Image(
-                        painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
+                        painter = rememberVectorPainter(Icons.ArrowDown),
                         contentDescription = "",
                         modifier = Modifier.wrapContentSize()
                     )

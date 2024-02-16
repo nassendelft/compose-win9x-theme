@@ -22,12 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.rememberVectorResourcePainter
+import nl.ncaj.theme.win9x.vector.Icons
+import nl.ncaj.theme.win9x.vector.SliderThumb
 import nl.ncaj.theme.win9x.win9xBorder
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -122,7 +124,7 @@ fun Slider(
 
             // thumb
             Image(
-                painter = rememberVectorResourcePainter("vector_images/ic_slider_thumb.xml"),
+                painter = rememberVectorPainter(Icons.SliderThumb),
                 contentDescription = "Thumb for slider",
                 modifier = Modifier
                     .wrapContentSize()

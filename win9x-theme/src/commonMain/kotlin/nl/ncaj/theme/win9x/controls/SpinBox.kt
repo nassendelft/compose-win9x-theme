@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.rememberVectorResourcePainter
+import nl.ncaj.theme.win9x.vector.ArrowDown
+import nl.ncaj.theme.win9x.vector.Icons
 
 @Composable
 fun SpinBox(
@@ -30,7 +32,7 @@ fun SpinBox(
                     borders = innerButtonBorders(),
                 ) {
                     Image(
-                        painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
+                        painter = rememberVectorPainter(Icons.ArrowDown),
                         contentDescription = "",
                         modifier = Modifier
                             .rotate(180f)
@@ -43,7 +45,7 @@ fun SpinBox(
                     borders = innerButtonBorders(),
                 ) {
                     Image(
-                        painter = rememberVectorResourcePainter("vector_images/ic_arrow_down.xml"),
+                        painter = rememberVectorPainter(Icons.ArrowDown),
                         contentDescription = "",
                         modifier = Modifier.wrapContentSize()
                     )
