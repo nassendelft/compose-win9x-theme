@@ -1,4 +1,4 @@
-name: Build binaries
+name: Publish site
 
 on:
   # Runs on pushes targeting the default branch
