@@ -26,14 +26,18 @@ fully represent the capabilities of the JVM target.
 
 <table>
   <tr>
-    <td >Android</td>
     <td >JS Wasm</td>
     <td >JVM</td>
   </tr>
   <tr>
-    <td ><img src="screenshots/components_overview_android.png" alt="win9x theme components for android" width="200"/></td>
     <td ><img src="screenshots/components_overview_jswasm.png" alt="win9x theme components for jsWasm" width="200"/></td>
     <td ><img src="screenshots/components_overview_jvm.png" alt="win9x theme components for jvm" width="200"/></td>
+  </tr>
+  <tr>
+    <td >Android</td>
+  </tr>
+  <tr>
+    <td ><img src="screenshots/components_overview_android.png" alt="win9x theme components for android" width="200"/></td>
   </tr>
 </table>
 
@@ -44,11 +48,12 @@ Integration into a Jetpack Compose project is straightforward:
 ### Step 1: Adding the Repository
 
 First, you need to add the repository that hosts the `win9x-theme` library to your
-project's `build.gradle.kts` file. Replace `VERSION` with the current version of the library:
+project's `build.gradle.kts` file. Replace `VERSION` with the current version of the library.
+Make sure you configure [authentication properly](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages).
 
 ```kotlin
 repositories {
-    maven(url = "https://github.com/nassendelft/compose-win9x-theme.git")
+    maven(url = "https://maven.pkg.github.com/nassendelft/compose-win9x-theme")
 }
 ```
 
