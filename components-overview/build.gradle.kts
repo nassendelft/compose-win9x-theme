@@ -26,8 +26,6 @@ kotlin {
                     }
                 }
             }
-
-            // applyBinaryen()
         }
     }
 
@@ -64,7 +62,7 @@ compose.desktop {
 
 android {
     namespace = "nl.ncaj.win9x.example"
-    compileSdk = 34
+    compileSdk = 33
 
     defaultConfig {
         minSdk = 26
