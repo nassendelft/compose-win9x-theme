@@ -217,6 +217,8 @@ fun ScrollableHost(
                 measurables: List<Measurable>,
                 constraints: Constraints
             ): MeasureResult {
+                check(measurables.size == 3) { "A ScrollableHost requires content" }
+
                 val contentMeasurable = measurables[0]
                 val horizontalMeasurable = measurables[1]
                 val verticalMeasurable = measurables[2]

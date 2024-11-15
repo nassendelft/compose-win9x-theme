@@ -10,25 +10,42 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.msSansSerifFamilyBold
-import nl.ncaj.theme.win9x.msSansSerifFamilyNormal
+import nl.ncaj.theme.win9x.win9x_theme.generated.resources.Res
+import nl.ncaj.theme.win9x.win9x_theme.generated.resources.ms_sans_serif_bold
+import nl.ncaj.theme.win9x.win9x_theme.generated.resources.ms_sans_serif_regular
+import org.jetbrains.compose.resources.Font
 
 internal object TypographyTokens {
-    private val msSansSerifFamily = FontFamily(msSansSerifFamilyNormal, msSansSerifFamilyBold)
+    private val msSansSerifFamily: FontFamily
+        @Composable
+        get() = FontFamily(
+            Font(
+                resource = Res.font.ms_sans_serif_regular,
+                weight = FontWeight.Normal,
+                style = FontStyle.Normal,
+            ),
+            Font(
+                resource = Res.font.ms_sans_serif_bold,
+                weight = FontWeight.Bold,
+                style = FontStyle.Normal,
+            )
+        )
 
-    val defaultTextStyle = TextStyle(
+    val defaultTextStyle @Composable get() = TextStyle(
         color = Color(0xFF1A1A1A),
         fontFamily = msSansSerifFamily
     )
 
-    val disabledTextStyle = defaultTextStyle.copy(
+    val disabledTextStyle @Composable get() = defaultTextStyle.copy(
         color = Color(0xFF6D6D6D),
         shadow = Shadow(color = Color.White, offset = Offset(1f, 1f)),
     )
 
-    val captionTextStyle = defaultTextStyle.copy(
+    val captionTextStyle @Composable get() = defaultTextStyle.copy(
         color = Color(0xFFFFFFFF),
     )
 }

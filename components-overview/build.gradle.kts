@@ -1,11 +1,11 @@
-import org.jetbrains.compose.ExperimentalComposeLibrary
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.jetbrainsCompose)
 }
 
 kotlin {
@@ -31,10 +31,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":win9x-theme"))
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(project(":win9x-theme"))
-            @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
         }
         androidMain.dependencies {
@@ -43,15 +42,16 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.7.89.1")
+            implementation("org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.8.15")
+            implementation("androidx.collection:collection:1.4.5")
+            implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+            implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.7")
+            implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
+            implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
         }
     }
 
     jvmToolchain(17)
-}
-
-compose.experimental {
-    web.application {}
 }
 
 compose.desktop {
@@ -62,7 +62,7 @@ compose.desktop {
 
 android {
     namespace = "nl.ncaj.win9x.example"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 26

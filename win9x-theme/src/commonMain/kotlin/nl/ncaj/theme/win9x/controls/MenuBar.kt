@@ -61,7 +61,7 @@ fun MenuBar(
                     modifier = Modifier
                         .clickable(
                             interactionSource = mutableInteractionSource,
-                            indication = SelectionIndication,
+                            indication = SelectionIndication.create(),
                             onClick = { currentMenu = item.content }
                         )
                         .padding(4.dp),

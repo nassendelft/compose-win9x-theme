@@ -1,58 +1,17 @@
 package nl.ncaj.theme.win9x
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.controls.Button
-import nl.ncaj.theme.win9x.controls.Checkbox
-import nl.ncaj.theme.win9x.controls.DropDownComboBox
-import nl.ncaj.theme.win9x.controls.DropDownListBox
-import nl.ncaj.theme.win9x.controls.DropDownListBoxItem
-import nl.ncaj.theme.win9x.controls.Grouping
-import nl.ncaj.theme.win9x.controls.ListBox
-import nl.ncaj.theme.win9x.controls.MenuButton
-import nl.ncaj.theme.win9x.controls.OptionButton
-import nl.ncaj.theme.win9x.controls.OptionSetButton
-import nl.ncaj.theme.win9x.controls.ProgressIndicator
-import nl.ncaj.theme.win9x.controls.ScrollableHost
-import nl.ncaj.theme.win9x.controls.Slider
-import nl.ncaj.theme.win9x.controls.SpinBox
-import nl.ncaj.theme.win9x.controls.TabHost
-import nl.ncaj.theme.win9x.controls.Text
-import nl.ncaj.theme.win9x.controls.TextBox
-import nl.ncaj.theme.win9x.controls.TreeView
-import nl.ncaj.theme.win9x.controls.TreeViewItem
-import nl.ncaj.theme.win9x.controls.rememberScrollbarState
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.LoadState
-import org.jetbrains.compose.resources.rememberImageBitmap
-import org.jetbrains.compose.resources.resource
+import nl.ncaj.theme.win9x.controls.*
+import org.jetbrains.compose.resources.painterResource
+import win9x.components_overview.generated.resources.Res
+import win9x.components_overview.generated.resources.directory_open
 
 @Composable
 fun Overview(modifier: Modifier = Modifier) {
@@ -84,7 +43,7 @@ private fun ExampleItem(
     label: String,
     content: @Composable () -> Unit,
 ) {
-    Box(Modifier.size(200.dp).padding(4.dp)) {
+    Box(Modifier.size(400.dp).padding(4.dp)) {
         Grouping(
             label = label,
             modifier = Modifier.fillMaxSize(),
@@ -261,22 +220,20 @@ private fun SpinBoxExample() {
     )
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun TreeViewExample() {
-    val state = resource("png_images/directory_open.png").rememberImageBitmap()
-    val icon = if (state is LoadState.Success<ImageBitmap>) {
-        remember(state.value) { BitmapPainter(state.value) }
-    } else null
     var collapsable by remember { mutableStateOf(true) }
     var showRelationship by remember { mutableStateOf(true) }
 
-    @Composable
-    fun Item(label: String, enabled: Boolean = true) {
+    fun TreeViewScope.labelItem(
+        label: String,
+        enabled: Boolean = true,
+        children: (TreeViewScope.() -> Unit)? = null
+    ) = item(children) {
         TreeViewItem(
             label = label,
             enabled = enabled,
-            leadingIcon = { icon?.let { Image(it, contentDescription = "") } },
+            leadingIcon = { Image(painterResource(Res.drawable.directory_open), contentDescription = "") },
             onClick = {}
         )
     }
@@ -287,55 +244,34 @@ private fun TreeViewExample() {
             showRelationship = showRelationship,
             modifier = Modifier.fillMaxWidth().weight(1f),
         ) {
-            item { Item("Value 1") }
-            item { Item("Value 2", enabled = false) }
-            item(
-                content = { Item("Value 3") },
-                children = {
-                    item { Item("Value 3.1") }
-                    item(
-                        content = { Item("Value 3.2") },
-                        children = {
-                            item(
-                                content = { Item("Value 3.2.1") },
-                                children = {
-                                    item { Item("Value 3.2.1.1") }
-                                    item(
-                                        content = { Item("Value 3.2.1.2") },
-                                        children = {
-                                            item { Item("Value 3.2.1.2.1") }
-                                            item { Item("Value 3.2.1.2.2") }
-                                        }
-                                    )
-                                    item { Item("Value 3.2.1.2") }
-                                }
-                            )
-                            item(
-                                content = { Item("Value 3.2.2") },
-                                children = {
-                                    item { Item("Value 3.2.2.1") }
-                                    item(
-                                        content = { Item("Value 3.2.2.2") },
-                                        children = {
-                                            item { Item("Value 3.2.2.2.1") }
-                                        }
-                                    )
-                                }
-                            )
+            labelItem("Value 1")
+            labelItem("Value 2", enabled = false)
+            labelItem("Value 3") {
+                labelItem("Value 3.1")
+                labelItem("Value 3.2") {
+                    labelItem("Value 3.2.1") {
+                        labelItem("Value 3.2.1.1")
+                        labelItem("Value 3.2.1.2") {
+                            labelItem("Value 3.2.1.2.1")
+                            labelItem("Value 3.2.1.2.2")
                         }
-                    )
-                    item { Item("Value 3.3") }
-                    item(
-                        content = { Item("Value 3.4") },
-                        children = {
-                            item { Item("Value 3.4.1") }
+                        labelItem("Value 3.2.1.2")
+                    }
+                    labelItem("Value 3.2.2") {
+                        labelItem("Value 3.2.2.1")
+                        labelItem("Value 3.2.2.2") {
+                            labelItem("Value 3.2.2.2.1")
                         }
-                    )
+                    }
                 }
-            )
+                labelItem("Value 3.3")
+                labelItem("Value 3.4") {
+                    labelItem("Value 3.4.1")
+                }
+            }
         }
         Row(
-            Modifier.padding(top = 4.dp)
+            modifier = Modifier.padding(top = 4.dp)
         ) {
             Checkbox(
                 checked = collapsable,
