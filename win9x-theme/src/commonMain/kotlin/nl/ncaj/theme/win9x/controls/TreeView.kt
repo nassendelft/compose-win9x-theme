@@ -5,19 +5,14 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.layout.LayoutIdParentData
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.node.ParentDataModifierNode
-import androidx.compose.ui.platform.InspectorInfo
-import androidx.compose.ui.platform.debugInspectorInfo
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nl.ncaj.theme.win9x.DashFocusIndication
@@ -25,31 +20,32 @@ import nl.ncaj.theme.win9x.Win9xTheme
 
 
 internal class TreeViewItem(
-    val children: (TreeViewScope.() -> Unit)? = null,
+    val key: Any,
+    val depth: Int,
+    val lineIndices: List<Int>,
+    val children: (TreeViewScope.() -> Unit)?,
     val content: @Composable () -> Unit
 )
 
 class TreeViewScope internal constructor(
-    internal val depth: Int = 0,
-    internal val lineIndices: List<Int> = emptyList(),
+    private val depth: Int = 0,
+    private val lineIndices: List<Int> = emptyList(),
 ) {
     internal val items = mutableListOf<TreeViewItem>()
 
     fun item(
+        key: Any,
         children: (TreeViewScope.() -> Unit)? = null,
         content: @Composable () -> Unit,
     ) {
-        items.add(TreeViewItem(children, content))
+        val item = TreeViewItem(key, depth, lineIndices, children, content)
+        items.add(item)
     }
 
     internal fun newTreeViewScope(item: TreeViewItem) = item.children?.let { children ->
         val isLastItem = items.indexOf(item) == items.size - 1
         val indices = if (isLastItem) lineIndices.filterNot { depth - 1 == it } else lineIndices
-
-        TreeViewScope(
-            depth = depth + 1,
-            lineIndices = indices + depth
-        ).apply(children)
+        TreeViewScope(depth = depth + 1, lineIndices = indices + depth).apply(children)
     }
 }
 
@@ -117,6 +113,8 @@ fun TreeView(
     showRelationship: Boolean = true,
     content: TreeViewScope.() -> Unit
 ) {
+    val state = rememberLazyListState()
+
 //    val horizontalScroll = rememberScrollState()
 //    val verticalScroll = rememberScrollState()
 //    val scrollbarState = rememberScrollbarState(horizontalScroll, verticalScroll)
@@ -129,6 +127,7 @@ fun TreeView(
         content = content,
         collapsable = collapsable,
         showRelationship = showRelationship,
+        state = state,
         modifier = modifier
             .background(Win9xTheme.colorScheme.buttonHighlight)
 //            .horizontalScroll(horizontalScroll)
@@ -137,208 +136,110 @@ fun TreeView(
 //    }
 }
 
+private fun createFlatTreeViewItems(
+    rootScope: TreeViewScope,
+    collapsedItems: List<Any>
+): MutableList<TreeViewItem> {
+    val result = mutableListOf<TreeViewItem>()
+    val stack = mutableListOf<Pair<TreeViewItem, TreeViewScope>>()
+
+    stack.addAll(rootScope.items.reversed().map { it to rootScope })
+
+    while (stack.isNotEmpty()) {
+        val (current, scope) = stack.removeLastOrNull() ?: continue
+
+        result.add(current)
+
+        if (current.children != null && !collapsedItems.contains(current.key)) {
+            scope.newTreeViewScope(current)
+                ?.let { childScope -> stack.addAll(childScope.items.reversed().map { it to childScope }) }
+        }
+    }
+
+    return result
+}
+
 @Composable
 private fun TreeViewContent(
     modifier: Modifier = Modifier,
     collapsable: Boolean = true,
     showRelationship: Boolean = true,
+    state: LazyListState = rememberLazyListState(),
     content: TreeViewScope.() -> Unit
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-
     val depthInset = 20.dp
 
-    fun LazyListScope.render(content: TreeViewScope) {
-        // If there's no depth (the root children have no children of its own) then there's need to draw
-        // the expand toggle and thus no need to reserve any spacing at all
-        val initialDepthOffset =
-            if (!collapsable || (content.depth == 0 && content.items.all { it.children == null })) 0.dp
-            else depthInset
+    val collapsedItems = remember { mutableStateListOf<Any>() }
+    val interactionSource = remember { MutableInteractionSource() }
 
-        content.items.forEachIndexed { itemIndex, item ->
-            val hasNextSibling = itemIndex < content.items.size - 1
-            var expanded by mutableStateOf(true)
-
-            item {
-                Box(Modifier.height(IntrinsicSize.Min)) {
-                    if (showRelationship) {
-                        // draws vertical lines for each parent (to the root) that still has siblings
-                        content.lineIndices.forEachIndexed { index, lineIndex ->
-                            val shouldCutOff = !hasNextSibling && index == content.lineIndices.size - 1
-                            DashedVerticalLine(
-                                modifier = Modifier.padding(start = (depthInset * lineIndex) + initialDepthOffset)
-                                    .width(20.dp)
-                                    .fillMaxHeight()
-                                    .then(
-                                        // this should probably be half the size of max height instead of relying on
-                                        // depthInset as it causes the layout to increase if the content is smaller
-                                        if (shouldCutOff) Modifier.padding(bottom = depthInset / 2)
-                                        else Modifier
-                                    )
-                            )
-                        }
-                        // draws horizontal line to the item
-                        if (content.depth != 0) {
-                            DashedHorizontalLine(
-                                modifier = Modifier.padding(start = ((depthInset * (content.depth - 1)) + (depthInset / 2)) + initialDepthOffset)
-                                    .width(depthInset / 2)
-                                    .height(depthInset)
-                            )
-                        }
-                    }
-
-                    if (collapsable && item.children != null) {
-                        ExpandToggle(
-                            expanded = expanded,
-                            onExpanded = { expanded = it },
-                            interactionSource = interactionSource,
-                            modifier = Modifier
-                                .padding(start = (depthInset * content.depth) + 4.dp)
-                                .size(12.dp)
-                                .align(Alignment.CenterStart)
-                        )
-                    }
-
-                    // finally only draw the actual content plus depth inset
-                    Row {
-                        Spacer(Modifier.width((depthInset * content.depth) + initialDepthOffset))
-                        item.content()
-                    }
-                }
-            }
-            if (expanded) content.newTreeViewScope(item)?.let(::render)
-        }
-    }
+    val root = remember(content) { TreeViewScope().apply(content) }
+    val items by remember (root, collapsedItems) { derivedStateOf { createFlatTreeViewItems(root, collapsedItems) } }
 
     LazyColumn(
         modifier = modifier,
+        state = state,
     ) {
-        render(TreeViewScope().apply(content))
-    }
+        itemsIndexed(items, key = {_, item -> item.key }) { itemIndex, item ->
+            // If there's no depth (the root children have no children of its own) then there's need to draw
+            // the expand toggle and thus no need to reserve any spacing at all
+            val initialDepthOffset =
+                if (!collapsable || (root.items.all { it.children == null })) 0.dp
+                else depthInset
 
-//    Layout(
-//        modifier = modifier,
-//        content = {
-//            val items = TreeViewScope().apply { content() }
-//                .items
-//                .reversed()
-//                .map { 0 to it }
-//                .toMutableList()
-//            var absoluteIndex = 0
-//            while (items.isNotEmpty()) {
-//                val (depth, curr) = items.removeLast()
-//                var expanded by remember { mutableStateOf(true) }
-//
-//                // root elements with no children don't require any start padding
-//                if (depth == 0) {
-//                    Box(Modifier.treeViewItem(absoluteIndex, depth, curr.hasChildren), content = { curr.content() })
-//                } else if (curr.children == null || !collapsable) {
-//                    Row(
-//                        modifier = Modifier.treeViewItem(absoluteIndex, depth, curr.hasChildren),
-//                        verticalAlignment = Alignment.CenterVertically,
-//                    ) {
-//                        if (showRelationship) {
-//                            Spacer(Modifier.width(10.dp))
-//                            DashedHorizontalLine(Modifier.size(10.dp, 12.dp))
-//                        } else {
-//                            Spacer(Modifier.width(20.dp))
-//                        }
-//                        curr.content()
-//                    }
-//                } else {
-//                    Row(
-//                        modifier = Modifier.treeViewItem(absoluteIndex, depth, curr.hasChildren),
-//                        verticalAlignment = Alignment.CenterVertically,
-//                    ) {
-//                        Spacer(Modifier.width(4.dp))
-//                        ExpandToggle(
-//                            expanded = expanded,
-//                            onExpanded = { expanded = it },
-//                            interactionSource = interactionSource,
-//                            modifier = Modifier.size(12.dp)
-//                        )
-//                        if (showRelationship) {
-//                            DashedHorizontalLine(Modifier.size(4.dp, 12.dp))
-//                        } else {
-//                            Spacer(Modifier.width(4.dp))
-//                        }
-//                        curr.content()
-//                    }
-//                }
-//
-//                if (expanded && curr.children != null) {
-//                    if (showRelationship) {
-//                        DashedVerticalLine(
-//                            modifier = Modifier
-//                                .width(20.dp)
-//                                .dashLine(absoluteIndex + 1, depth + 1)
-//                        )
-//                    }
-//
-//                    curr.children
-//                        .let { content -> TreeViewScope().apply { content() } }
-//                        .items
-//                        .reversed()
-//                        .forEach { items.add(depth + 1 to it) }
-//                }
-//
-//                absoluteIndex++
-//            }
-//        },
-//        measurePolicy = { measurables, constraints ->
-//            // measure all tree view items with no constraints
-//            val treeViewItemPlacables = measurables.filter { it.layoutId != DashLineId }
-//                .map { it.measure(Constraints()) to it }
-//
-//            // measure all vertical lines
-//            val placeableVerticalLines = measurables.filter { it.layoutId == DashLineId }
-//                .mapNotNull { lineMeasurable ->
-//                    // from the same treeview item on the same index as the line to the last treeview item on the same depth
-//                    val lineHeight = treeViewItemPlacables.drop(lineMeasurable.absoluteIndex)
-//                        .takeWhile { it.second.depth >= lineMeasurable.depth }
-//                        .takeIf { it.size > 1 }
-//                        ?.let { list -> list.sumOf { it.first.height } - list.last().first.height / 2 }
-//                        ?: return@mapNotNull null
-//
-////                    val depthPlaceables = treeViewItemPlacables.drop(lineMeasurable.absoluteIndex)
-////                        .let { list ->
-////                            var lastItem = 0
-////                            for ((index, item) in list.withIndex()) {
-////                                if (item.second.depth == lineMeasurable.depth) lastItem = index
-////                                if (item.second.depth < lineMeasurable.depth) break
-////                            }
-////                            list.take(lastItem + 1)
-////                        }
-////                        .filter { it.first.height != Constraints.Infinity }
-////                    val lineHeight = depthPlaceables.sumOf { (placeable) -> placeable.height }
-//
-////                    val offset =
-////                        if (lineHeight == 0) 0 else depthPlaceables.last().first.height / 2
-//
-////                    val lineConstraint = Constraints.fixedHeight(lineHeight - offset)
-//                    val lineConstraint = Constraints.fixedHeight(lineHeight)
-//                    lineMeasurable.measure(lineConstraint) to lineMeasurable
-//                }
-//
-//            val width =
-//                constraints.constrainWidth(treeViewItemPlacables.maxOf { (placeable) -> placeable.width })
-//            val height =
-//                constraints.constrainHeight(treeViewItemPlacables.sumOf { (placeable) -> placeable.height })
-//            layout(width, height) {
-//                var itemY = 0
-//                for ((placeable, data) in treeViewItemPlacables) {
-//                    placeable.place(max(0, data.depth - 1) * depthInset.roundToPx(), itemY)
-//                    itemY = min(height - placeable.height, itemY + placeable.height)
-//                }
-//
-//                for ((placeable, measurable) in placeableVerticalLines) {
-//                    val y = treeViewItemPlacables.subList(0, measurable.absoluteIndex)
-//                        .sumOf { (placeable) -> placeable.height }
-//                    placeable.place((measurable.depth - 1) * verticalLineInset.roundToPx(), y)
-//                }
-//            }
-//        }
-//    )
+            Box(Modifier.height(IntrinsicSize.Min)) {
+                // draws relationship lines
+                if (showRelationship) {
+                    // draws vertical lines for each parent (to the root) that still has siblings
+                    item.lineIndices.forEachIndexed { index, lineIndex ->
+                        // since this is a flat list of a hierarchical structure, we can check the next
+                        // index and see if it's on the same depth, if it's not than we are the last item on this
+                        // subtree.
+                        val isLastItem = items.getOrNull(itemIndex + 1)?.depth != item.depth
+                        // vertical lines should normally be drawn from top to bottom, but if it's the last line
+                        // we need to only draw half.
+                        val heightFraction = if (isLastItem && index == item.lineIndices.size - 1) 0.5f else 1f
+                        val startPadding = (depthInset * lineIndex) + initialDepthOffset
+                        DashedVerticalLine(
+                            modifier = Modifier.padding(start = startPadding)
+                                .width(20.dp)
+                                .fillMaxHeight(heightFraction)
+                        )
+                    }
+                    // draws horizontal line to the item
+                    if (item.depth != 0) {
+                        val startPadding = ((depthInset * (item.depth - 1)) + (depthInset / 2)) + initialDepthOffset
+                        DashedHorizontalLine(
+                            modifier = Modifier.padding(start = startPadding)
+                                .width(depthInset / 2)
+                                .height(depthInset)
+                        )
+                    }
+                }
+
+                // draws the expand toggle if possible
+                if (collapsable && item.children != null) {
+                    ExpandToggle(
+                        expanded = !collapsedItems.contains(item.key),
+                        onExpanded = { expanded ->
+                            if (expanded) collapsedItems.remove(item.key)
+                            else collapsedItems.add(item.key)
+                        },
+                        interactionSource = interactionSource,
+                        modifier = Modifier
+                            .padding(start = (depthInset * item.depth) + 4.dp)
+                            .size(12.dp)
+                            .align(Alignment.CenterStart)
+                    )
+                }
+
+                // draws the actual content plus depth inset
+                Row {
+                    Spacer(Modifier.width((depthInset * item.depth) + initialDepthOffset))
+                    item.content()
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -397,91 +298,4 @@ private fun DashedHorizontalLine(
             pathEffect = dashPathEffect
         )
     }
-}
-
-private fun Modifier.dashLine(index: Int, depth: Int) = this.then(
-    TreeViewChildDataElement(
-        depth = depth,
-        layoutId = DashLineId,
-        index = index,
-        hasChildren = false,
-        inspectorInfo = debugInspectorInfo {
-            name = "dashLine"
-            properties["index"] = index
-            properties["depth"] = depth
-        }
-    )
-)
-
-private fun Modifier.treeViewItem(
-    index: Int,
-    depth: Int,
-    hasChildren: Boolean
-) = this.then(
-    TreeViewChildDataElement(
-        depth = depth,
-        layoutId = TreeViewItemId,
-        index = index,
-        hasChildren = hasChildren,
-        inspectorInfo = debugInspectorInfo {
-            name = "treeViewItem"
-            properties["index"] = index
-            properties["depth"] = depth
-            properties["children"] = hasChildren
-        }
-    )
-)
-
-private val Measurable.treeViewChildDataNode: TreeViewChildDataNode? get() = parentData as? TreeViewChildDataNode
-private val Measurable.depth: Int get() = treeViewChildDataNode?.depth ?: 0
-private val Measurable.absoluteIndex: Int get() = treeViewChildDataNode?.absoluteIndex ?: -1
-private val Measurable.hasChildren: Boolean get() = treeViewChildDataNode?.hasChildren ?: false
-
-private object DashLineId
-private object TreeViewItemId
-
-private class TreeViewChildDataElement(
-    val depth: Int,
-    val layoutId: Any,
-    val index: Int,
-    val hasChildren: Boolean,
-    val inspectorInfo: InspectorInfo.() -> Unit
-) : ModifierNodeElement<TreeViewChildDataNode>() {
-
-    override fun create() = TreeViewChildDataNode(depth, layoutId, index, hasChildren)
-
-    override fun update(node: TreeViewChildDataNode) {
-        node.depth = depth
-        node.layoutId = layoutId
-        node.absoluteIndex = index
-        node.hasChildren = hasChildren
-    }
-
-    override fun InspectorInfo.inspectableProperties() = inspectorInfo()
-
-    override fun hashCode(): Int {
-        var result = depth
-        result = 31 * result + layoutId.hashCode()
-        result = 31 * result + index
-        result = 31 * result + hasChildren.hashCode()
-        return result
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        val otherModifier = other as? TreeViewChildDataElement ?: return false
-        return depth == otherModifier.depth
-                && layoutId == otherModifier.layoutId
-                && index == otherModifier.index
-                && hasChildren == otherModifier.hasChildren
-    }
-}
-
-private class TreeViewChildDataNode(
-    var depth: Int,
-    override var layoutId: Any,
-    var absoluteIndex: Int,
-    var hasChildren: Boolean,
-) : ParentDataModifierNode, LayoutIdParentData, Modifier.Node() {
-    override fun Density.modifyParentData(parentData: Any?) = this@TreeViewChildDataNode
 }

@@ -229,7 +229,7 @@ private fun TreeViewExample() {
         label: String,
         enabled: Boolean = true,
         children: (TreeViewScope.() -> Unit)? = null
-    ) = item(children) {
+    ) = item(label, children) {
         TreeViewItem(
             label = label,
             enabled = enabled,
@@ -255,7 +255,7 @@ private fun TreeViewExample() {
                             labelItem("Value 3.2.1.2.1")
                             labelItem("Value 3.2.1.2.2")
                         }
-                        labelItem("Value 3.2.1.2")
+                        labelItem("Value 3.2.1.3")
                     }
                     labelItem("Value 3.2.2") {
                         labelItem("Value 3.2.2.1")
