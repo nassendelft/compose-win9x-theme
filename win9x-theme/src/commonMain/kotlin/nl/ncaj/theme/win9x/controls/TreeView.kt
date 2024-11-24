@@ -113,8 +113,6 @@ fun TreeView(
     showRelationship: Boolean = true,
     content: TreeViewScope.() -> Unit
 ) {
-    val state = rememberLazyListState()
-
 //    val horizontalScroll = rememberScrollState()
 //    val verticalScroll = rememberScrollState()
 //    val scrollbarState = rememberScrollbarState(horizontalScroll, verticalScroll)
@@ -127,7 +125,6 @@ fun TreeView(
         content = content,
         collapsable = collapsable,
         showRelationship = showRelationship,
-        state = state,
         modifier = modifier
             .background(Win9xTheme.colorScheme.buttonHighlight)
 //            .horizontalScroll(horizontalScroll)

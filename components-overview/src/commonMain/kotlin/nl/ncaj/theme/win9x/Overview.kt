@@ -43,7 +43,7 @@ private fun ExampleItem(
     label: String,
     content: @Composable () -> Unit,
 ) {
-    Box(Modifier.size(400.dp).padding(4.dp)) {
+    Box(Modifier.size(200.dp).padding(4.dp)) {
         Grouping(
             label = label,
             modifier = Modifier.fillMaxSize(),
