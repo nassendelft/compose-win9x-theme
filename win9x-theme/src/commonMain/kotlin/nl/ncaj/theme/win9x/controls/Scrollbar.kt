@@ -27,18 +27,9 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
-import androidx.compose.ui.layout.IntrinsicMeasurable
-import androidx.compose.ui.layout.IntrinsicMeasureScope
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.MeasurePolicy
-import androidx.compose.ui.layout.MeasureResult
-import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.constrainHeight
-import androidx.compose.ui.unit.constrainWidth
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -83,9 +74,9 @@ interface ScrollbarAdapter {
      */
     val viewportSize: Double
 
-    val canDecreaseScroll: Boolean
+    val canScrollBackward: Boolean
 
-    val canIncreaseScroll: Boolean
+    val canScrollForward: Boolean
 
     /**
      * Instantly jump to [scrollOffset].
@@ -118,9 +109,9 @@ internal class LazyListScrollbarAdapter(
                 viewportSize.width
         }.toDouble()
 
-    //FIXME
-    override val canDecreaseScroll get() = true
-    override val canIncreaseScroll get() = true
+    override val canScrollBackward get() = scrollState.canScrollBackward
+
+    override val canScrollForward get() = scrollState.canScrollForward
 
     /**
      * Return the first visible line, if any.
@@ -273,8 +264,9 @@ internal class ScrollableScrollbarAdapter(
 ): ScrollbarAdapter {
     override val scrollOffset: Double get() = scrollState.value.toDouble()
 
-    override val canDecreaseScroll by derivedStateOf { scrollState.value != 0 }
-    override val canIncreaseScroll by derivedStateOf { scrollState.value != scrollState.maxValue }
+    override val canScrollBackward get() = scrollState.canScrollBackward
+
+    override val canScrollForward get() = scrollState.canScrollForward
 
     override suspend fun scrollTo(scrollOffset: Double) {
         scrollState.scrollTo(scrollOffset.roundToInt())
@@ -400,7 +392,7 @@ fun ScrollableHost(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable () -> Unit,
 ) {
-    check(verticalScrollbarAdapter != null && horizontalScrollbarAdapter != null) {
+    check(verticalScrollbarAdapter != null || horizontalScrollbarAdapter != null) {
         "Setting both vertical scrollbarAdapter and horizontal scrollbarAdapter to null does not make sense"
     }
 
@@ -586,9 +578,9 @@ private fun Scrollbar(
             Button(
                 onClick = { scope.launch { adapter.scrollBy(-10f) } },
                 borders = innerButtonBorders(),
-                enabled = !disableArrowButtonsIfNotScrollable || adapter.canDecreaseScroll
+                enabled = !disableArrowButtonsIfNotScrollable || adapter.canScrollBackward
             ) {
-                val image = if (disableArrowButtonsIfNotScrollable && !adapter.canDecreaseScroll) {
+                val image = if (disableArrowButtonsIfNotScrollable && !adapter.canScrollBackward) {
                     rememberVectorPainter(Icons.ArrowDownDisabled)
                 } else {
                     rememberVectorPainter(Icons.ArrowDown)
@@ -616,9 +608,9 @@ private fun Scrollbar(
             Button(
                 onClick = { scope.launch { adapter.scrollBy(10f) } },
                 borders = innerButtonBorders(),
-                enabled = !disableArrowButtonsIfNotScrollable || adapter.canIncreaseScroll
+                enabled = !disableArrowButtonsIfNotScrollable || adapter.canScrollForward
             ) {
-                val image = if (disableArrowButtonsIfNotScrollable && !adapter.canIncreaseScroll) {
+                val image = if (disableArrowButtonsIfNotScrollable && !adapter.canScrollForward) {
                     rememberVectorPainter(Icons.ArrowDownDisabled)
                 } else {
                     rememberVectorPainter(Icons.ArrowDown)
