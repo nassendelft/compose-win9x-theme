@@ -400,9 +400,8 @@ fun ScrollableHost(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable () -> Unit,
 ) {
-    if (verticalScrollbarAdapter == null && horizontalScrollbarAdapter != null) {
-        content()
-        return
+    check(verticalScrollbarAdapter != null && horizontalScrollbarAdapter != null) {
+        "Setting both vertical scrollbarAdapter and horizontal scrollbarAdapter to null does not make sense"
     }
 
     Layout(
