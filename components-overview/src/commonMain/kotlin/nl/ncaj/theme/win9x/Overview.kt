@@ -1,9 +1,13 @@
 package nl.ncaj.theme.win9x
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -186,13 +190,15 @@ private fun ListBoxExample() {
 private fun ScrollbarExample() {
     val horizontalScrollState = rememberScrollState()
     val verticalScrollState = rememberScrollState()
-    val scrollbarAdapter = rememberScrollbarState(horizontalScrollState, verticalScrollState)
+    val horizontalScrollbarAdapter = rememberScrollbarAdapter(horizontalScrollState)
+    val verticalScrollbarAdapter = rememberScrollbarAdapter(verticalScrollState)
 
     ScrollableHost(
         modifier = Modifier
             .sunkenBorder()
             .padding(Win9xTheme.borderWidthDp),
-        scrollbarState = scrollbarAdapter,
+        horizontalScrollbarAdapter = horizontalScrollbarAdapter,
+        verticalScrollbarAdapter = verticalScrollbarAdapter,
     ) {
         Text(
             text = "Some text that is repeated multiple times\n".repeat(15),
@@ -260,7 +266,9 @@ private fun TreeViewExample() {
                     labelItem("Value 3.2.2") {
                         labelItem("Value 3.2.2.1")
                         labelItem("Value 3.2.2.2") {
-                            labelItem("Value 3.2.2.2.1")
+                            labelItem("Value 3.2.2.2.1") {
+                                labelItem("Value 3.2.2.2.1.1")
+                            }
                         }
                     }
                 }

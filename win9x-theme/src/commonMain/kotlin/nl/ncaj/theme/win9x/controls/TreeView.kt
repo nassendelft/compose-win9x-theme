@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nl.ncaj.theme.win9x.DashFocusIndication
 import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.sunkenBorder
 
 
 internal class TreeViewItem(
@@ -113,24 +114,24 @@ fun TreeView(
     showRelationship: Boolean = true,
     content: TreeViewScope.() -> Unit
 ) {
-//    val horizontalScroll = rememberScrollState()
-//    val verticalScroll = rememberScrollState()
-//    val scrollbarState = rememberScrollbarState(horizontalScroll, verticalScroll)
-//    ScrollableHost(
-//        scrollbarState = scrollbarState,
-//        modifier = modifier.sunkenBorder()
-//            .padding(Win9xTheme.borderWidthDp)
-//    ) {
-    TreeViewContent(
-        content = content,
-        collapsable = collapsable,
-        showRelationship = showRelationship,
-        modifier = modifier
-            .background(Win9xTheme.colorScheme.buttonHighlight)
-//            .horizontalScroll(horizontalScroll)
-//            .verticalScroll(verticalScroll)
-    )
-//    }
+    val lazyListState = rememberLazyListState()
+    val horizontalScroll = rememberScrollState()
+    ScrollableHost(
+        horizontalScrollbarAdapter = rememberScrollbarAdapter(horizontalScroll),
+        verticalScrollbarAdapter = rememberScrollbarAdapter(lazyListState),
+        modifier = modifier.sunkenBorder()
+            .padding(Win9xTheme.borderWidthDp)
+    ) {
+        TreeViewContent(
+            content = content,
+            collapsable = collapsable,
+            showRelationship = showRelationship,
+            state = lazyListState,
+            modifier = modifier
+                .background(Win9xTheme.colorScheme.buttonHighlight)
+                .horizontalScroll(horizontalScroll)
+        )
+    }
 }
 
 private fun createFlatTreeViewItems(

@@ -3,16 +3,11 @@ package nl.ncaj.theme.win9x.controls
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.awaitHorizontalDragOrCancellation
-import androidx.compose.foundation.gestures.awaitVerticalDragOrCancellation
-import androidx.compose.foundation.gestures.drag
-import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
@@ -54,32 +49,246 @@ import nl.ncaj.theme.win9x.vector.ArrowDown
 import nl.ncaj.theme.win9x.vector.ArrowDownDisabled
 import nl.ncaj.theme.win9x.vector.Icons
 import nl.ncaj.theme.win9x.windowBorder
+import kotlin.js.JsName
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
+/**
+ * Defines how to scroll the scrollable component and how to display a scrollbar for it.
+ *
+ * The values of this interface are typically in pixels, but do not have to be.
+ * It's possible to create an adapter with any scroll range of `Double` values.
+ */
+interface ScrollbarAdapter {
 
-internal class ScrollbarAdapter(
+    // We use `Double` values here in order to allow scrolling both very large (think LazyList with
+    // millions of items) and very small (think something whose natural coordinates are less than 1)
+    // content.
+
+    /**
+     * Scroll offset of the content inside the scrollable component.
+     *
+     * For example, a value of `100` could mean the content is scrolled by 100 pixels from the
+     * start.
+     */
+    val scrollOffset: Double
+
+    /**
+     * The size of the scrollable content, on the scrollable axis.
+     */
+    val contentSize: Double
+
+    /**
+     * The size of the viewport, on the scrollable axis.
+     */
+    val viewportSize: Double
+
+    val canDecreaseScroll: Boolean
+
+    val canIncreaseScroll: Boolean
+
+    /**
+     * Instantly jump to [scrollOffset].
+     *
+     * @param scrollOffset target offset to jump to, value will be coerced to the valid
+     * scroll range.
+     */
+    suspend fun scrollTo(scrollOffset: Double)
+
+    /**
+     * Scroll from the current position by the given amount of pixels.
+     */
+    suspend fun scrollBy(value: Float)
+}
+
+internal class LazyListScrollbarAdapter(
+    private val scrollState: LazyListState
+): ScrollbarAdapter {
+
+    class VisibleLine(
+        val index: Int,
+        val offset: Int
+    )
+
+    override val viewportSize: Double
+        get() = with(scrollState.layoutInfo) {
+            if (orientation == Orientation.Vertical)
+                viewportSize.height
+            else
+                viewportSize.width
+        }.toDouble()
+
+    //FIXME
+    override val canDecreaseScroll get() = true
+    override val canIncreaseScroll get() = true
+
+    /**
+     * Return the first visible line, if any.
+     */
+    fun firstVisibleLine(): VisibleLine? {
+        val firstFloatingVisibleIndex = firstFloatingVisibleItemIndex() ?: return null
+        val firstFloatingItem = scrollState.layoutInfo.visibleItemsInfo[firstFloatingVisibleIndex]
+        return VisibleLine(
+            index = firstFloatingItem.index,
+            offset = firstFloatingItem.offset
+        )
+    }
+
+    /**
+     * Return the total number of lines.
+     */
+    fun totalLineCount(): Int = scrollState.layoutInfo.totalItemsCount
+
+    /**
+     * The sum of content padding (before+after) on the scrollable axis.
+     */
+    fun contentPadding(): Int = with(scrollState.layoutInfo){
+        beforeContentPadding + afterContentPadding
+    }
+
+    /**
+     * Scroll immediately to the given line, and offset it by [scrollOffset] pixels.
+     */
+    suspend fun snapToLine(lineIndex: Int, scrollOffset: Int) {
+        scrollState.scrollToItem(lineIndex, scrollOffset)
+    }
+
+    /**
+     * Scroll from the current position by the given amount of pixels.
+     */
+    override suspend fun scrollBy(value: Float) {
+        scrollState.scrollBy(value)
+    }
+    /**
+     * A heuristic that tries to ignore the "currently stickied" header because it breaks the other
+     * computations in this adapter:
+     * - The currently stickied header always appears in the list of visible items, with its
+     *   regular index. This makes [firstVisibleLine] always return its index, even if the list has
+     *   been scrolled far beyond it.
+     * - [averageVisibleLineSize] calculates the average size in O(1) by assuming that items don't
+     *   overlap, and the stickied item breaks this assumption.
+     *
+     * Attempts to return the index into `visibleItemsInfo` of the first non-currently-stickied (it
+     * could be sticky, but not stickied to the top of the list right now) item, if there is one.
+     *
+     * Note that this heuristic breaks down if the sticky header covers the entire list, so that
+     * it's the only visible item for some portion of the scroll range. But there's currently no
+     * known better way to solve it, and it's a relatively unusual case.
+     */
+    private fun firstFloatingVisibleItemIndex() = with(scrollState.layoutInfo.visibleItemsInfo){
+        when (size) {
+            0 -> null
+            1 -> 0
+            else -> {
+                val first = this[0]
+                val second = this[1]
+                // If either the indices or the offsets aren't continuous, then the first item is
+                // sticky, so we return 1
+                if ((first.index < second.index - 1) ||
+                    (first.offset + first.size + lineSpacing > second.offset))
+                    1
+                else
+                    0
+            }
+        }
+    }
+
+    /**
+     * Return the average size (on the scrollable axis) of the visible lines.
+     */
+    fun averageVisibleLineSize(): Double = with(scrollState.layoutInfo.visibleItemsInfo){
+        val firstFloatingIndex = firstFloatingVisibleItemIndex() ?: return@with 0.0
+        val first = this[firstFloatingIndex]
+        val last = last()
+        val count = size - firstFloatingIndex
+        (last.offset + last.size - first.offset - (count - 1) * lineSpacing).toDouble() / count
+    }
+
+    /**
+     * The spacing between lines.
+     */
+    val lineSpacing: Int get() = scrollState.layoutInfo.mainAxisItemSpacing
+
+    @JsName("averageVisibleLineSizeProperty")
+    private val averageVisibleLineSize by derivedStateOf {
+        if (totalLineCount() == 0)
+            0.0
+        else
+            averageVisibleLineSize()
+    }
+
+    private val averageVisibleLineSizeWithSpacing get() = averageVisibleLineSize + lineSpacing
+
+    override val scrollOffset: Double
+        get() {
+            val firstVisibleLine = firstVisibleLine()
+            return if (firstVisibleLine == null)
+                0.0
+            else
+                firstVisibleLine.index * averageVisibleLineSizeWithSpacing - firstVisibleLine.offset
+        }
+
+    override val contentSize: Double
+        get() {
+            val totalLineCount = totalLineCount()
+            return averageVisibleLineSize * totalLineCount +
+                    lineSpacing * (totalLineCount - 1).coerceAtLeast(0) +
+                    contentPadding()
+        }
+
+    override suspend fun scrollTo(scrollOffset: Double) {
+        val distance = scrollOffset - this.scrollOffset
+
+        // if we scroll less than viewport we need to use scrollBy function to avoid
+        // undesirable scroll jumps (when an item size is different)
+        //
+        // if we scroll more than viewport we should immediately jump to this position
+        // without recreating all items between the current and the new position
+        if (abs(distance) <= viewportSize) {
+            scrollBy(distance.toFloat())
+        } else {
+            snapTo(scrollOffset)
+        }
+    }
+
+    private suspend fun snapTo(scrollOffset: Double) {
+        val scrollOffsetCoerced = scrollOffset.coerceIn(0.0, maxScrollOffset)
+
+        val index = (scrollOffsetCoerced / averageVisibleLineSizeWithSpacing)
+            .toInt()
+            .coerceAtLeast(0)
+            .coerceAtMost(totalLineCount() - 1)
+
+        val offset = (scrollOffsetCoerced - index * averageVisibleLineSizeWithSpacing)
+            .toInt()
+            .coerceAtLeast(0)
+
+        snapToLine(lineIndex = index, scrollOffset = offset)
+    }
+
+}
+
+internal class ScrollableScrollbarAdapter(
     private val scrollState: ScrollState,
-) {
-    var parentSize by mutableStateOf(0)
+): ScrollbarAdapter {
+    override val scrollOffset: Double get() = scrollState.value.toDouble()
 
-    val scrollOffset: Double get() = scrollState.value.toDouble()
+    override val canDecreaseScroll by derivedStateOf { scrollState.value != 0 }
+    override val canIncreaseScroll by derivedStateOf { scrollState.value != scrollState.maxValue }
 
-    val canDecreaseScroll by derivedStateOf { scrollState.value != 0 }
-    val canIncreaseScroll by derivedStateOf { scrollState.value != scrollState.maxValue }
-
-    suspend fun scrollTo(scrollOffset: Double) {
+    override suspend fun scrollTo(scrollOffset: Double) {
         scrollState.scrollTo(scrollOffset.roundToInt())
     }
 
-    suspend fun scrollBy(delta: Double) {
-        scrollState.scrollBy(delta.toFloat())
+    override suspend fun scrollBy(value: Float) {
+        scrollState.scrollBy(value)
     }
 
-    val contentSize: Double
+    override val contentSize: Double
         get() = scrollState.maxValue + viewportSize
 
-    val viewportSize: Double
-        get() = parentSize.toDouble()
+    override val viewportSize: Double
+        get() = scrollState.viewportSize.toDouble()
 }
 
 internal val ScrollbarAdapter.maxScrollOffset: Double
@@ -159,57 +368,64 @@ internal class SliderAdapter(
 // Because k/js and k/wasm don't have runBlocking
 internal expect fun runBlockingIfPossible(block: suspend CoroutineScope.() -> Unit)
 
-class ScrollbarState internal constructor(
-    internal val horizontalScrollbarAdapter: ScrollbarAdapter,
-    internal val verticalScrollbarAdapter: ScrollbarAdapter,
-) {
-
-    internal fun setParentSize(width: Int, height: Int) {
-        horizontalScrollbarAdapter.parentSize = width
-        verticalScrollbarAdapter.parentSize = height
-    }
-}
 
 @Composable
-fun rememberScrollbarState(
-    horizontalScrollState: ScrollState = rememberScrollState(),
-    verticalScrollState: ScrollState = rememberScrollState(),
-) = remember(horizontalScrollState, verticalScrollState) {
-    ScrollbarState(
-        horizontalScrollbarAdapter = ScrollbarAdapter(
-            scrollState = horizontalScrollState,
-        ),
-        verticalScrollbarAdapter = ScrollbarAdapter(
-            scrollState = verticalScrollState,
-        ),
-    )
+fun rememberScrollbarAdapter(
+    scrollState: LazyListState,
+): ScrollbarAdapter = remember(scrollState) {
+    ScrollbarAdapter(scrollState)
 }
+
+fun ScrollbarAdapter(
+    scrollState: LazyListState
+): ScrollbarAdapter = LazyListScrollbarAdapter(scrollState)
+
+@Composable
+fun rememberScrollbarAdapter(
+    scrollState: ScrollState,
+): ScrollbarAdapter = remember(scrollState) {
+    ScrollbarAdapter(scrollState)
+}
+
+fun ScrollbarAdapter(
+    scrollState: ScrollState
+): ScrollbarAdapter = ScrollableScrollbarAdapter(scrollState)
 
 @Composable
 fun ScrollableHost(
     modifier: Modifier = Modifier,
     reverseLayout: Boolean = false,
-    scrollbarState: ScrollbarState = rememberScrollbarState(),
+    horizontalScrollbarAdapter: ScrollbarAdapter? = null,
+    verticalScrollbarAdapter: ScrollbarAdapter? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     content: @Composable () -> Unit,
 ) {
+    if (verticalScrollbarAdapter == null && horizontalScrollbarAdapter != null) {
+        content()
+        return
+    }
+
     Layout(
         content = {
             content()
-            Scrollbar(
-                adapter = scrollbarState.horizontalScrollbarAdapter,
-                isVertical = false,
-                interactionSource = interactionSource,
-                reverseLayout = reverseLayout,
-                disableArrowButtonsIfNotScrollable = false,
-            )
-            Scrollbar(
-                adapter = scrollbarState.verticalScrollbarAdapter,
-                isVertical = true,
-                interactionSource = interactionSource,
-                reverseLayout = reverseLayout,
-                disableArrowButtonsIfNotScrollable = false,
-            )
+            horizontalScrollbarAdapter?.let {
+                Scrollbar(
+                    adapter = it,
+                    isVertical = false,
+                    interactionSource = interactionSource,
+                    reverseLayout = reverseLayout,
+                    disableArrowButtonsIfNotScrollable = false,
+                )
+            }
+            verticalScrollbarAdapter?.let {
+                Scrollbar(
+                    adapter = it,
+                    isVertical = true,
+                    interactionSource = interactionSource,
+                    reverseLayout = reverseLayout,
+                    disableArrowButtonsIfNotScrollable = false,
+                )
+            }
         },
         modifier = modifier,
         measurePolicy = object : MeasurePolicy {
@@ -217,31 +433,36 @@ fun ScrollableHost(
                 measurables: List<Measurable>,
                 constraints: Constraints
             ): MeasureResult {
-                check(measurables.size == 3) { "A ScrollableHost requires content" }
-
                 val contentMeasurable = measurables[0]
-                val horizontalMeasurable = measurables[1]
-                val verticalMeasurable = measurables[2]
+                val horizontalMeasurable = if(horizontalScrollbarAdapter != null) measurables[1] else null
+                val verticalMeasurable = if(horizontalScrollbarAdapter != null && verticalScrollbarAdapter != null)
+                    measurables[2]
+                else if(horizontalScrollbarAdapter == null && verticalScrollbarAdapter != null)
+                    measurables[1]
+                else null
+
 
                 val maxWidth = constraints.maxWidth
                 val maxHeight = constraints.maxHeight
 
                 val showVerticalScroll = constraints.hasBoundedWidth
-                        && contentMeasurable.maxIntrinsicHeight(maxWidth) > maxWidth
+                        && (verticalScrollbarAdapter?.contentSize ?: 0.0) > maxWidth
                 val showHorizontalScroll = constraints.hasBoundedHeight
-                        && contentMeasurable.maxIntrinsicWidth(maxHeight) > maxHeight
+                        && (horizontalScrollbarAdapter?.contentSize ?: 0.0) > maxHeight
 
-                val horizontalScrollPlaceable = if (showHorizontalScroll) {
-                    val offset =
-                        if (showVerticalScroll) verticalMeasurable.maxIntrinsicWidth(maxWidth)
-                        else 0
+                val horizontalScrollPlaceable = if (showHorizontalScroll && horizontalMeasurable != null) {
+                    val offset = if (showVerticalScroll && verticalMeasurable != null)
+                        verticalMeasurable.maxIntrinsicWidth(maxWidth)
+                    else
+                        0
                     horizontalMeasurable.measure(Constraints.fixedWidth(maxWidth - offset))
                 } else null
 
-                val verticalScrollPlaceable = if (showVerticalScroll) {
-                    val offset =
-                        if (showHorizontalScroll) horizontalMeasurable.maxIntrinsicHeight(maxHeight)
-                        else 0
+                val verticalScrollPlaceable = if (showVerticalScroll && verticalMeasurable != null) {
+                    val offset = if (showHorizontalScroll && horizontalMeasurable != null)
+                        horizontalMeasurable.maxIntrinsicHeight(maxHeight)
+                    else
+                        0
                     verticalMeasurable.measure(Constraints.fixedHeight(maxHeight - offset))
                 } else null
 
@@ -253,7 +474,6 @@ fun ScrollableHost(
                 )
 
                 val contentPlaceable = contentMeasurable.measure(contentConstraints)
-                scrollbarState.setParentSize(contentPlaceable.width, contentPlaceable.height)
 
                 val width = contentPlaceable.width + verticalWidth
                 val height = contentPlaceable.height + horizontalHeight
@@ -297,7 +517,7 @@ fun HorizontalScrollBar(
     disableArrowButtonsIfNotScrollable: Boolean = true,
 ) = Scrollbar(
     modifier = modifier,
-    adapter = ScrollbarAdapter(scrollState),
+    adapter = ScrollableScrollbarAdapter(scrollState),
     interactionSource = interactionSource,
     reverseLayout = reverseLayout,
     isVertical = false,
@@ -313,7 +533,7 @@ fun VerticalScrollBar(
     disableArrowButtonsIfNotScrollable: Boolean = true,
 ) = Scrollbar(
     modifier = modifier,
-    adapter = ScrollbarAdapter(scrollState),
+    adapter = ScrollableScrollbarAdapter(scrollState),
     interactionSource = interactionSource,
     reverseLayout = reverseLayout,
     isVertical = true,
@@ -377,7 +597,7 @@ private fun Scrollbar(
         content = {
             // decrease button
             Button(
-                onClick = { scope.launch { adapter.scrollBy(-10.0) } },
+                onClick = { scope.launch { adapter.scrollBy(-10f) } },
                 borders = innerButtonBorders(),
                 enabled = !disableArrowButtonsIfNotScrollable || adapter.canDecreaseScroll
             ) {
@@ -407,7 +627,7 @@ private fun Scrollbar(
 
             // increase button
             Button(
-                onClick = { scope.launch { adapter.scrollBy(10.0) } },
+                onClick = { scope.launch { adapter.scrollBy(10f) } },
                 borders = innerButtonBorders(),
                 enabled = !disableArrowButtonsIfNotScrollable || adapter.canIncreaseScroll
             ) {
