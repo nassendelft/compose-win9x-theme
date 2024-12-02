@@ -2,21 +2,16 @@ package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.DashFocusIndication
+import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.buttonNormalBorder
 import nl.ncaj.theme.win9x.buttonPressedBorder
@@ -54,7 +49,7 @@ fun OptionSetButton(
                 indication = null,
                 onClick = { onSetChanged(!set) },
             )
-            .indication(interactionSource, DashFocusIndication(3.dp))
+            .dashFocusIndication(interactionSource, padding = 3.dp)
             .padding(defaultPadding)
             .then(if ((enabled && isPressed) || set) Modifier.offset(1.dp, 1.dp) else Modifier),
         contentAlignment = Alignment.Center,

@@ -11,11 +11,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import nl.ncaj.theme.win9x.DashFocusIndication
+import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
+import nl.ncaj.theme.win9x.SelectionIndication.Companion.selectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.sunkenBorder
 
@@ -56,9 +58,9 @@ fun TreeViewItem(
     modifier: Modifier = Modifier,
     leadingIcon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = MutableInteractionSource(),
     onClick: (() -> Unit)? = null,
 ) {
+    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     Row(
@@ -93,15 +95,8 @@ fun TreeViewItem(
             text = label,
             style = textStyle,
             modifier = Modifier
-                .then(
-                    if (isFocused) Modifier.background(Win9xTheme.colorScheme.selection)
-                    else Modifier
-                )
-                .focusable(enabled, interactionSource)
-                .indication(
-                    indication = DashFocusIndication.DashFocusIndicationNoPadding,
-                    interactionSource = interactionSource
-                )
+                .selectionIndication(interactionSource)
+                .dashFocusIndication(interactionSource)
                 .padding(horizontal = 1.dp, vertical = 2.dp)
         )
     }
@@ -227,6 +222,7 @@ private fun TreeViewContent(
                             .padding(start = (depthInset * item.depth) + 4.dp)
                             .size(12.dp)
                             .align(Alignment.CenterStart)
+                            .focusProperties { canFocus = false }
                     )
                 }
 

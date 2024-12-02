@@ -1,18 +1,15 @@
 package nl.ncaj.theme.win9x
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.controls.*
+import nl.ncaj.theme.win9x.controls.rememberScrollbarAdapter
 import org.jetbrains.compose.resources.painterResource
 import win9x.components_overview.generated.resources.Res
 import win9x.components_overview.generated.resources.directory_open
@@ -240,7 +237,7 @@ private fun TreeViewExample() {
             label = label,
             enabled = enabled,
             leadingIcon = { Image(painterResource(Res.drawable.directory_open), contentDescription = "") },
-            onClick = {}
+            onClick = { },
         )
     }
 

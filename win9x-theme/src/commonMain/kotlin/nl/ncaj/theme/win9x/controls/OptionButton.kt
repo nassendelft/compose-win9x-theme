@@ -3,14 +3,9 @@ package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -20,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.DashFocusIndication.Companion.DashFocusIndicationNoPadding
+import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.vector.Backgrounds
 import nl.ncaj.theme.win9x.vector.Icons
@@ -68,7 +63,7 @@ fun OptionButton(
         }
         Spacer(modifier = Modifier.width(6.dp))
         Box(
-            modifier = Modifier.indication(interactionSource, DashFocusIndicationNoPadding),
+            modifier = Modifier.dashFocusIndication(interactionSource),
             content = label
         )
     }
