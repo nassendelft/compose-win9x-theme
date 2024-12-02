@@ -144,7 +144,7 @@ class SelectionIndication private constructor(private val color: Color) : Indica
 }
 
 // draws a dotted line border *over* the content
-class DashFocusIndication private constructor(
+class DashFocusIndication(
     private val padding: Dp = Dp.Unspecified
 ) : IndicationNodeFactory {
 
