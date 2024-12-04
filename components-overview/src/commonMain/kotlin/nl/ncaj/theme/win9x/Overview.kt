@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.controls.*
 import nl.ncaj.theme.win9x.controls.rememberScrollbarAdapter
@@ -36,6 +37,7 @@ fun Overview(modifier: Modifier = Modifier) {
         item { ExampleItem("Dropdown ListBox") { DropDownListBoxExample() } }
         item { ExampleItem("ComboBox") { ComboBoxExample() } }
         item { ExampleItem("DropDownComboBox") { DropDownComboBoxExample() } }
+        item { ExampleItem("ListView") { ListViewExample() } }
     }
 }
 
@@ -368,6 +370,43 @@ private fun DropDownComboBoxExample() {
                     label = it,
                     onSelected = { value = it },
                     selected = value == it
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ListViewExample() {
+    val listViewState = rememberListViewState()
+    val icon = painterResource(Res.drawable.directory_open)
+
+    Column {
+        ListView(
+            modifier = Modifier.weight(1f),
+            state = listViewState,
+            columns = listOf(ListViewColumn("Name"), ListViewColumn("Details"), ListViewColumn("Extra"))
+        ) {
+            for (i in 1..6) {
+                item(listOf("Item $i", "description", "some data"), icon)
+            }
+            item(listOf("Item unknown", "description", "some data"), icon)
+            for (i in 8..20) {
+                item(listOf("Item $i", "description", "some data"), icon)
+            }
+        }
+        FlowRow(
+            modifier = Modifier.padding(top = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            ListViewViewState.entries.forEachIndexed { index, viewState ->
+                OptionButton(
+                    checked = viewState == listViewState.viewState,
+                    onCheckChange = { listViewState.viewState = viewState },
+                    label = { Text(viewState.name) },
+                    modifier = if (index == ListViewViewState.entries.size-1) Modifier
+                    else Modifier.padding(end = 4.dp)
                 )
             }
         }
