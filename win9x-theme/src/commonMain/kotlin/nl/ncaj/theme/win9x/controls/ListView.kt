@@ -1,6 +1,9 @@
 package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -13,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
@@ -20,6 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
+import nl.ncaj.theme.win9x.DashedVerticalLine
 import nl.ncaj.theme.win9x.SelectionIndication.Companion.selectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.sunkenBorder
@@ -298,9 +304,11 @@ private fun DetailsListView(
     modifier: Modifier = Modifier,
 ) = with(LocalDensity.current) {
     val defaultColumnWidth = 100.dp
-    val columnWidths by remember(columns) { mutableStateOf(columns.map { defaultColumnWidth }) }
+    val columnWidths = mutableStateListOf(*columns.map { defaultColumnWidth }.toTypedArray())
     var listWidth by remember { mutableIntStateOf(0) }
     val lastColumnWidth by derivedStateOf { max(0, listWidth - columnWidths.sumOf { it.roundToPx() }) }
+    var draggingIndex by remember { mutableIntStateOf(-1) }
+    var offsetX by remember { mutableStateOf(0f) }
 
     val columnState = rememberLazyListState()
     val horizontalScroll = rememberScrollState()
@@ -310,39 +318,71 @@ private fun DetailsListView(
         modifier = modifier.sunkenBorder()
             .padding(Win9xTheme.borderWidthDp)
     ) {
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .background(Color.White)
                 .onSizeChanged { listWidth = it.width }
                 .horizontalScroll(horizontalScroll),
-            state = columnState,
         ) {
-            stickyHeader {
-                Row(
-                    modifier = Modifier.height(IntrinsicSize.Max)
-                ) {
-                    columns.forEachIndexed { index, column ->
+            LazyColumn(
+                state = columnState,
+            ) {
+                stickyHeader {
+                    Row(
+                        modifier = Modifier.height(IntrinsicSize.Max)
+                    ) {
+                        columns.forEachIndexed { index, column ->
+                            Box {
+                                ColumnHeading(
+                                    label = column.label,
+                                    icon = column.icon,
+                                    horizontalArrangement = column.horizontalArrangement,
+                                    onclick = column.onclick,
+                                    modifier = Modifier.fillMaxHeight().width(columnWidths[index]),
+                                )
+                                Spacer(
+                                    modifier = Modifier.width(4.dp)
+                                        .fillMaxHeight()
+                                        .align(Alignment.TopEnd)
+                                        .pointerHoverIcon(PointerIcon.Crosshair)
+                                        .draggable(
+                                            state = rememberDraggableState { delta ->
+                                                offsetX += delta
+                                            },
+                                            orientation = Orientation.Horizontal,
+                                            startDragImmediately = true,
+                                            onDragStarted = { draggingIndex = index },
+                                            onDragStopped = {
+                                                columnWidths[index] =
+                                                    max(0f, columnWidths[index].toPx() + offsetX).toDp()
+                                                draggingIndex = -1
+                                                offsetX = 0f
+                                            }
+                                        )
+                                )
+                            }
+                        }
                         ColumnHeading(
-                            label = column.label,
-                            icon = column.icon,
-                            horizontalArrangement = column.horizontalArrangement,
-                            onclick = column.onclick,
-                            modifier = Modifier.fillMaxHeight().width(columnWidths[index]),
+                            label = "",
+                            modifier = Modifier.fillMaxHeight().width(lastColumnWidth.toDp()),
                         )
                     }
-                    ColumnHeading(
-                        label = "",
-                        modifier = Modifier.fillMaxHeight().width(lastColumnWidth.toDp()),
+                }
+                items(items) { item ->
+                    DetailsItem(
+                        labels = item.labels,
+                        icon = item.icon,
+                        enabled = item.enabled,
+                        onClick = item.onClick,
+                        columnWidths = columnWidths,
                     )
                 }
             }
-            items(items) { item ->
-                DetailsItem(
-                    labels = item.labels,
-                    icon = item.icon,
-                    enabled = item.enabled,
-                    onClick = item.onClick,
-                    columnWidths = columnWidths,
+            if (draggingIndex != -1) {
+                val x = columnWidths.take(draggingIndex + 1).sumOf { it.roundToPx() } + offsetX
+                DashedVerticalLine(
+                    modifier = Modifier.fillMaxHeight()
+                        .offset(x = x.toDp())
                 )
             }
         }
@@ -361,10 +401,14 @@ private fun ColumnHeading(
     val isPressed by interactionSource.collectIsPressedAsState()
     val borders = defaultButtonBorders()
     Row(
-        modifier = modifier.clickable(
-            interactionSource = interactionSource,
-            indication = null
-        ) { onclick() }
+        horizontalArrangement = horizontalArrangement,
+        modifier = modifier
+            .defaultMinSize(minHeight = 15.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onclick
+            )
             .background(Win9xTheme.colorScheme.buttonFace)
             .then(
                 if (isPressed) Modifier.win9xBorder(borders.pressed)
@@ -375,12 +419,14 @@ private fun ColumnHeading(
                 else Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
             )
             .then(if (isPressed) Modifier.offset(1.dp, 1.dp) else Modifier),
-        horizontalArrangement = horizontalArrangement,
     ) {
         icon?.let { Image(icon, contentDescription = null) }
         Text(
             text = label,
             style = Win9xTheme.typography.default.copy(fontSize = 12.sp),
+            maxLines = 1,
+            minLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

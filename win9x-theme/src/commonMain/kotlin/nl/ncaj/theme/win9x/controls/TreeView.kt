@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
+import nl.ncaj.theme.win9x.DashedHorizontalLine
+import nl.ncaj.theme.win9x.DashedVerticalLine
 import nl.ncaj.theme.win9x.SelectionIndication.Companion.selectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.sunkenBorder
@@ -258,38 +260,6 @@ private fun ExpandToggle(
             text = if (expanded) "-" else "+",
             style = Win9xTheme.typography.default.copy(fontSize = 11.sp),
             modifier = Modifier.offset(0.5.dp, (-0.5).dp)
-        )
-    }
-}
-
-private val dashPathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f), 0f)
-
-@Composable
-private fun DashedVerticalLine(
-    modifier: Modifier = Modifier,
-) {
-    val dashColor = Win9xTheme.colorScheme.buttonShadow
-    Canvas(modifier) {
-        drawLine(
-            color = dashColor,
-            start = Offset(size.width / 2, 0f),
-            end = Offset(size.width / 2, size.height),
-            pathEffect = dashPathEffect
-        )
-    }
-}
-
-@Composable
-private fun DashedHorizontalLine(
-    modifier: Modifier = Modifier,
-) {
-    val dashColor = Win9xTheme.colorScheme.buttonShadow
-    Canvas(modifier) {
-        drawLine(
-            color = dashColor,
-            start = Offset(0f, size.height / 2),
-            end = Offset(size.width, size.height / 2),
-            pathEffect = dashPathEffect
         )
     }
 }
