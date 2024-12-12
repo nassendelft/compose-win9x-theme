@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.controls.*
 import nl.ncaj.theme.win9x.controls.rememberScrollbarAdapter
@@ -379,13 +378,13 @@ private fun DropDownComboBoxExample() {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ListViewExample() {
-    val listViewState = rememberListViewState()
+    var selectedViewState by remember { mutableStateOf(ListViewViewState.LargeIcons) }
     val icon = painterResource(Res.drawable.directory_open)
 
     Column {
         ListView(
             modifier = Modifier.weight(1f),
-            state = listViewState,
+            viewState = selectedViewState,
             columns = listOf(ListViewColumn("Name"), ListViewColumn("Details"), ListViewColumn("Extra"))
         ) {
             for (i in 1..6) {
@@ -402,8 +401,8 @@ private fun ListViewExample() {
         ) {
             ListViewViewState.entries.forEachIndexed { index, viewState ->
                 OptionButton(
-                    checked = viewState == listViewState.viewState,
-                    onCheckChange = { listViewState.viewState = viewState },
+                    checked = viewState == selectedViewState,
+                    onCheckChange = { selectedViewState = viewState },
                     label = { Text(viewState.name) },
                     modifier = if (index == ListViewViewState.entries.size-1) Modifier
                     else Modifier.padding(end = 4.dp)

@@ -1,36 +1,24 @@
 package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
-import nl.ncaj.theme.win9x.DashedVerticalLine
 import nl.ncaj.theme.win9x.SelectionIndication.Companion.selectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.component.Table
 import nl.ncaj.theme.win9x.sunkenBorder
 import nl.ncaj.theme.win9x.win9xBorder
-import kotlin.math.max
 
 internal class ListViewItem internal constructor(
     val labels: List<String>,
@@ -71,24 +59,16 @@ class ListViewScope internal constructor(private val columnSize: Int) {
 
 enum class ListViewViewState { LargeIcons, SmallIcons, List, Details }
 
-class ListViewState(viewState: ListViewViewState = ListViewViewState.LargeIcons) {
-    var viewState by mutableStateOf(viewState)
-}
-
-@Composable
-fun rememberListViewState(viewState: ListViewViewState = ListViewViewState.LargeIcons) =
-    remember { ListViewState(viewState) }
-
 @Composable
 fun ListView(
     modifier: Modifier = Modifier,
     columns: List<ListViewColumn> = listOf(defaultColumn),
-    state: ListViewState = rememberListViewState(),
+    viewState: ListViewViewState = ListViewViewState.LargeIcons,
     content: ListViewScope.() -> Unit
 ) {
     val items = ListViewScope(columns.size).apply(content).items
 
-    when (state.viewState) {
+    when (viewState) {
         ListViewViewState.LargeIcons -> FlowRowListView(modifier) {
             items.forEach { item -> LargeIconItem(item.labels.first(), item.icon, item.enabled) }
         }
@@ -102,68 +82,6 @@ fun ListView(
         }
 
         ListViewViewState.Details -> DetailsListView(columns, items, modifier)
-    }
-}
-
-@Composable
-private fun DetailsItem(
-    labels: List<String>,
-    icon: Painter,
-    enabled: Boolean,
-    onClick: () -> Unit,
-    columnWidths: List<Dp>,
-    modifier: Modifier = Modifier,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-) {
-    val isFocused by interactionSource.collectIsFocusedAsState()
-    Row(modifier) {
-        labels.forEachIndexed { index, label ->
-            if (index == 0) {
-                val textStyle = when {
-                    !enabled -> Win9xTheme.typography.disabled
-                    isFocused -> Win9xTheme.typography.caption
-                    else -> Win9xTheme.typography.default
-                }
-
-                Row(
-                    modifier = Modifier
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null
-                        ) { onClick() }
-                        .width(columnWidths[index])
-                        .padding(horizontal = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Image(
-                        painter = icon,
-                        modifier = Modifier.size(18.dp),
-                        contentDescription = ""
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text(
-                        text = label,
-                        style = textStyle.copy(fontSize = 12.sp),
-                        minLines = 1,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .selectionIndication(interactionSource)
-                            .dashFocusIndication(interactionSource)
-                            .padding(horizontal = 1.dp, vertical = 2.dp)
-                    )
-                }
-            } else {
-                Text(
-                    text = label,
-                    style = Win9xTheme.typography.default.copy(fontSize = 12.sp),
-                    modifier = Modifier.width(columnWidths[index]).padding(horizontal = 4.dp),
-                    minLines = 1,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
     }
 }
 
@@ -254,6 +172,50 @@ private fun SmallIconItem(
     }
 }
 
+@Composable
+private fun ListViewItem(
+    label: String,
+    icon: Painter,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    onclick: () -> Unit = {},
+) {
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val textStyle = when {
+        !enabled -> Win9xTheme.typography.disabled
+        isFocused -> Win9xTheme.typography.caption
+        else -> Win9xTheme.typography.default
+    }
+
+    Row(
+        modifier = modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null
+        ) { onclick() },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            painter = icon,
+            modifier = Modifier.size(18.dp),
+            contentDescription = ""
+        )
+        Spacer(Modifier.width(4.dp))
+        Text(
+            text = label,
+            style = textStyle.copy(fontSize = 12.sp),
+            maxLines = 1,
+            minLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .selectionIndication(interactionSource)
+                .dashFocusIndication(interactionSource)
+                .padding(horizontal = 1.dp, vertical = 2.dp)
+        )
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FlowColumnListView(
@@ -296,94 +258,50 @@ private fun FlowRowListView(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun DetailsListView(
     columns: List<ListViewColumn>,
-    items: List<ListViewItem>,
+    items: MutableList<ListViewItem>,
     modifier: Modifier = Modifier,
-) = with(LocalDensity.current) {
-    val defaultColumnWidth = 100.dp
-    val columnWidths = mutableStateListOf(*columns.map { defaultColumnWidth }.toTypedArray())
-    var listWidth by remember { mutableIntStateOf(0) }
-    val lastColumnWidth by derivedStateOf { max(0, listWidth - columnWidths.sumOf { it.roundToPx() }) }
-    var draggingIndex by remember { mutableIntStateOf(-1) }
-    var offsetX by remember { mutableStateOf(0f) }
-
-    val columnState = rememberLazyListState()
+) {
+    val verticalScroll = rememberScrollState()
     val horizontalScroll = rememberScrollState()
     ScrollableHost(
-        verticalScrollbarAdapter = rememberScrollbarAdapter(columnState),
         horizontalScrollbarAdapter = rememberScrollbarAdapter(horizontalScroll),
+        verticalScrollbarAdapter = rememberScrollbarAdapter(verticalScroll),
         modifier = modifier.sunkenBorder()
             .padding(Win9xTheme.borderWidthDp)
     ) {
-        Box(
-            modifier = Modifier
-                .background(Color.White)
-                .onSizeChanged { listWidth = it.width }
-                .horizontalScroll(horizontalScroll),
+        Table(
+            modifier = modifier.background(Color.White),
+            horizontalScrollState = horizontalScroll,
+            verticalScrollState = verticalScroll,
+            columns = columns.size,
         ) {
-            LazyColumn(
-                state = columnState,
-            ) {
-                stickyHeader {
-                    Row(
-                        modifier = Modifier.height(IntrinsicSize.Max)
-                    ) {
-                        columns.forEachIndexed { index, column ->
-                            Box {
-                                ColumnHeading(
-                                    label = column.label,
-                                    icon = column.icon,
-                                    horizontalArrangement = column.horizontalArrangement,
-                                    onclick = column.onclick,
-                                    modifier = Modifier.fillMaxHeight().width(columnWidths[index]),
-                                )
-                                Spacer(
-                                    modifier = Modifier.width(4.dp)
-                                        .fillMaxHeight()
-                                        .align(Alignment.TopEnd)
-                                        .pointerHoverIcon(PointerIcon.Crosshair)
-                                        .draggable(
-                                            state = rememberDraggableState { delta ->
-                                                offsetX += delta
-                                            },
-                                            orientation = Orientation.Horizontal,
-                                            startDragImmediately = true,
-                                            onDragStarted = { draggingIndex = index },
-                                            onDragStopped = {
-                                                columnWidths[index] =
-                                                    max(0f, columnWidths[index].toPx() + offsetX).toDp()
-                                                draggingIndex = -1
-                                                offsetX = 0f
-                                            }
-                                        )
-                                )
-                            }
-                        }
-                        ColumnHeading(
-                            label = "",
-                            modifier = Modifier.fillMaxHeight().width(lastColumnWidth.toDp()),
+            headingRow { columnIndex ->
+                val column = columns[columnIndex]
+                ColumnHeading(
+                    label = column.label,
+                    icon = column.icon,
+                    horizontalArrangement = column.horizontalArrangement,
+                    onclick = column.onclick,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            items.forEach { item ->
+                itemRow { columnIndex ->
+                    if (columnIndex == 0) {
+                        ListViewItem(item.labels[columnIndex], item.icon, item.enabled)
+                    } else {
+                        Text(
+                            text = item.labels[columnIndex],
+                            style = Win9xTheme.typography.default.copy(fontSize = 12.sp),
+                            minLines = 1,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
-                items(items) { item ->
-                    DetailsItem(
-                        labels = item.labels,
-                        icon = item.icon,
-                        enabled = item.enabled,
-                        onClick = item.onClick,
-                        columnWidths = columnWidths,
-                    )
-                }
-            }
-            if (draggingIndex != -1) {
-                val x = columnWidths.take(draggingIndex + 1).sumOf { it.roundToPx() } + offsetX
-                DashedVerticalLine(
-                    modifier = Modifier.fillMaxHeight()
-                        .offset(x = x.toDp())
-                )
             }
         }
     }
