@@ -8,11 +8,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import nl.ncaj.theme.win9x.component.IcoImage
 import nl.ncaj.theme.win9x.controls.*
 import nl.ncaj.theme.win9x.controls.rememberScrollbarAdapter
-import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import win9x.components_overview.generated.resources.Res
-import win9x.components_overview.generated.resources.directory_open
 
 @Composable
 fun Overview(modifier: Modifier = Modifier) {
@@ -224,6 +224,7 @@ private fun SpinBoxExample() {
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun TreeViewExample() {
     var collapsable by remember { mutableStateOf(true) }
@@ -237,7 +238,10 @@ private fun TreeViewExample() {
         TreeViewItem(
             label = label,
             enabled = enabled,
-            leadingIcon = { Image(painterResource(Res.drawable.directory_open), contentDescription = "") },
+            leadingIcon = {
+                val icon = suspend { Res.readBytes("files/directory_open.ico") }
+                IcoImage(icon, contentDescription = null) }
+            ,
             onClick = { },
         )
     }
@@ -375,11 +379,11 @@ private fun DropDownComboBoxExample() {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
 @Composable
 private fun ListViewExample() {
     var selectedViewState by remember { mutableStateOf(ListViewViewState.LargeIcons) }
-    val icon = painterResource(Res.drawable.directory_open)
+    val icon = suspend { Res.readBytes("files/directory_open.ico") }
 
     Column {
         ListView(

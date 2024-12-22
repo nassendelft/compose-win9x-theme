@@ -1,15 +1,37 @@
-package nl.ncaj.reader.ico
+package nl.ncaj.theme.win9x.component
 
 import kotlinx.io.*
-import kotlinx.io.bytestring.ByteString
 import kotlin.math.ceil
 
+class Ico internal constructor(
+    val type: IconType,
+    val images: List<IcoImage>
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
+        if (this::class != other::class) return false
 
-class IcoImage(
+        other as Ico
+
+        if (type != other.type) return false
+        if (images != other.images) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = type.hashCode()
+        result = 31 * result + images.hashCode()
+        return result
+    }
+}
+
+class IcoImage internal constructor(
     val data: IntArray,
     val width: Int,
     val height: Int,
-    val bitCount: Int,
+    val colorCount: Int,
 )
 
 // https://en.wikipedia.org/wiki/ICO_(file_format)
@@ -17,21 +39,23 @@ class IcoImage(
 // https://devblogs.microsoft.com/oldnewthing/20101018-00/?p=12513
 object IcoReader {
 
-    fun read(file: ByteString): List<IcoImage> {
+    fun read(file: ByteArray): Ico {
         val headerSource = Buffer().also { it.write(file, 2, 6) } as Source
         val iconType = IconType.fromIndex(headerSource.readShortLe())
         val imageCount = headerSource.readShortLe()
 
         val imageDirectorySource = Buffer().also { it.write(file, 6, 6 + (16 * imageCount)) } as Source
-        return imageDirectorySource.readEntries(iconType, imageCount)
+        val images = imageDirectorySource.readEntries(iconType, imageCount)
             .map { entry ->
                 Buffer().also { it.write(file, entry.offset, entry.offset + entry.size) }.readImage(entry)
             }
+        return Ico(iconType, images)
     }
 
     private fun Source.readImage(entry: IconDirectoryEntry): IcoImage {
         check(entry is IconDirectoryEntry.Icon) { "Cursor entry is not supported" }
 
+        // BitmapInfoHeader data
         check(readIntLe() == 40) { "Not a valid BitmapInfoHeader, PNG is not supported" }
         val width = readIntLe() // Width of the bitmap in pixels
         val height = readIntLe() // Height of the bitmap in pixels
@@ -53,12 +77,14 @@ object IcoReader {
         check(listOf(1, 4, 8, 16, 24, 32).contains(bitCount)) { "Bit count must be one of 1, 4, 8, 16, 24, 32" }
         check(bitCount < 24) { "Only 1, 4, 8 and 16 bits images are supported" }
 
-        val colorPalette = (0 until colorUsed).map { readIntLe() or (0xFF shl 24) }
         val image = IntArray(entry.width * entry.height)
+
+        // color palette data
+        val colorPalette = (0 until colorUsed).map { readIntLe() or (0xFF shl 24) }
 
         // pixel data
         val pixelsPerByte = 8 / entry.bitsPerPixel
-        for (y in entry.height-1 downTo  0) {
+        for (y in entry.height - 1 downTo 0) {
             val byteCount = (ceil(entry.width * entry.bitsPerPixel / 32.0) * 4).toInt()
             val row = readByteString(byteCount)
             for (x in 0 until entry.width) {
@@ -70,21 +96,21 @@ object IcoReader {
         }
 
         // mask data
-        val maskSize = (entry.width * entry.height) / 8
-        val maskData = readByteString(maskSize)
-        for (y in entry.height-1 downTo  0) {
+        for (y in entry.height - 1 downTo 0) {
+            val byteCount = (ceil(entry.width / 32.0) * 4).toInt()
+            val row = readByteString(byteCount)
             for (x in 0 until entry.width) {
-                val pixelIndex = (y * width + x)
-                val maskByteIndex = (y * width + x) / 8
-                val maskBitIndex = (y * width + x) % 8
-                if (maskData[maskByteIndex].toInt() and (1 shl maskBitIndex) != 0) {
+                val pixelIndex = y * entry.width + x
+                val maskByte = row[x / 8].toInt()
+                val maskBitIndex = 8 - (x % 8)
+                if (maskByte and (1 shl maskBitIndex) != 0) {
                     // set alpha to 0 (transparent)
                     image[pixelIndex] = image[pixelIndex] and 0x00FFFFFF
                 }
             }
         }
 
-        return IcoImage(image, entry.width, entry.height, entry.bitsPerPixel)
+        return IcoImage(image, entry.width, entry.height, colorUsed)
     }
 
     private fun Source.readEntries(
@@ -120,10 +146,10 @@ object IcoReader {
 }
 
 
-private enum class IconType {
+enum class IconType {
     ICON, CURSOR;
 
-    companion object {
+    internal companion object {
         fun fromIndex(index: Short): IconType = when (index) {
             1.toShort() -> ICON
             2.toShort() -> CURSOR

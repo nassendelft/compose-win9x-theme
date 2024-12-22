@@ -10,19 +10,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
 import nl.ncaj.theme.win9x.SelectionIndication.Companion.selectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.component.IcoImage
 import nl.ncaj.theme.win9x.component.Table
 import nl.ncaj.theme.win9x.sunkenBorder
 import nl.ncaj.theme.win9x.win9xBorder
 
 internal class ListViewItem internal constructor(
     val labels: List<String>,
-    val icon: Painter,
+    val icon: suspend () -> ByteArray,
     val enabled: Boolean,
     val onClick: () -> Unit,
 )
@@ -41,14 +43,14 @@ class ListViewScope internal constructor(private val columnSize: Int) {
 
     fun item(
         label: String,
-        icon: Painter,
+        icon: suspend () -> ByteArray,
         enabled: Boolean = true,
         onClick: () -> Unit = {},
     ) = item(listOf(label), icon, enabled, onClick)
 
     fun item(
         labels: List<String>,
-        icon: Painter,
+        icon: suspend () -> ByteArray,
         enabled: Boolean = true,
         onClick: () -> Unit = {},
     ) {
@@ -88,7 +90,7 @@ fun ListView(
 @Composable
 private fun LargeIconItem(
     label: String,
-    icon: Painter,
+    icon: suspend () -> ByteArray,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -110,8 +112,8 @@ private fun LargeIconItem(
             ) { onclick() },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Image(
-            painter = icon,
+        IcoImage(
+            data = icon,
             modifier = Modifier.size(36.dp),
             contentDescription = ""
         )
@@ -132,7 +134,7 @@ private fun LargeIconItem(
 @Composable
 private fun SmallIconItem(
     label: String,
-    icon: Painter,
+    icon: suspend () -> ByteArray,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -154,8 +156,8 @@ private fun SmallIconItem(
             ) { onclick() },
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Image(
-                painter = icon,
+            IcoImage(
+                data = icon,
                 modifier = Modifier.size(18.dp),
                 contentDescription = ""
             )
@@ -175,7 +177,7 @@ private fun SmallIconItem(
 @Composable
 private fun ListViewItem(
     label: String,
-    icon: Painter,
+    icon: suspend () -> ByteArray,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -196,8 +198,8 @@ private fun ListViewItem(
         ) { onclick() },
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = icon,
+        IcoImage(
+            data = icon,
             modifier = Modifier.size(18.dp),
             contentDescription = ""
         )

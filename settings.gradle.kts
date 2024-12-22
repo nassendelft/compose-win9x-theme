@@ -7,7 +7,7 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+//    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "win9x"
-include(":win9x-theme", ":components-overview", ":ico-reader")
+include(":win9x-theme", ":components-overview")
