@@ -240,8 +240,8 @@ private fun TreeViewExample() {
             enabled = enabled,
             leadingIcon = {
                 val icon = suspend { Res.readBytes("files/directory_open.ico") }
-                IcoImage(icon, contentDescription = null) }
-            ,
+                IcoImage(icon, contentDescription = null)
+            },
             onClick = { },
         )
     }
@@ -379,36 +379,91 @@ private fun DropDownComboBoxExample() {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
+enum class ListViewState { LargeIcon, SmallIcon, List, Details }
+class ListViewItem(val label: String, val description: String, val data: String, val icon: suspend () -> ByteArray)
+
+@OptIn(ExperimentalResourceApi::class)
+val listViewItems = (0 until 20)
+    .map { ListViewItem("Item $it", "Description", "data", suspend { Res.readBytes("files/directory_open.ico") }) }
+
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ListViewExample() {
-    var selectedViewState by remember { mutableStateOf(ListViewViewState.LargeIcons) }
-    val icon = suspend { Res.readBytes("files/directory_open.ico") }
+    var selectedViewState by remember { mutableStateOf(ListViewState.LargeIcon) }
 
     Column {
-        ListView(
-            modifier = Modifier.weight(1f),
-            viewState = selectedViewState,
-            columns = listOf(ListViewColumn("Name"), ListViewColumn("Details"), ListViewColumn("Extra"))
-        ) {
-            for (i in 1..6) {
-                item(listOf("Item $i", "description", "some data"), icon)
+        when (selectedViewState) {
+            ListViewState.LargeIcon -> VerticalListView(
+                modifier = Modifier.weight(1f)
+            ) {
+                listViewItems.forEach {
+                    LargeIconListItem(
+                        label = it.label,
+                        icon = { IcoImage(it.icon, null) },
+                    )
+                }
             }
-            item(listOf("Item unknown", "description", "some data"), icon)
-            for (i in 8..20) {
-                item(listOf("Item $i", "description", "some data"), icon)
+
+            ListViewState.SmallIcon -> VerticalListView(
+                modifier = Modifier.weight(1f)
+            ) {
+                listViewItems.forEach {
+                    SmallIconListItem(
+                        label = it.label,
+                        icon = { IcoImage(it.icon, null) },
+                    )
+                }
+            }
+
+            ListViewState.List -> HorizontalListView(
+                modifier = Modifier.weight(1f)
+            ) {
+                listViewItems.forEach {
+                    SmallIconListItem(
+                        label = it.label,
+                        icon = { IcoImage(it.icon, null) },
+                    )
+                }
+            }
+
+            ListViewState.Details -> DetailsListView(
+                columns = 3,
+                modifier = Modifier.weight(1f)
+            ) {
+                headingRow { column ->
+                    val label = when (column) {
+                        0 -> "Title"
+                        1 -> "Description"
+                        2 -> "Data"
+                        else -> error("Column label not found")
+                    }
+                    ColumnHeading(
+                        label = label,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                listViewItems.forEach {
+                    itemRow { column ->
+                        when (column) {
+                            0 -> DetailsViewListItem(label = it.label, icon = { IcoImage(it.icon, null) })
+                            1 -> DetailsViewListItem(label = it.description)
+                            2 -> DetailsViewListItem(label = it.data)
+                            else -> error("Column data not found")
+                        }
+                    }
+                }
             }
         }
         FlowRow(
             modifier = Modifier.padding(top = 4.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            ListViewViewState.entries.forEachIndexed { index, viewState ->
+            ListViewState.entries.forEachIndexed { index, viewState ->
                 OptionButton(
                     checked = viewState == selectedViewState,
                     onCheckChange = { selectedViewState = viewState },
                     label = { Text(viewState.name) },
-                    modifier = if (index == ListViewViewState.entries.size-1) Modifier
+                    modifier = if (index == ListViewState.entries.size - 1) Modifier
                     else Modifier.padding(end = 4.dp)
                 )
             }
