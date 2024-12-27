@@ -325,13 +325,9 @@ private fun DropDownListBoxExample() {
         onExpandChange = { expanded = it },
         modifier = Modifier.fillMaxWidth()
     ) {
-        item { DropDownListBoxItem(text = "Value", onSelection = { currentValue = "Value" }) }
-        item { DropDownListBoxItem(text = "Value (disabled)", onSelection = { }, enabled = false) }
-        item {
-            DropDownListBoxItem(
-                text = "Longer value",
-                onSelection = { currentValue = "Longer value" })
-        }
+        DropDownListBoxItem(text = "Value", onSelection = { currentValue = "Value" })
+        DropDownListBoxItem(text = "Value (disabled)", onSelection = { }, enabled = false)
+        DropDownListBoxItem(text = "Longer value", onSelection = { currentValue = "Longer value" })
     }
 }
 
@@ -360,13 +356,11 @@ private fun DropDownComboBoxExample() {
         onValueChange = { value = it }
     ) {
         listOf("Value 1", "Value 2", "Value 3").forEach {
-            item {
-                DropDownListBoxItem(
-                    label = it,
-                    onSelected = { value = it },
-                    selected = value == it
-                )
-            }
+            DropDownListBoxItem(
+                label = it,
+                onSelected = { value = it },
+                selected = value == it
+            )
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,7 +44,7 @@ fun DropDownListBox(
     expanded: Boolean = false,
     enabled: Boolean = true,
     onExpandChange: (expanded: Boolean) -> Unit,
-    content: DropDownMenuScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) = with(LocalDensity.current) {
     var containerSize by remember { mutableStateOf(IntSize.Zero) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -91,20 +92,13 @@ fun DropDownListBox(
                     modifier = Modifier
                         .width(containerSize.width.toDp())
                         .background(Win9xTheme.colorScheme.buttonHighlight)
-                        .border(BorderStroke(1.dp, Win9xTheme.colorScheme.windowFrame))
-                ) {
-                    DropDownMenuScope().apply(content).items.forEach { it.invoke() }
-                }
+                        .border(BorderStroke(1.dp, Win9xTheme.colorScheme.windowFrame)),
+                    content = content
+                )
             }
         }
     }
 }
-
-class DropDownMenuScope internal constructor() {
-    internal val items = mutableListOf<@Composable () -> Unit>()
-    fun item(content: @Composable () -> Unit) = items.add(content)
-}
-
 
 @Composable
 fun DropDownListBoxItem(
