@@ -159,28 +159,22 @@ private fun ListBoxExample() {
     ListBox(
         modifier = Modifier.fillMaxSize(0.6f)
     ) {
-        item {
-            DropDownListBoxItem(
-                label = "Value 1",
-                onSelected = { selection = 0 },
-                selected = selection == 0
-            )
-        }
-        item {
-            DropDownListBoxItem(
-                label = "Value 2 (Disabled)",
-                enabled = false,
-                onSelected = { selection = 1 },
-                selected = selection == 1
-            )
-        }
-        item {
-            DropDownListBoxItem(
-                label = "Value 3",
-                onSelected = { selection = 3 },
-                selected = selection == 3
-            )
-        }
+        DropDownListBoxItem(
+            label = "Value 1",
+            onSelected = { selection = 0 },
+            selected = selection == 0
+        )
+        DropDownListBoxItem(
+            label = "Value 2 (Disabled)",
+            enabled = false,
+            onSelected = { selection = 1 },
+            selected = selection == 1
+        )
+        DropDownListBoxItem(
+            label = "Value 3",
+            onSelected = { selection = 3 },
+            selected = selection == 3
+        )
     }
 }
 
@@ -348,13 +342,11 @@ private fun ComboBoxExample() {
         TextBox(value = value, onValueChange = { value = it }, modifier = Modifier.fillMaxWidth())
         ListBox(Modifier.fillMaxSize()) {
             listOf("Value 1", "Value 2", "Value 3").forEach {
-                item {
-                    DropDownListBoxItem(
-                        label = it,
-                        onSelected = { value = it },
-                        selected = value == it
-                    )
-                }
+                DropDownListBoxItem(
+                    label = it,
+                    onSelected = { value = it },
+                    selected = value == it
+                )
             }
         }
     }

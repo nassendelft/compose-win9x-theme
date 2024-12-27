@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -24,16 +25,10 @@ import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.sunkenBorder
 
-class ListBoxScope internal constructor() {
-    internal val items = mutableListOf<@Composable () -> Unit>()
-
-    fun item(content: @Composable () -> Unit) = items.add(content)
-}
-
 @Composable
 fun ListBox(
     modifier: Modifier = Modifier,
-    content: ListBoxScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) {
     val scrollState = rememberScrollState()
     Row(
@@ -47,7 +42,7 @@ fun ListBox(
                 .weight(1f)
                 .padding(2.dp)
                 .verticalScroll(scrollState),
-            content = { ListBoxScope().apply(content).items.forEach { it() } }
+            content = content
         )
         VerticalScrollBar(scrollState = scrollState)
     }
