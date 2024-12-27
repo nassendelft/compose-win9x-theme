@@ -17,8 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.windowBorder
 
@@ -50,7 +54,7 @@ fun TitleBar(
         icon?.invoke()
         Text(
             text = title,
-            style = Win9xTheme.typography.caption,
+            style = Win9xTheme.typography.caption.copy(fontSize = 11.sp, fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(horizontal = 2.dp)
         )
         Spacer(Modifier.weight(1f))
