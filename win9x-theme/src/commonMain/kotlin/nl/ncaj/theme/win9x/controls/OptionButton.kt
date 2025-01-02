@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
+import nl.ncaj.theme.win9x.FocusDashIndication.Companion.FocusDashIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.vector.Backgrounds
 import nl.ncaj.theme.win9x.vector.Icons
@@ -63,7 +63,7 @@ fun OptionButton(
         }
         Spacer(modifier = Modifier.width(6.dp))
         Box(
-            modifier = Modifier.dashFocusIndication(interactionSource),
+            modifier = Modifier.FocusDashIndication(interactionSource),
             content = label
         )
     }

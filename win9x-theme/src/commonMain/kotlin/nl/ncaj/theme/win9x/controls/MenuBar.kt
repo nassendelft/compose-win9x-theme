@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.SelectionIndication
+import nl.ncaj.theme.win9x.FocusSelectionIndication
 
 class MenuBarItem(
     internal val title: String,
@@ -61,7 +61,7 @@ fun MenuBar(
                     modifier = Modifier
                         .clickable(
                             interactionSource = mutableInteractionSource,
-                            indication = SelectionIndication.create(),
+                            indication = FocusSelectionIndication.create(),
                             onClick = { currentMenu = item.content }
                         )
                         .padding(4.dp),

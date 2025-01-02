@@ -4,8 +4,12 @@ package nl.ncaj.theme.win9x
 
 import androidx.compose.foundation.IndicationNodeFactory
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.FocusInteraction
+import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -90,23 +94,23 @@ private class IndicationModifierNode(
 }
 
 // Draws a selection color box underneath the content
-class SelectionIndication private constructor(private val color: Color) : IndicationNodeFactory {
+class FocusSelectionIndication private constructor(private val color: Color) : IndicationNodeFactory {
 
     override fun create(interactionSource: InteractionSource): DelegatableNode =
-        SelectionIndicationNode(interactionSource, color)
+        FocusSelectionIndicationNode(interactionSource, color)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as SelectionIndication
+        other as FocusSelectionIndication
 
         return color == other.color
     }
 
     override fun hashCode() = color.hashCode()
 
-    private class SelectionIndicationNode(
+    private class FocusSelectionIndicationNode(
         private val interactionSource: InteractionSource,
         private val color: Color
     ) : Modifier.Node(), DrawModifierNode {
@@ -131,20 +135,68 @@ class SelectionIndication private constructor(private val color: Color) : Indica
 
     companion object {
         @Composable
-        fun Modifier.selectionIndication(
-            interactionSource: InteractionSource,
+        fun Modifier.focusSelectionIndication(
+            interactionSource: MutableInteractionSource,
             color: Color = Win9xTheme.colorScheme.selection,
-        ) = this.indication(interactionSource, SelectionIndication(color))
+        ) = focusable(interactionSource = interactionSource)
+            .indication(interactionSource, FocusSelectionIndication(color))
 
         @Composable
         fun create(
             color: Color = Win9xTheme.colorScheme.selection
-        ) = SelectionIndication(color)
+        ) = FocusSelectionIndication(color)
+    }
+}
+
+
+// Draws a selection color box underneath the content
+fun Modifier.hoverSelection(
+    interactionSource: MutableInteractionSource,
+    enabled: Boolean = true,
+) = hoverable(interactionSource, enabled)
+        .indication(interactionSource, HoverSelectionIndication())
+
+class HoverSelectionIndication internal constructor() : IndicationNodeFactory {
+
+    override fun create(interactionSource: InteractionSource): DelegatableNode =
+        HoverSelectionIndicationNode(interactionSource)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return this::class.hashCode()
+    }
+
+    private class HoverSelectionIndicationNode(
+        private val interactionSource: InteractionSource,
+    ) : Modifier.Node(), DrawModifierNode, CompositionLocalConsumerModifierNode {
+        private var isHovered = false
+
+        override fun onAttach() {
+            coroutineScope.launch {
+                interactionSource.interactions
+                    .filter { it is HoverInteraction }
+                    .collectLatest { interaction ->
+                        isHovered = interaction is HoverInteraction.Enter
+                        invalidateDraw()
+                    }
+            }
+        }
+
+        override fun ContentDrawScope.draw() {
+            val color = currentValueOf(LocalColorScheme).selection
+            if (isHovered) drawRect(color, size = size)
+            drawContent()
+        }
     }
 }
 
 // draws a dotted line border *over* the content
-class DashFocusIndication(
+class FocusDashIndication(
     private val padding: Dp = Dp.Unspecified
 ) : IndicationNodeFactory {
 
@@ -155,7 +207,7 @@ class DashFocusIndication(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as DashFocusIndication
+        other as FocusDashIndication
 
         return padding == other.padding
     }
@@ -187,28 +239,28 @@ class DashFocusIndication(
 
     companion object {
         @Composable
-        fun Modifier.dashFocusIndication(
+        fun Modifier.FocusDashIndication(
             interactionSource: InteractionSource,
             padding: Dp = Dp.Unspecified,
-        ) = this.indication(interactionSource, DashFocusIndication(padding))
+        ) = this.indication(interactionSource, FocusDashIndication(padding))
 
-        val DashFocusIndicationNoPadding = DashFocusIndication()
+        val FocusDashIndicationNoPadding = FocusDashIndication()
     }
 }
 
-class ColorPressIndication private constructor(
+class PressColorIndication private constructor(
     private val pressColor: Color = Color.Unspecified,
     private val backgroundColor: Color = Color.Unspecified
 ) : IndicationNodeFactory {
 
     override fun create(interactionSource: InteractionSource): DelegatableNode =
-        ColorPressIndicationNode(interactionSource, pressColor, backgroundColor)
+        PressColorIndicationNode(interactionSource, pressColor, backgroundColor)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as ColorPressIndication
+        other as PressColorIndication
 
         if (pressColor != other.pressColor) return false
         if (backgroundColor != other.backgroundColor) return false
@@ -222,7 +274,7 @@ class ColorPressIndication private constructor(
         return result
     }
 
-    private class ColorPressIndicationNode(
+    private class PressColorIndicationNode(
         private val interactionSource: InteractionSource,
         private val pressedColor: Color,
         private val backgroundColor: Color,
@@ -249,11 +301,11 @@ class ColorPressIndication private constructor(
 
     companion object {
         @Composable
-        fun Modifier.colorIndication(
+        fun Modifier.pressColorIndication(
             interactionSource: InteractionSource,
             pressColor: Color = Win9xTheme.colorScheme.buttonShadow,
             backgroundColor: Color = Win9xTheme.colorScheme.windowFrame
-        ) = this.indication(interactionSource, ColorPressIndication(pressColor, backgroundColor))
+        ) = this.indication(interactionSource, PressColorIndication(pressColor, backgroundColor))
     }
 }
 

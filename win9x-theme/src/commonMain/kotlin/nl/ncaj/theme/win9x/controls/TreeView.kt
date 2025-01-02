@@ -12,14 +12,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
+import nl.ncaj.theme.win9x.FocusDashIndication.Companion.FocusDashIndication
 import nl.ncaj.theme.win9x.DashedHorizontalLine
 import nl.ncaj.theme.win9x.DashedVerticalLine
-import nl.ncaj.theme.win9x.SelectionIndication.Companion.selectionIndication
+import nl.ncaj.theme.win9x.FocusSelectionIndication.Companion.focusSelectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.sunkenBorder
 
@@ -97,8 +95,8 @@ fun TreeViewItem(
             text = label,
             style = textStyle,
             modifier = Modifier
-                .selectionIndication(interactionSource)
-                .dashFocusIndication(interactionSource)
+                .focusSelectionIndication(interactionSource)
+                .FocusDashIndication(interactionSource)
                 .padding(horizontal = 1.dp, vertical = 2.dp)
         )
     }

@@ -23,9 +23,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
+import nl.ncaj.theme.win9x.FocusDashIndication.Companion.FocusDashIndication
 import nl.ncaj.theme.win9x.DashedVerticalLine
-import nl.ncaj.theme.win9x.SelectionIndication.Companion.selectionIndication
+import nl.ncaj.theme.win9x.FocusSelectionIndication.Companion.focusSelectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.sunkenBorder
 import nl.ncaj.theme.win9x.win9xBorder
@@ -268,8 +268,8 @@ fun DetailsViewListItem(
             minLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
-                .selectionIndication(interactionSource)
-                .dashFocusIndication(interactionSource)
+                .focusSelectionIndication(interactionSource)
+                .FocusDashIndication(interactionSource)
                 .padding(horizontal = 1.dp, vertical = 2.dp)
         )
     }

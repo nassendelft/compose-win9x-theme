@@ -1,16 +1,18 @@
 package nl.ncaj.theme.win9x
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.component.IcoImage
 import nl.ncaj.theme.win9x.controls.*
-import nl.ncaj.theme.win9x.controls.rememberScrollbarAdapter
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import win9x.components_overview.generated.resources.Res
 
@@ -90,18 +92,39 @@ private fun OptionSetButtonExample() {
     }
 }
 
+data object SubMenuID1
+data object SubMenuID2
+data object SubMenuID3
+
 @Composable
 private fun MenuButtonExample() {
     MenuButton(
-        menu = {
-            label("Command") {}
-            divider()
-            cascade("Check Box") {
-                label("Command") {}
+        label = { Text("Menu") },
+        subMenu = { id ->
+            when (id) {
+                SubMenuID1 -> {
+                    MenuItemLabel("Sub command 1") {}
+                    MenuItemCascade("Sub menu3", modifier = Modifier.cascade(SubMenuID3))
+                }
+
+                SubMenuID2 -> {
+                    MenuItemLabel("Sub command 2") {}
+                }
+
+                SubMenuID3 -> {
+                    MenuItemLabel("Sub command 3") {}
+                }
             }
         }
     ) {
-        Text("Menu")
+        var optionChecked by remember { mutableStateOf(true) }
+        var boxChecked by remember { mutableStateOf(true) }
+
+        MenuItemLabel("Command") {}
+        MenuItemOptionButton("Option button", optionChecked) { optionChecked = it}
+        MenuItemCascade("Sub menu1", modifier = Modifier.cascade(SubMenuID1))
+        MenuItemCheckBox("Checkbox", boxChecked) { boxChecked = it}
+        MenuItemCascade("Sub menu2", modifier = Modifier.cascade(SubMenuID2))
     }
 }
 

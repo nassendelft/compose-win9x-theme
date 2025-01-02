@@ -11,8 +11,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
-import nl.ncaj.theme.win9x.SelectionIndication.Companion.selectionIndication
+import nl.ncaj.theme.win9x.FocusDashIndication.Companion.FocusDashIndication
+import nl.ncaj.theme.win9x.FocusSelectionIndication.Companion.focusSelectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.sunkenBorder
 
@@ -52,8 +52,8 @@ fun LargeIconListItem(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
-                .selectionIndication(interactionSource)
-                .dashFocusIndication(interactionSource)
+                .focusSelectionIndication(interactionSource)
+                .FocusDashIndication(interactionSource)
                 .padding(horizontal = 1.dp, vertical = 2.dp)
         )
     }
@@ -92,8 +92,8 @@ fun SmallIconListItem(
                 text = label,
                 style = textStyle.copy(fontSize = 12.sp),
                 modifier = Modifier
-                    .selectionIndication(interactionSource)
-                    .dashFocusIndication(interactionSource)
+                    .focusSelectionIndication(interactionSource)
+                    .FocusDashIndication(interactionSource)
                     .padding(horizontal = 1.dp, vertical = 2.dp)
             )
         }

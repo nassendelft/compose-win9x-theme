@@ -8,5 +8,6 @@ import androidx.compose.ui.unit.IntOffset
 expect fun PopupMenu(
     offset: IntOffset = IntOffset.Zero,
     onDismissRequested: () -> Unit,
-    content: MenuScope.() -> Unit,
+    subMenu: @Composable MenuScope.(subMenuId: Any) -> Unit = {},
+    content: @Composable MenuScope.() -> Unit,
 )

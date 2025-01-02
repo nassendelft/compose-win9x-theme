@@ -8,15 +8,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.unit.IntOffset
 
 
 @Composable
 fun MenuButton(
-    menu: MenuScope.() -> Unit,
+    label: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    subMenu: @Composable MenuScope.(subMenuId: Any) -> Unit = {},
+    menu: @Composable MenuScope.() -> Unit,
 ) {
     var displayMenu by remember { mutableStateOf(false) }
     var buttonSet by remember { mutableStateOf(false) }
@@ -25,14 +26,12 @@ fun MenuButton(
     Box(modifier) {
         OptionSetButton(
             set = buttonSet,
-            modifier = Modifier.onGloballyPositioned {
-                buttonHeight = it.size.height
-            },
+            modifier = Modifier.onPlaced { buttonHeight = it.size.height },
             onSetChanged = {
                 displayMenu = true
                 buttonSet = it
             },
-            content = { content() }
+            content = { label() }
         )
         if (displayMenu) {
             PopupMenu(
@@ -41,6 +40,7 @@ fun MenuButton(
                     displayMenu = false
                     buttonSet = false
                 },
+                subMenu = subMenu,
                 content = menu
             )
         }

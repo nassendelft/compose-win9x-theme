@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.DashFocusIndication
+import nl.ncaj.theme.win9x.FocusDashIndication
 import nl.ncaj.theme.win9x.Win9xBorder
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.win9xBorder
@@ -36,7 +36,7 @@ fun Button(
             .background(background)
             .clickable(
                 interactionSource = interactionSource,
-                indication = DashFocusIndication(3.dp),
+                indication = FocusDashIndication(3.dp),
                 enabled = enabled,
                 onClick = onClick,
             )

@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.ColorPressIndication.Companion.colorIndication
-import nl.ncaj.theme.win9x.DashFocusIndication.Companion.dashFocusIndication
+import nl.ncaj.theme.win9x.PressColorIndication.Companion.pressColorIndication
+import nl.ncaj.theme.win9x.FocusDashIndication.Companion.FocusDashIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.sunkenBorder
 import nl.ncaj.theme.win9x.vector.Checkmark
@@ -43,7 +43,7 @@ fun Checkbox(
         Box(
             modifier = Modifier
                 .defaultMinSize(13.dp, 13.dp)
-                .colorIndication(
+                .pressColorIndication(
                     interactionSource = interactionSource,
                     pressColor = if(enabled) Win9xTheme.colorScheme.buttonShadow else Color.Unspecified,
                     backgroundColor = if (enabled) Win9xTheme.colorScheme.buttonHighlight else Win9xTheme.colorScheme.buttonFace
@@ -61,7 +61,7 @@ fun Checkbox(
         }
         Spacer(modifier = Modifier.width(6.dp))
         Box(
-            modifier = Modifier.dashFocusIndication(interactionSource),
+            modifier = Modifier.FocusDashIndication(interactionSource),
             content = label
         )
     }
