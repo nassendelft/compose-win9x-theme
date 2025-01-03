@@ -1,6 +1,8 @@
 package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -21,12 +23,10 @@ fun MenuButton(
 ) {
     var displayMenu by remember { mutableStateOf(false) }
     var buttonSet by remember { mutableStateOf(false) }
-    var buttonHeight by remember { mutableIntStateOf(0) }
 
-    Box(modifier) {
+    Column(modifier) {
         OptionSetButton(
             set = buttonSet,
-            modifier = Modifier.onPlaced { buttonHeight = it.size.height },
             onSetChanged = {
                 displayMenu = true
                 buttonSet = it
@@ -34,15 +34,16 @@ fun MenuButton(
             content = { label() }
         )
         if (displayMenu) {
-            PopupMenu(
-                offset = IntOffset(0, buttonHeight),
-                onDismissRequested = {
-                    displayMenu = false
-                    buttonSet = false
-                },
-                subMenu = subMenu,
-                content = menu
-            )
+            Box {
+                PopupMenu(
+                    onDismissRequested = {
+                        displayMenu = false
+                        buttonSet = false
+                    },
+                    subMenu = subMenu,
+                    content = menu
+                )
+            }
         }
     }
 }
