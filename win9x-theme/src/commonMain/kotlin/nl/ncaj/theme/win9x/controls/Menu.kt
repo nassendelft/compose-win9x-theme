@@ -257,10 +257,11 @@ fun Menu(
         content = {
             MenuContent(Modifier.menu(MenuIdRoot, state)) { scope.content() }
             state.selectedMenuStack.forEach { id ->
-                MenuContent(modifier = Modifier.menu(id, state).layoutId(id), content = { scope.subMenu(id) })
+                MenuContent(modifier = Modifier.menu(id, state), content = { scope.subMenu(id) })
             }
         },
         measurePolicy = { measurables, constraints ->
+            println(constraints)
             val rootMenu = measurables.first().measure(constraints)
             val subMenus = if (state.subMenuLocations.isEmpty()) emptyMap()
             else measurables.drop(1).associate { it.layoutId to it.measure(constraints) }
@@ -367,7 +368,7 @@ private class MenuItemNode(var interactionSource: MutableInteractionSource?) : N
 }
 
 private fun Modifier.menu(id: Any, state: MenuState) =
-    this then MenuElement(id, state)
+    this.layoutId(id) then MenuElement(id, state)
 
 private class MenuElement(
     private val id: Any,

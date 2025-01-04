@@ -121,7 +121,7 @@ private fun MenuButtonExample() {
         var boxChecked by remember { mutableStateOf(true) }
 
         MenuItemLabel("Command") {}
-        MenuItemOptionButton("Option button", optionChecked) { optionChecked = it}
+        MenuItemOptionButton("Option button longer name", optionChecked) { optionChecked = it}
         MenuItemCascade("Sub menu1", modifier = Modifier.cascade(SubMenuID1))
         MenuItemCheckBox("Checkbox", boxChecked) { boxChecked = it}
         MenuItemCascade("Sub menu2", modifier = Modifier.cascade(SubMenuID2))

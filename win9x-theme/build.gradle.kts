@@ -47,7 +47,7 @@ kotlin {
 
 android {
     namespace = "nl.ncaj.theme.win9x"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
