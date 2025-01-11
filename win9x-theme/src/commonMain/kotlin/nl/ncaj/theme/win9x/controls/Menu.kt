@@ -27,6 +27,7 @@ import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.TraversableNode
 import androidx.compose.ui.node.traverseAncestors
 import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -39,6 +40,18 @@ import nl.ncaj.theme.win9x.hoverSelection
 import nl.ncaj.theme.win9x.vector.*
 import nl.ncaj.theme.win9x.windowBorder
 
+@Composable
+fun MenuItemLabel(
+    label: String,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    enabled: Boolean = true,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit
+) {
+    Label(label, modifier.menuItem(interactionSource), interactionSource, enabled, leadingIcon, trailingIcon, onClick)
+}
 
 @Composable
 fun MenuItemCascade(
@@ -52,7 +65,7 @@ fun MenuItemCascade(
 
     val isHovered by interactionSource.collectIsHoveredAsState()
 
-    MenuItemLabel(
+    Label(
         modifier = modifier,
         interactionSource = interactionSource,
         label = label,
@@ -86,9 +99,9 @@ fun MenuItemOptionButton(
 ) {
     val isHover by interactionSource.collectIsHoveredAsState()
 
-    MenuItemLabel(
+    Label(
         label = label,
-        modifier = modifier.hoverable(interactionSource),
+        modifier = modifier.menuItem(interactionSource).hoverable(interactionSource),
         enabled = enabled,
         leadingIcon = {
             if (checked) {
@@ -120,9 +133,9 @@ fun MenuItemCheckBox(
 ) {
     val isHover by interactionSource.collectIsHoveredAsState()
 
-    MenuItemLabel(
+    Label(
         label = label,
-        modifier = modifier.hoverable(interactionSource),
+        modifier = modifier.menuItem(interactionSource).hoverable(interactionSource),
         enabled = enabled,
         leadingIcon = {
             if (checked) {
@@ -144,7 +157,7 @@ fun MenuItemCheckBox(
 }
 
 @Composable
-fun MenuItemLabel(
+private fun Label(
     label: String,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -155,9 +168,11 @@ fun MenuItemLabel(
 ) {
     val isHover by interactionSource.collectIsHoveredAsState()
 
-    MenuItem(
-        modifier = modifier.clickable(interactionSource = interactionSource, indication = null) { onClick?.invoke() },
-        interactionSource = interactionSource,
+    Row(
+        modifier = modifier
+            .padding(Win9xTheme.borderWidthDp)
+            .padding(horizontal = 1.dp, vertical = 3.dp)
+            .clickable(interactionSource = interactionSource, indication = null) { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -257,19 +272,21 @@ fun Menu(
         content = {
             MenuContent(Modifier.menu(MenuIdRoot, state)) { scope.content() }
             state.selectedMenuStack.forEach { id ->
-                MenuContent(modifier = Modifier.menu(id, state).layoutId(id), content = { scope.subMenu(id) })
+                MenuContent(Modifier.menu(id, state)) { scope.subMenu(id) }
             }
         },
         measurePolicy = { measurables, constraints ->
-            val rootMenu = measurables.first().measure(constraints)
+            val rootMenu = measurables.first().measure(Constraints())
             val subMenus = if (state.subMenuLocations.isEmpty()) emptyMap()
-            else measurables.drop(1).associate { it.layoutId to it.measure(constraints) }
+            else measurables.drop(1).associate { it.layoutId to it.measure(Constraints()) }
 
-            val subMenusHeight = subMenus.map { state.subMenuLocations[it.key]!!.y.toInt() + it.value.height }.sum()
+            val maxSubmenuHeight = subMenus.map { state.subMenuLocations[it.key]!!.y.toInt() + it.value.height }
+                .maxOrNull()
+                ?: 0
 
             layout(
                 width = rootMenu.width + subMenus.values.sumOf { it.width },
-                height = subMenusHeight + rootMenu.height,
+                height = maxOf(maxSubmenuHeight, rootMenu.height),
             ) {
                 rootMenu.place(0, 0)
                 var x = rootMenu.width - 4
@@ -298,7 +315,7 @@ private inline fun MenuContent(
             .width(IntrinsicSize.Max)
             .background(Win9xTheme.colorScheme.buttonFace)
             .windowBorder(),
-        content = { content() }
+        content = content
     )
 }
 
@@ -367,7 +384,7 @@ private class MenuItemNode(var interactionSource: MutableInteractionSource?) : N
 }
 
 private fun Modifier.menu(id: Any, state: MenuState) =
-    this then MenuElement(id, state)
+    then(MenuElement(id, state)).layoutId(id)
 
 private class MenuElement(
     private val id: Any,
