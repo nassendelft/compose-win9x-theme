@@ -1,4 +1,4 @@
-name: Publish package to GitHub Packages
+name: Publish package to GitHub Packages and Sonatype (maven central)
 
 on:
   release:
@@ -26,3 +26,6 @@ jobs:
         run: ./gradlew :win9x-theme:publish :win9x-theme:publishSonatype -PpublishVersion="${GITHUB_REF_NAME}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PGP_KEY: ${{ secrets.PGP_KEY }}
+          PGP_PASSWORD: ${{ secrets.PGP_PASSWORD }}
+          SONATYPE_AUTH_TOKEN: ${{ secrets.SONATYPE_AUTH_TOKEN }}
