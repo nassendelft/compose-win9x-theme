@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -578,7 +579,8 @@ private fun Scrollbar(
             Button(
                 onClick = { scope.launch { adapter.scrollBy(-10f) } },
                 borders = innerButtonBorders(),
-                enabled = !disableArrowButtonsIfNotScrollable || adapter.canScrollBackward
+                enabled = !disableArrowButtonsIfNotScrollable || adapter.canScrollBackward,
+                modifier = Modifier.focusProperties { canFocus = false },
             ) {
                 val image = if (disableArrowButtonsIfNotScrollable && !adapter.canScrollBackward) {
                     rememberVectorPainter(Icons.ArrowDownDisabled)
@@ -608,7 +610,8 @@ private fun Scrollbar(
             Button(
                 onClick = { scope.launch { adapter.scrollBy(10f) } },
                 borders = innerButtonBorders(),
-                enabled = !disableArrowButtonsIfNotScrollable || adapter.canScrollForward
+                enabled = !disableArrowButtonsIfNotScrollable || adapter.canScrollForward,
+                modifier = Modifier.focusProperties { canFocus = false },
             ) {
                 val image = if (disableArrowButtonsIfNotScrollable && !adapter.canScrollForward) {
                     rememberVectorPainter(Icons.ArrowDownDisabled)

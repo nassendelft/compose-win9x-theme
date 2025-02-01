@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.FocusDashIndication.Companion.FocusDashIndication
+import nl.ncaj.theme.win9x.FocusDashIndication.Companion.focusDashIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.buttonNormalBorder
 import nl.ncaj.theme.win9x.buttonPressedBorder
@@ -47,9 +47,10 @@ fun OptionSetButton(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
+                enabled = enabled,
                 onClick = { onSetChanged(!set) },
             )
-            .FocusDashIndication(interactionSource, padding = 3.dp)
+            .focusDashIndication(interactionSource, padding = 3.dp)
             .padding(defaultPadding)
             .then(if ((enabled && isPressed) || set) Modifier.offset(1.dp, 1.dp) else Modifier),
         contentAlignment = Alignment.Center,

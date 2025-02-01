@@ -10,6 +10,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.component.IcoImage
 import nl.ncaj.theme.win9x.controls.*
@@ -121,9 +123,9 @@ private fun MenuButtonExample() {
         var boxChecked by remember { mutableStateOf(true) }
 
         MenuItemLabel("Command") {}
-        MenuItemOptionButton("Option button", optionChecked) { optionChecked = it}
+        MenuItemOptionButton("Option button", optionChecked) { optionChecked = it }
         MenuItemCascade("Sub menu1", modifier = Modifier.cascade(SubMenuID1))
-        MenuItemCheckBox("Checkbox", boxChecked) { boxChecked = it}
+        MenuItemCheckBox("Checkbox", boxChecked) { boxChecked = it }
         MenuItemCascade("Sub menu2", modifier = Modifier.cascade(SubMenuID2))
     }
 }
@@ -164,7 +166,7 @@ private fun CheckboxExample() {
 private fun TextBoxExample() {
     var text by remember { mutableStateOf("Default") }
     Column {
-        TextBox(text, onValueChange = { text = it }, maxLines = 4)
+        TextBox(text, onValueChange = { text = it }, maxLines = 1)
         Spacer(modifier = Modifier.height(2.dp))
         TextBox("Disabled", onValueChange = {}, enabled = false)
     }
@@ -172,31 +174,24 @@ private fun TextBoxExample() {
 
 @Composable
 private fun SliderExample() {
-    Slider(modifier = Modifier, steps = 4, onStep = { })
+    Slider(steps = 4, onStep = { })
 }
 
 @Composable
 private fun ListBoxExample() {
-    var selection by remember { mutableIntStateOf(0) }
-
+    var state = rememberListBoxState(itemCount = 5)
     ListBox(
-        modifier = Modifier.fillMaxSize(0.6f)
-    ) {
-        DropDownListBoxItem(
-            label = "Value 1",
-            onSelected = { selection = 0 },
-            selected = selection == 0
-        )
-        DropDownListBoxItem(
-            label = "Value 2 (Disabled)",
-            enabled = false,
-            onSelected = { selection = 1 },
-            selected = selection == 1
-        )
-        DropDownListBoxItem(
-            label = "Value 3",
-            onSelected = { selection = 3 },
-            selected = selection == 3
+        state = state,
+        modifier = Modifier.fillMaxSize(0.6f),
+    ) { index ->
+        Text(
+            modifier = Modifier
+                .listBoxItem(enabled = index != 2)
+                .fillMaxWidth()
+                .padding(4.dp),
+            text = "Value ${index + 1}",
+            enabled = index != 2,
+            color = if (state.selectedIndex == index) ColorProducer { Color.White } else null
         )
     }
 }
@@ -322,12 +317,13 @@ private fun TabsExample() {
     TabHost(
         selectedTabIndex = selectedTabIndex,
         onTabSelected = { selectedTabIndex = it },
-        tabs = { for (i in 0..2) tab { Text("Tab ${i + 1}") } },
+        tabCount = 3,
+        tabs = { Text("Tab ${it + 1}") },
         modifier = Modifier.fillMaxSize(),
         content = {
             Text(
                 text = "Tab selected: ${selectedTabIndex + 1}",
-                modifier = Modifier.widthIn(150.dp)
+                modifier = Modifier.fillMaxSize()
             )
         },
     )
@@ -357,16 +353,27 @@ private fun DropDownListBoxExample() {
 @Composable
 private fun ComboBoxExample() {
     var value by remember { mutableStateOf("") }
+    var state = rememberListBoxState(itemCount = 3, defaultIndex = -1) { index -> value = "Value ${index+1}" }
     Column(Modifier.fillMaxSize(0.6f)) {
-        TextBox(value = value, onValueChange = { value = it }, modifier = Modifier.fillMaxWidth())
-        ListBox(Modifier.fillMaxSize()) {
-            listOf("Value 1", "Value 2", "Value 3").forEach {
-                DropDownListBoxItem(
-                    label = it,
-                    onSelected = { value = it },
-                    selected = value == it
-                )
-            }
+        TextBox(
+            value = value,
+            onValueChange = { value = it },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+        ListBox(
+            state = state,
+            modifier = Modifier.fillMaxSize(),
+        ) { index ->
+            Text(
+                modifier = Modifier
+                    .listBoxItem(enabled = index != 1)
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                text = "Value ${index+1}",
+                enabled = index != 1,
+                color = if (state.selectedIndex == index) ColorProducer { Color.White } else null
+            )
         }
     }
 }
@@ -374,15 +381,19 @@ private fun ComboBoxExample() {
 @Composable
 private fun DropDownComboBoxExample() {
     var value by remember { mutableStateOf("") }
+    var selection by remember { mutableStateOf(0) }
     DropDownComboBox(
         value = value,
         onValueChange = { value = it }
     ) {
-        listOf("Value 1", "Value 2", "Value 3").forEach {
-            DropDownListBoxItem(
-                label = it,
-                onSelected = { value = it },
-                selected = value == it
+        for (index in 0 until 3) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                text = "Value ${index+1}",
+                enabled = index != 1,
+                color = if (selection == index) ColorProducer { Color.White } else null
             )
         }
     }

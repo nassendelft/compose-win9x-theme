@@ -2,6 +2,7 @@ package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontStyle
@@ -130,7 +132,8 @@ fun TitleButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier.size(14.dp),
+        modifier = modifier.size(14.dp)
+            .focusProperties { canFocus = false },
         enabled = enabled,
         defaultPadding = PaddingValues(),
         interactionSource = interactionSource,

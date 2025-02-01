@@ -24,6 +24,7 @@ fun SpinBox(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
+        singleLine = true,
         trailingCommandButton = {
             Column {
                 Button(

@@ -1,5 +1,3 @@
-//@file:Suppress("DEPRECATION_ERROR")
-
 package nl.ncaj.theme.win9x
 
 import androidx.compose.foundation.IndicationNodeFactory
@@ -138,8 +136,7 @@ class FocusSelectionIndication private constructor(private val color: Color) : I
         fun Modifier.focusSelectionIndication(
             interactionSource: MutableInteractionSource,
             color: Color = Win9xTheme.colorScheme.selection,
-        ) = focusable(interactionSource = interactionSource)
-            .indication(interactionSource, FocusSelectionIndication(color))
+        ) = this then indication(interactionSource, FocusSelectionIndication(color))
 
         @Composable
         fun create(
@@ -238,8 +235,7 @@ class FocusDashIndication(
     }
 
     companion object {
-        @Composable
-        fun Modifier.FocusDashIndication(
+        fun Modifier.focusDashIndication(
             interactionSource: InteractionSource,
             padding: Dp = Dp.Unspecified,
         ) = this.indication(interactionSource, FocusDashIndication(padding))

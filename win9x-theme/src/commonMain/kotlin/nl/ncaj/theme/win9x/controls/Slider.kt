@@ -6,18 +6,9 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
@@ -27,6 +18,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import nl.ncaj.theme.win9x.FocusDashIndication.Companion.focusDashIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.vector.Icons
 import nl.ncaj.theme.win9x.vector.SliderThumb
@@ -83,6 +75,8 @@ fun Slider(
     var parentWidth by remember { mutableIntStateOf(0) }
     var thumbWidth by remember { mutableIntStateOf(0) }
 
+    val interactionSource = remember { MutableInteractionSource() }
+
     val state = remember(steps, onStep, parentWidth, thumbWidth) {
         SliderState(steps, thumbWidth, parentWidth, onStep)
     }
@@ -107,7 +101,10 @@ fun Slider(
 
     Layout(
         modifier = modifier
-            .defaultMinSize(minWidth = 100.dp, minHeight = 28.dp),
+            .focusable(interactionSource = interactionSource)
+            .defaultMinSize(minWidth = 100.dp, minHeight = 36.dp)
+            .focusDashIndication(interactionSource)
+            .padding(4.dp),
         content = {
             // track
             Box(
@@ -128,7 +125,6 @@ fun Slider(
                 contentDescription = "Thumb for slider",
                 modifier = Modifier
                     .wrapContentSize()
-                    .focusable()
                     .thumbDrag(state)
             )
 

@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import nl.ncaj.theme.win9x.FocusDashIndication.Companion.FocusDashIndication
 import nl.ncaj.theme.win9x.DashedHorizontalLine
 import nl.ncaj.theme.win9x.DashedVerticalLine
+import nl.ncaj.theme.win9x.FocusDashIndication.Companion.focusDashIndication
 import nl.ncaj.theme.win9x.FocusSelectionIndication.Companion.focusSelectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.sunkenBorder
@@ -96,7 +96,7 @@ fun TreeViewItem(
             style = textStyle,
             modifier = Modifier
                 .focusSelectionIndication(interactionSource)
-                .FocusDashIndication(interactionSource)
+                .focusDashIndication(interactionSource)
                 .padding(horizontal = 1.dp, vertical = 2.dp)
         )
     }

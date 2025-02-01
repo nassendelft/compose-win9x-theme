@@ -2,6 +2,8 @@ package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.defaultMinSize
@@ -12,70 +14,74 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.MeasurePolicy
-import androidx.compose.ui.layout.MeasureResult
-import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import nl.ncaj.theme.win9x.FocusDashIndication
 import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.indication
 import nl.ncaj.theme.win9x.win9xBorder
 import kotlin.math.max
 import kotlin.math.min
-
-class TabScope {
-    internal val tabs = mutableListOf<@Composable BoxScope.() -> Unit>()
-
-    fun tab(content: @Composable BoxScope.() -> Unit) {
-        tabs.add(content)
-    }
-}
 
 @Composable
 fun TabHost(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
+    tabs: @Composable (Int) -> Unit,
+    tabCount: Int,
     modifier: Modifier = Modifier,
-    tabs: TabScope.() -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable BoxScope.() -> Unit
 ) = with(LocalDensity.current) {
     val offset = 1.dp
-    val scope = TabScope().apply(tabs)
 
     val measurePolicy = remember(selectedTabIndex) {
         TabMeasurePolicy(selectedTabIndex, offset.roundToPx())
     }
-
+    val interactionSource = remember { MutableInteractionSource() }
     Layout(
         modifier = modifier
+            .focusable(interactionSource = interactionSource)
             .defaultMinSize(minHeight = 50.dp),
         content = {
-            scope.tabs.forEachIndexed { i, tab ->
+            for (i in 0 until tabCount) {
                 Box(
                     contentAlignment = Alignment.TopCenter,
                     modifier = Modifier
                         .tabBorder(offset)
                         .padding(Win9xTheme.borderWidthDp + 4.dp)
-                        .then(if (selectedTabIndex == i) Modifier.zIndex(1f) else Modifier)
-                        .clickable { onTabSelected(i) },
-                    content = tab
+                        .focusProperties { canFocus = false }
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource()},
+                            indication = null,
+                            onClick = { onTabSelected(i) }
+                        )
+                        .then(
+                            if(i == selectedTabIndex) Modifier.indication(interactionSource, FocusDashIndication())
+                            else Modifier
+                        )
+                        .then(
+                            if (selectedTabIndex == i)
+                                Modifier.zIndex(1f)
+                            else Modifier
+                        ),
+                    content = { tabs(i) }
                 )
             }
             Box(
-                Modifier
+                modifier = Modifier
                     .background(Win9xTheme.colorScheme.buttonFace)
                     .tabsContentBorder()
                     .padding(4.dp)
-                    .zIndex(1f)
-            ) {
-                content()
-            }
+                    .zIndex(1f),
+                content = content
+            )
         },
         measurePolicy = measurePolicy
     )

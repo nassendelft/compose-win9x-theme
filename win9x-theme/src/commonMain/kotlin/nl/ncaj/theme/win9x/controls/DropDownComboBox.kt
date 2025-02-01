@@ -38,9 +38,6 @@ fun DropDownComboBox(
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = false,
-    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
-    minLines: Int = 1,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onTextLayout: (TextLayoutResult) -> Unit = {},
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -57,9 +54,7 @@ fun DropDownComboBox(
         enabled = enabled,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
-        singleLine = singleLine,
-        maxLines = maxLines,
-        minLines = minLines,
+        singleLine = true,
         visualTransformation = visualTransformation,
         onTextLayout = onTextLayout,
         interactionSource = interactionSource,
@@ -67,7 +62,6 @@ fun DropDownComboBox(
         trailingCommandButton = {
             Button(
                 onClick = { expanded = !expanded },
-                interactionSource = interactionSource,
                 modifier = Modifier.width(14.dp),
                 borders = innerButtonBorders()
             ) {
