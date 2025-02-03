@@ -41,7 +41,6 @@ private fun CanvasRenderingContext2D.createImageData(
 ) = createImageData(width.toDouble(), height.toDouble()).apply {
     for (i in 0 until (width * height)) {
         val argb = pixels[i]
-        println("argb: ${argb.toHexString()}")
         // data requires RGBA format
         data[(i * 4) + 0] = (argb shr 16) and 0xFF // Red
         data[(i * 4) + 1] = (argb shr 8) and 0xFF  // Green
