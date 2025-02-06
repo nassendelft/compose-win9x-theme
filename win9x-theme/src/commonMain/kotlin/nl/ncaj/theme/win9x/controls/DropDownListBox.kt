@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -36,10 +35,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import nl.ncaj.theme.win9x.FocusDashIndication
 import nl.ncaj.theme.win9x.FocusDashIndication.Companion.focusDashIndication
 import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.indication
+import nl.ncaj.theme.win9x.selectionBackground
 import nl.ncaj.theme.win9x.sunkenBorder
 import nl.ncaj.theme.win9x.vector.ArrowDown
 import nl.ncaj.theme.win9x.vector.Icons
@@ -49,10 +47,10 @@ import nl.ncaj.theme.win9x.win9xBorder
 @Composable
 fun DropDownListBox(
     text: String,
-    modifier: Modifier = Modifier,
-    expanded: Boolean = false,
-    enabled: Boolean = true,
+    expanded: Boolean,
     onExpandChange: (expanded: Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) = with(LocalDensity.current) {
     var containerSize by remember { mutableStateOf(IntSize.Zero) }
@@ -121,36 +119,27 @@ fun DropDownListBox(
 @Composable
 fun DropDownListBoxItem(
     text: String,
-    onSelection: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    selected: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    val isFocused by interactionSource.collectIsFocusedAsState()
-
-    val textStyle = when {
-        !enabled -> Win9xTheme.typography.disabled
-        isFocused -> Win9xTheme.typography.caption
-        else -> Win9xTheme.typography.default
-    }
-
     Text(
-        enabled = enabled,
         text = text,
-        style = textStyle,
+        interactionSource =interactionSource,
+        enabled = enabled,
+        selected = selected,
         modifier = modifier
             .clickable(
                 enabled = enabled,
-                onClick = onSelection,
+                onClick = onClick,
                 interactionSource = interactionSource,
                 indication = null
             )
-            .onFocusChanged { if(it.isFocused) onSelection() }
+            .onFocusChanged { if(it.isFocused) onClick() }
             .fillMaxWidth()
-            .then(
-                if(isFocused) Modifier.background(Win9xTheme.colorScheme.selection)
-                else Modifier
-            )
+            .selectionBackground(selected)
             .padding(horizontal = 6.dp, vertical = 4.dp)
     )
 }

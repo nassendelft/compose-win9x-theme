@@ -2,26 +2,14 @@ package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,10 +27,9 @@ fun TitleBar(
             .height(18.dp)
             .defaultMinSize(minWidth = 100.dp)
             .padding(horizontal = 2.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        content()
-    }
+        verticalAlignment = Alignment.CenterVertically,
+        content = content
+    )
 }
 
 @Composable
@@ -69,10 +56,10 @@ fun Window(
     title: String,
     modifier: Modifier = Modifier,
     icon: @Composable (() -> Unit)? = null,
-    menuBar: (MenuBarScope.() -> Unit)? = null,
+    menuBar: (@Composable () -> Unit)? = null,
     statusBar: (StatusBarScope.() -> Unit)? = null,
     buttons: (@Composable () -> Unit)? = null,
-    content: @Composable () -> Unit,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     Window(
         modifier = modifier,
@@ -93,9 +80,9 @@ fun Window(
 fun Window(
     titleBar: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    menuBar: (MenuBarScope.() -> Unit)? = null,
+    menuBar: (@Composable () -> Unit)? = null,
     statusBar: (StatusBarScope.() -> Unit)? = null,
-    content: @Composable () -> Unit,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -106,7 +93,11 @@ fun Window(
     ) {
         titleBar()
 
-        menuBar?.let { MenuBar(content = it) }
+        menuBar?.let { bar ->
+            Spacer(Modifier.height(1.dp))
+            bar()
+            Spacer(Modifier.height(1.dp))
+        }
 
         Spacer(modifier = Modifier.height(2.dp))
 

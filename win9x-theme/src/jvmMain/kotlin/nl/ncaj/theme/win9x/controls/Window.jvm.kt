@@ -2,13 +2,10 @@ package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -16,12 +13,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.rememberWindowState
-import nl.ncaj.theme.win9x.vector.Cross
-import nl.ncaj.theme.win9x.vector.Icons
-import nl.ncaj.theme.win9x.vector.Maximize
-import nl.ncaj.theme.win9x.vector.Minimize
-import nl.ncaj.theme.win9x.vector.RestoreWindow
+import nl.ncaj.theme.win9x.vector.*
 
 @Composable
 fun Window(
@@ -29,16 +23,20 @@ fun Window(
     onCloseRequested: () -> Unit,
     modifier: Modifier = Modifier,
     closeEnabled: Boolean = true,
+    maximizable: Boolean = true,
+    minimizable: Boolean = true,
+    resizable: Boolean = true,
+    windowState: WindowState = rememberWindowState(),
     icon: @Composable (() -> Unit)? = null,
-    menuBar: (MenuBarScope.() -> Unit)? = null,
+    menuBar: @Composable (() -> Unit)? = null,
     statusBar: (StatusBarScope.() -> Unit)? = null,
-    content: @Composable () -> Unit,
+    content: @Composable BoxScope.() -> Unit,
 ) {
-    val windowState = rememberWindowState()
     var dragOffset by remember { mutableStateOf(Offset.Zero) }
 
     androidx.compose.ui.window.Window(
         onCloseRequest = onCloseRequested,
+        resizable = resizable,
         undecorated = true,
         state = windowState
     ) {
@@ -51,44 +49,54 @@ fun Window(
                 TitleBar(
                     title = title,
                     icon = icon,
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragStart = { dragOffset = Offset.Zero },
-                            onDrag = { change, _ ->
-                                dragOffset += change.position - change.previousPosition
-                                windowState.position = WindowPosition(
-                                    x = windowState.position.x + dragOffset.x.toDp(),
-                                    y = windowState.position.y + dragOffset.y.toDp(),
-                                )
-                            }
-                        )
-                    }.pointerInput(Unit) {
-                        detectTapGestures(
-                            onDoubleTap = {
-                                windowState.placement =
-                                    if (windowState.placement == WindowPlacement.Maximized)
-                                        WindowPlacement.Floating else WindowPlacement.Maximized
-                            }
-                        )
-                    },
+                    modifier = Modifier
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragStart = { dragOffset = Offset.Zero },
+                                onDrag = { change, _ ->
+                                    dragOffset += change.position - change.previousPosition
+                                    windowState.position = WindowPosition(
+                                        x = windowState.position.x + dragOffset.x.toDp(),
+                                        y = windowState.position.y + dragOffset.y.toDp(),
+                                    )
+                                }
+                            )
+                        }
+                        .then(
+                            if (maximizable) Modifier
+                                .pointerInput(Unit) {
+                                    detectTapGestures(
+                                        onDoubleTap = {
+                                            windowState.placement =
+                                                if (windowState.placement == WindowPlacement.Maximized) WindowPlacement.Floating
+                                                else WindowPlacement.Maximized
+                                        }
+                                    )
+                                }
+                            else Modifier
+                        ),
                 ) {
-                    TitleButton(
-                        painter = rememberVectorPainter(Icons.Minimize),
-                        contentDescription = "minimize window",
-                        onClick = { windowState.isMinimized = true }
-                    )
-                    if (windowState.placement == WindowPlacement.Maximized) {
+                    if (minimizable) {
                         TitleButton(
-                            painter = rememberVectorPainter(Icons.RestoreWindow),
-                            contentDescription = "restore window size",
-                            onClick = { windowState.placement = WindowPlacement.Floating }
+                            painter = rememberVectorPainter(Icons.Minimize),
+                            contentDescription = "minimize window",
+                            onClick = { windowState.isMinimized = true }
                         )
-                    } else {
-                        TitleButton(
-                            painter = rememberVectorPainter(Icons.Maximize),
-                            contentDescription = "maximize window",
-                            onClick = { windowState.placement = WindowPlacement.Maximized }
-                        )
+                    }
+                    if (maximizable) {
+                        if (windowState.placement == WindowPlacement.Maximized) {
+                            TitleButton(
+                                painter = rememberVectorPainter(Icons.RestoreWindow),
+                                contentDescription = "restore window size",
+                                onClick = { windowState.placement = WindowPlacement.Floating }
+                            )
+                        } else {
+                            TitleButton(
+                                painter = rememberVectorPainter(Icons.Maximize),
+                                contentDescription = "maximize window",
+                                onClick = { windowState.placement = WindowPlacement.Maximized }
+                            )
+                        }
                     }
                     Spacer(Modifier.width(1.dp))
                     TitleButton(

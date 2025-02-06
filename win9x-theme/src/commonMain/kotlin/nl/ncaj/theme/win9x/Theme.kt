@@ -69,6 +69,7 @@ class Typography(
     val default: TextStyle,
     val disabled: TextStyle,
     val caption: TextStyle,
+    val focused: TextStyle,
 )
 
 @Composable
@@ -97,7 +98,8 @@ internal val LocalTypography: ProvidableCompositionLocal<Typography>
         val default = TypographyTokens.defaultTextStyle
         val disabled = TypographyTokens.disabledTextStyle
         val caption = TypographyTokens.captionTextStyle
-        return staticCompositionLocalOf { Typography(default, disabled, caption) }
+        val focused = TypographyTokens.focusedTextStyle
+        return staticCompositionLocalOf { Typography(default, disabled, caption, focused ) }
     }
 
 object Win9xTheme {

@@ -2,81 +2,62 @@ package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorProducer
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.FocusSelectionIndication
+import nl.ncaj.theme.win9x.selectionBackground
 
-class MenuBarItem(
-    internal val title: String,
-    internal val enabled: Boolean,
-    internal val content: MenuScope.() -> Unit
-)
 
-class MenuBarScope {
-    internal val items = mutableListOf<MenuBarItem>()
-
-    fun entry(
-        title: String,
+class MenuBarScope internal constructor(
+    private val positions: MutableMap<Any, Float>,
+    private val onToggleMenu: (Any) -> Unit,
+    rowScope: RowScope
+) : RowScope by rowScope {
+    fun Modifier.menuBarItem(
+        key: Any,
+        selected: Boolean,
+        interactionSource: MutableInteractionSource? = null,
         enabled: Boolean = true,
-        content: MenuScope.() -> Unit
-    ) = items.add(MenuBarItem(title, enabled, content))
+        onClick: () -> Unit = {},
+    ) = this then Modifier
+        .focusProperties { canFocus = false }
+        .onGloballyPositioned { positions[key] = it.positionInParent().x }
+        .clickable(enabled = enabled, interactionSource = interactionSource, indication = null) {
+            onToggleMenu(key)
+            onClick()
+        }
+        .selectionBackground(selected)
+        .padding(horizontal = 4.dp, vertical = 2.dp)
 }
 
 @Composable
 fun MenuBar(
+    selectedMenu: Any?,
+    onMenuSelected: (Any?) -> Unit,
     modifier: Modifier = Modifier,
-    content: MenuBarScope.() -> Unit,
+    menu: @Composable MenuScope.(key: Any) -> Unit,
+    content: @Composable MenuBarScope.() -> Unit,
 ) {
-    val scope = MenuBarScope().apply(content)
-    var barHeight by remember { mutableIntStateOf(0) }
-    Row(
-        modifier = modifier.onGloballyPositioned { barHeight = it.size.height }
-    ) {
-        scope.items.forEach { item ->
-            var currentMenu by remember { mutableStateOf<(MenuScope.() -> Unit)?>(null) }
+    val positions = remember { mutableMapOf<Any, Float>() }
+    val onToggleMenu: (Any) -> Unit = { onMenuSelected(if (selectedMenu == null) it else null) }
 
-            val mutableInteractionSource = remember { MutableInteractionSource() }
-            val isFocused by mutableInteractionSource.collectIsFocusedAsState()
-            val isPressed by mutableInteractionSource.collectIsPressedAsState()
-            Box {// box is needed to get PopupMenu aligned properly
-                Text(
-                    text = item.title,
-                    modifier = Modifier
-                        .clickable(
-                            interactionSource = mutableInteractionSource,
-                            indication = FocusSelectionIndication.create(),
-                            onClick = { currentMenu = item.content }
-                        )
-                        .padding(4.dp),
-                    color = if (isFocused || isPressed) ColorProducer { Color.White } else null
+    Column(modifier) {
+        Row { MenuBarScope(positions, onToggleMenu, this).apply { content() } }
+        selectedMenu?.let { menuKey ->
+            Box { // box is needed to get PopupMenu aligned properly
+                PopupMenu(
+                    offset = IntOffset(positions[menuKey]!!.toInt(), 0),
+                    onDismissRequested = { onMenuSelected(null) },
+                    subMenu = { menu(it) },
+                    content = { menu(menuKey) }
                 )
-
-                currentMenu?.let {
-                    PopupMenu(
-                        offset = IntOffset(0, barHeight),
-                        onDismissRequested = { currentMenu = null },
-                        content = it
-                    )
-                }
             }
-            Spacer(Modifier.width(4.dp))
         }
     }
 }

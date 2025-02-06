@@ -4,9 +4,13 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
@@ -21,12 +25,12 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.selectionBackground
 import nl.ncaj.theme.win9x.vector.ArrowDown
 import nl.ncaj.theme.win9x.vector.Icons
 
@@ -34,6 +38,8 @@ import nl.ncaj.theme.win9x.vector.Icons
 fun DropDownComboBox(
     value: String,
     onValueChange: (String) -> Unit,
+    expanded: Boolean,
+    onExpandChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -44,48 +50,76 @@ fun DropDownComboBox(
     cursorBrush: Brush = SolidColor(Color.Black),
     content: @Composable ColumnScope.() -> Unit
 ) = with(LocalDensity.current) {
-    var containerSize by remember { mutableStateOf(IntSize.Zero) }
-    var expanded by remember { mutableStateOf(false) }
+    var containerSize = remember { IntSize.Zero }
 
-    TextBox(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier.onGloballyPositioned { containerSize = it.size },
-        enabled = enabled,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        singleLine = true,
-        visualTransformation = visualTransformation,
-        onTextLayout = onTextLayout,
-        interactionSource = interactionSource,
-        cursorBrush = cursorBrush,
-        trailingCommandButton = {
-            Button(
-                onClick = { expanded = !expanded },
-                modifier = Modifier.width(14.dp),
-                borders = innerButtonBorders()
-            ) {
-                Image(
-                    painter = rememberVectorPainter(Icons.ArrowDown),
-                    contentDescription = "",
-                    modifier = Modifier.wrapContentSize()
-                )
+    Column {
+        TextBox(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = modifier.onGloballyPositioned { containerSize = it.size },
+            enabled = enabled,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            singleLine = true,
+            visualTransformation = visualTransformation,
+            onTextLayout = onTextLayout,
+            interactionSource = interactionSource,
+            cursorBrush = cursorBrush,
+            trailingCommandButton = {
+                Button(
+                    onClick = { onExpandChange(!expanded) },
+                    modifier = Modifier.width(14.dp),
+                    borders = innerButtonBorders()
+                ) {
+                    Image(
+                        painter = rememberVectorPainter(Icons.ArrowDown),
+                        contentDescription = "",
+                        modifier = Modifier.wrapContentSize()
+                    )
+                }
+            }
+        )
+        if (expanded) {
+            Box {
+                Popup(
+                    onDismissRequest = { onExpandChange(!expanded) },
+                    properties = PopupProperties(focusable = true)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .width(containerSize.width.toDp())
+                            .background(Win9xTheme.colorScheme.buttonHighlight)
+                            .border(BorderStroke(1.dp, Win9xTheme.colorScheme.windowFrame)),
+                        content = content
+                    )
+                }
             }
         }
-    )
-    if (expanded) {
-        Popup(
-            offset = IntOffset(0, containerSize.height),
-            onDismissRequest = { expanded = !expanded },
-            properties = PopupProperties(focusable = true)
-        ) {
-            Column(
-                modifier = Modifier
-                    .width(containerSize.width.toDp())
-                    .background(Win9xTheme.colorScheme.buttonHighlight)
-                    .border(BorderStroke(1.dp, Win9xTheme.colorScheme.windowFrame)),
-                content = content
-            )
-        }
     }
+}
+
+@Composable
+fun DropDownComboBoxItem(
+    label: String,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    enabled: Boolean = true,
+    selected: Boolean = false,
+    onClick: () -> Unit,
+) {
+    Text(
+        modifier = modifier
+            .fillMaxWidth()
+            .selectionBackground(selected)
+            .padding(4.dp)
+            .clickable(
+                onClick = onClick,
+                interactionSource = interactionSource,
+                indication = null,
+                enabled = enabled,
+            ),
+        text = label,
+        enabled = enabled,
+        selected = selected,
+    )
 }

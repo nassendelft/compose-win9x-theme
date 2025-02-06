@@ -153,10 +153,8 @@ fun MenuItemLabel(
     trailingIcon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {
-    val isHover by interactionSource.collectIsHoveredAsState()
-
     MenuItem(
-        modifier = modifier.clickable(interactionSource = interactionSource, indication = null) { onClick?.invoke() },
+        modifier = modifier.clickable(interactionSource = interactionSource, indication = null) { onClick() },
         interactionSource = interactionSource,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -168,8 +166,9 @@ fun MenuItemLabel(
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = label,
+            interactionSource = interactionSource,
             enabled = enabled,
-            color = if (isHover) ColorProducer { Color.White } else null
+            hoverable = true
         )
         Spacer(modifier = Modifier.weight(1f))
         Box(

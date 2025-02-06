@@ -1,7 +1,12 @@
 package nl.ncaj.theme.win9x.controls
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -48,14 +53,17 @@ internal object TypographyTokens {
     val captionTextStyle @Composable get() = defaultTextStyle.copy(
         color = Color(0xFFFFFFFF),
     )
+
+    val focusedTextStyle @Composable get() = defaultTextStyle.copy(
+        color = Color(0xFFFFFFFF),
+    )
 }
 
 @Composable
 fun Text(
     text: String,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    style: TextStyle = if (enabled) Win9xTheme.typography.default else Win9xTheme.typography.disabled,
+    style: TextStyle = TextDefaults.style(),
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
@@ -74,4 +82,53 @@ fun Text(
         minLines = minLines,
         color = color
     )
+}
+
+@Composable
+fun Text(
+    text: String,
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    enabled: Boolean = true,
+    hoverable: Boolean = false,
+    selected: Boolean = false,
+    style: TextStyle = TextDefaults.style(interactionSource, enabled, hoverable, selected),
+    onTextLayout: ((TextLayoutResult) -> Unit)? = null,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
+    color: ColorProducer? = null
+) {
+    Text(
+        text = text,
+        modifier = modifier,
+        style = style,
+        onTextLayout = onTextLayout,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        color = color
+    )
+}
+
+object TextDefaults {
+    @Composable
+    fun style(
+        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+        enabled: Boolean = true,
+        hoverable: Boolean = false,
+        selected: Boolean = false,
+    ): TextStyle {
+        val hovered by interactionSource.collectIsHoveredAsState()
+        val focused by interactionSource.collectIsFocusedAsState()
+        return when {
+            !enabled -> Win9xTheme.typography.disabled
+            selected -> Win9xTheme.typography.focused
+            hovered && hoverable -> Win9xTheme.typography.focused
+            focused -> Win9xTheme.typography.focused
+            else -> Win9xTheme.typography.default
+        }
+    }
 }

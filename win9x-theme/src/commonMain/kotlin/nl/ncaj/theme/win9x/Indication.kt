@@ -1,16 +1,13 @@
 package nl.ncaj.theme.win9x
 
 import androidx.compose.foundation.IndicationNodeFactory
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.FocusInteraction
-import androidx.compose.foundation.interaction.HoverInteraction
-import androidx.compose.foundation.interaction.InteractionSource
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.interaction.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -151,7 +148,7 @@ fun Modifier.hoverSelection(
     interactionSource: MutableInteractionSource,
     enabled: Boolean = true,
 ) = hoverable(interactionSource, enabled)
-        .indication(interactionSource, HoverSelectionIndication())
+    .indication(interactionSource, HoverSelectionIndication())
 
 class HoverSelectionIndication internal constructor() : IndicationNodeFactory {
 
@@ -319,4 +316,8 @@ internal fun DrawScope.drawDashFocus(padding: Dp = Dp.Unspecified) {
             pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f), 0f)
         )
     )
+}
+
+fun Modifier.selectionBackground(enabled: Boolean = true) = composed {
+    then(if (enabled) Modifier.background(Win9xTheme.colorScheme.selection) else Modifier)
 }

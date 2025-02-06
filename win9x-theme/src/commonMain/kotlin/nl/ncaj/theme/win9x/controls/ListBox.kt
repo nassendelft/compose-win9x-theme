@@ -19,6 +19,7 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.FocusDashIndication.Companion.focusDashIndication
 import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.selectionBackground
 import nl.ncaj.theme.win9x.sunkenBorder
 
 
@@ -41,9 +42,7 @@ fun ListBox(
                 .weight(1f)
                 .padding(2.dp)
                 .verticalScroll(scrollState)
-                .focusProperties {
-                    enter = { state.focusRequesters[state.selectedIndex] }
-                }
+                .focusProperties { enter = { state.focusRequesters[state.selectedIndex] } }
                 .onKeyEvent {
                     if (it.type == KeyEventType.KeyUp) {
                         if (it.key == Key.DirectionUp) {
@@ -70,9 +69,7 @@ fun rememberListBoxState(
     itemCount: Int,
     defaultIndex: Int = 0,
     onItemSelected: (index: Int) -> Unit = {}
-): ListBoxState {
-    return remember(itemCount) { ListBoxState(itemCount, defaultIndex, onItemSelected) }
-}
+) = remember(itemCount) { ListBoxState(itemCount, defaultIndex, onItemSelected) }
 
 class ListBoxState internal constructor(
     internal val itemCount: Int,
@@ -153,9 +150,6 @@ class ListBoxItemScope internal constructor(
                 interactionSource = mutableInteractionSource,
             )
             .focusDashIndication(mutableInteractionSource)
-            .then(
-                if (state.selectedIndex == index) Modifier.background(Win9xTheme.colorScheme.selection)
-                else Modifier
-            )
+            .selectionBackground(state.selectedIndex == index)
     }
 }

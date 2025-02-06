@@ -61,7 +61,6 @@ fun TreeViewItem(
     onClick: (() -> Unit)? = null,
 ) {
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
 
     Row(
         modifier = modifier.then(
@@ -85,15 +84,10 @@ fun TreeViewItem(
             Spacer(Modifier.width(4.dp))
         }
 
-        val textStyle = when {
-            !enabled -> Win9xTheme.typography.disabled
-            isFocused -> Win9xTheme.typography.caption
-            else -> Win9xTheme.typography.default
-        }
-
         Text(
             text = label,
-            style = textStyle,
+            interactionSource = interactionSource,
+            enabled = enabled,
             modifier = Modifier
                 .focusSelectionIndication(interactionSource)
                 .focusDashIndication(interactionSource)

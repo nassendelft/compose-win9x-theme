@@ -2,16 +2,15 @@ package nl.ncaj.theme.win9x
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.unit.dp
 import nl.ncaj.theme.win9x.component.IcoImage
 import nl.ncaj.theme.win9x.controls.*
@@ -20,27 +19,61 @@ import win9x.components_overview.generated.resources.Res
 
 @Composable
 fun Overview(modifier: Modifier = Modifier) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(200.dp),
-        modifier = modifier
+    val state = rememberLazyListState()
+    val verticalScrollbarAdapter = rememberScrollbarAdapter(state)
+
+    ScrollableHost(
+        modifier = Modifier
+            .sunkenBorder()
+            .padding(Win9xTheme.borderWidthDp),
+        verticalScrollbarAdapter = verticalScrollbarAdapter,
     ) {
-        item { ExampleItem("Button") { ButtonExample() } }
-        item { ExampleItem("Option set") { OptionSetButtonExample() } }
-        item { ExampleItem("Menu button") { MenuButtonExample() } }
-        item { ExampleItem("Option button") { OptionButtonExample() } }
-        item { ExampleItem("CheckBox") { CheckboxExample() } }
-        item { ExampleItem("TextBox") { TextBoxExample() } }
-        item { ExampleItem("Slider") { SliderExample() } }
-        item { ExampleItem("ListBox") { ListBoxExample() } }
-        item { ExampleItem("Scrollbar") { ScrollbarExample() } }
-        item { ExampleItem("SpinBox") { SpinBoxExample() } }
-        item { ExampleItem("TreeView") { TreeViewExample() } }
-        item { ExampleItem("Tabs") { TabsExample() } }
-        item { ExampleItem("Progress Indicator") { ProgressIndicatorExample() } }
-        item { ExampleItem("Dropdown ListBox") { DropDownListBoxExample() } }
-        item { ExampleItem("ComboBox") { ComboBoxExample() } }
-        item { ExampleItem("DropDownComboBox") { DropDownComboBoxExample() } }
-        item { ExampleItem("ListView") { ListViewExample() } }
+        LazyColumn(
+            modifier = modifier,
+            state = state,
+        ) {
+            item {
+                Row {
+                    ExampleItem("Button") { ButtonExample() }
+                    ExampleItem("Option set") { OptionSetButtonExample() }
+                    ExampleItem("Menu button") { MenuButtonExample() }
+                }
+            }
+            item {
+                Row {
+                    ExampleItem("Option button") { OptionButtonExample() }
+                    ExampleItem("CheckBox") { CheckboxExample() }
+                    ExampleItem("TextBox") { TextBoxExample() }
+                }
+            }
+            item {
+                Row {
+                    ExampleItem("Slider") { SliderExample() }
+                    ExampleItem("ListBox") { ListBoxExample() }
+                    ExampleItem("Scrollbar") { ScrollbarExample() }
+                }
+            }
+            item {
+                Row {
+                    ExampleItem("SpinBox") { SpinBoxExample() }
+                    ExampleItem("TreeView") { TreeViewExample() }
+                    ExampleItem("Tabs") { TabsExample() }
+                }
+            }
+            item {
+                Row {
+                    ExampleItem("Progress Indicator") { ProgressIndicatorExample() }
+                    ExampleItem("Dropdown ListBox") { DropDownListBoxExample() }
+                    ExampleItem("ComboBox") { ComboBoxExample() }
+                }
+            }
+            item {
+                Row {
+                    ExampleItem("DropDownComboBox") { DropDownComboBoxExample() }
+                    ExampleItem("ListView") { ListViewExample() }
+                }
+            }
+        }
     }
 }
 
@@ -184,14 +217,16 @@ private fun ListBoxExample() {
         state = state,
         modifier = Modifier.fillMaxSize(0.6f),
     ) { index ->
+        val interactionSource = remember { MutableInteractionSource() }
         Text(
             modifier = Modifier
-                .listBoxItem(enabled = index != 2)
+                .listBoxItem(enabled = index != 2, interactionSource)
                 .fillMaxWidth()
                 .padding(4.dp),
             text = "Value ${index + 1}",
+            interactionSource = interactionSource,
             enabled = index != 2,
-            color = if (state.selectedIndex == index) ColorProducer { Color.White } else null
+            selected = state.selectedIndex == index,
         )
     }
 }
@@ -344,9 +379,23 @@ private fun DropDownListBoxExample() {
         onExpandChange = { expanded = it },
         modifier = Modifier.fillMaxWidth()
     ) {
-        DropDownListBoxItem(text = "Value", onSelection = { currentValue = "Value" })
-        DropDownListBoxItem(text = "Value (disabled)", onSelection = { }, enabled = false)
-        DropDownListBoxItem(text = "Longer value", onSelection = { currentValue = "Longer value" })
+        DropDownListBoxItem(
+            text = "Value",
+            selected = currentValue == "Value",
+            onClick = {
+                currentValue = "Value"
+                expanded = false
+            }
+        )
+        DropDownListBoxItem(text = "Value (disabled)", onClick = {}, enabled = false)
+        DropDownListBoxItem(
+            text = "Longer value",
+            selected = currentValue == "Longer value",
+            onClick = {
+                currentValue = "Longer value"
+                expanded = false
+            }
+        )
     }
 }
 
@@ -372,7 +421,7 @@ private fun ComboBoxExample() {
                     .padding(4.dp),
                 text = "Value ${index+1}",
                 enabled = index != 1,
-                color = if (state.selectedIndex == index) ColorProducer { Color.White } else null
+                selected = state.selectedIndex == index,
             )
         }
     }
@@ -381,19 +430,24 @@ private fun ComboBoxExample() {
 @Composable
 private fun DropDownComboBoxExample() {
     var value by remember { mutableStateOf("") }
-    var selection by remember { mutableStateOf(0) }
+    var expanded by remember { mutableStateOf(false) }
+
     DropDownComboBox(
         value = value,
-        onValueChange = { value = it }
+        onValueChange = { value = it },
+        expanded = expanded,
+        onExpandChange = { expanded = it },
     ) {
         for (index in 0 until 3) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
-                text = "Value ${index+1}",
+            val label = "Value ${index+1}"
+            DropDownComboBoxItem(
+                label = label,
                 enabled = index != 1,
-                color = if (selection == index) ColorProducer { Color.White } else null
+                selected = value == label,
+                onClick = {
+                    value = "Value ${index+1}"
+                    expanded = false
+                }
             )
         }
     }
