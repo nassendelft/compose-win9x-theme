@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 fun Modifier.checkeredBackground(
     color1: Color,
     color2: Color,
-    sizeBlock: Float = 5f
+    sizeBlock: Float = 2f
 ): Modifier = drawWithCache {
     onDrawBehind {
         val columns = (size.width / sizeBlock).toInt()
