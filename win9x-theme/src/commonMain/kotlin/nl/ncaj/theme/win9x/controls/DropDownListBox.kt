@@ -68,8 +68,7 @@ fun DropDownListBox(
                 )
                 .onGloballyPositioned { containerSize = it.size }
                 .background(if (enabled) Win9xTheme.colorScheme.buttonHighlight else Win9xTheme.colorScheme.buttonFace)
-                .sunkenBorder()
-                .padding(Win9xTheme.borderWidthDp),
+                .sunkenBorder(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

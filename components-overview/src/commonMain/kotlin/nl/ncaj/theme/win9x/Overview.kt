@@ -23,9 +23,7 @@ fun Overview(modifier: Modifier = Modifier) {
     val verticalScrollbarAdapter = rememberScrollbarAdapter(state)
 
     ScrollableHost(
-        modifier = Modifier
-            .sunkenBorder()
-            .padding(Win9xTheme.borderWidthDp),
+        modifier = Modifier.sunkenBorder(),
         verticalScrollbarAdapter = verticalScrollbarAdapter,
     ) {
         LazyColumn(
@@ -239,9 +237,7 @@ private fun ScrollbarExample() {
     val verticalScrollbarAdapter = rememberScrollbarAdapter(verticalScrollState)
 
     ScrollableHost(
-        modifier = Modifier
-            .sunkenBorder()
-            .padding(Win9xTheme.borderWidthDp),
+        modifier = Modifier.sunkenBorder(),
         horizontalScrollbarAdapter = horizontalScrollbarAdapter,
         verticalScrollbarAdapter = verticalScrollbarAdapter,
     ) {

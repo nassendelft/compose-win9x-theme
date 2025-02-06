@@ -109,8 +109,7 @@ fun HorizontalListView(
     val horizontalScroll = rememberScrollState()
     ScrollableHost(
         horizontalScrollbarAdapter = rememberScrollbarAdapter(horizontalScroll),
-        modifier = modifier.sunkenBorder()
-            .padding(Win9xTheme.borderWidthDp)
+        modifier = modifier.sunkenBorder(),
     ) {
         FlowColumn(
             modifier = modifier
@@ -130,8 +129,7 @@ fun VerticalListView(
     val verticalScroll = rememberScrollState()
     ScrollableHost(
         verticalScrollbarAdapter = rememberScrollbarAdapter(verticalScroll),
-        modifier = modifier.sunkenBorder()
-            .padding(Win9xTheme.borderWidthDp)
+        modifier = modifier.sunkenBorder(),
     ) {
         FlowRow(
             modifier = modifier

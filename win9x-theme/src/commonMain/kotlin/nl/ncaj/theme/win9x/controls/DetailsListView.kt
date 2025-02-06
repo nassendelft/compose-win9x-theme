@@ -164,8 +164,7 @@ fun DetailsListView(
     ScrollableHost(
         horizontalScrollbarAdapter = rememberScrollbarAdapter(horizontalScroll),
         verticalScrollbarAdapter = rememberScrollbarAdapter(verticalScroll),
-        modifier = modifier.sunkenBorder()
-            .padding(Win9xTheme.borderWidthDp)
+        modifier = modifier.sunkenBorder(),
     ) {
         Box(modifier.background(Color.White)) {
             Column(

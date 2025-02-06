@@ -35,7 +35,6 @@ fun ListBox(
         modifier = modifier
             .background(Color.White)
             .sunkenBorder()
-            .padding(Win9xTheme.borderWidthDp)
     ) {
         Column(
             modifier = Modifier

@@ -108,8 +108,7 @@ fun TreeView(
     ScrollableHost(
         horizontalScrollbarAdapter = rememberScrollbarAdapter(horizontalScroll),
         verticalScrollbarAdapter = rememberScrollbarAdapter(lazyListState),
-        modifier = modifier.sunkenBorder()
-            .padding(Win9xTheme.borderWidthDp)
+        modifier = modifier.sunkenBorder(),
     ) {
         TreeViewContent(
             content = content,

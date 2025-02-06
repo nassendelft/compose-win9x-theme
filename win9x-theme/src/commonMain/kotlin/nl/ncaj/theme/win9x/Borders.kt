@@ -1,12 +1,15 @@
 package nl.ncaj.theme.win9x
 
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 
 fun Modifier.groupingBorder() = composed {
     win9xBorder(
@@ -28,14 +31,17 @@ fun Modifier.windowBorder() = composed {
     )
 }
 
-fun Modifier.sunkenBorder() = composed {
+fun Modifier.sunkenBorder(size: Dp = Dp.Unspecified) = composed {
     win9xBorder(
         outerStartTop = Win9xTheme.colorScheme.buttonShadow,
         innerStartTop = Win9xTheme.colorScheme.windowFrame,
         outerEndBottom = Win9xTheme.colorScheme.buttonHighlight,
         innerEndBottom = Win9xTheme.colorScheme.buttonFace,
-        borderWidth = Win9xTheme.borderWidthPx
+        borderWidth = with(LocalDensity.current) {
+            (if(size == Dp.Unspecified) Win9xTheme.borderWidthDp else size).toPx()
+        }
     )
+    .padding(if(size == Dp.Unspecified) Win9xTheme.borderWidthDp else size)
 }
 
 internal fun Modifier.buttonNormalBorder() = composed {
