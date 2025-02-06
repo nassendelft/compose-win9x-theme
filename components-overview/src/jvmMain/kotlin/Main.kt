@@ -32,7 +32,7 @@ fun main() = application {
             onCloseRequested = ::exitApplication,
             resizable = false,
             maximizable = false,
-            windowState = rememberWindowState(size = DpSize(615.dp, 600.dp)),
+            windowState = rememberWindowState(size = DpSize(675.dp, 600.dp)),
             menuBar = {
                 var selectedMenu by remember { mutableStateOf<Any?>(null) }
                 MenuBar(

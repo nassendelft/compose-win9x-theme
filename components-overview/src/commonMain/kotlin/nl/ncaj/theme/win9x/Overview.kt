@@ -1,5 +1,13 @@
 package nl.ncaj.theme.win9x
 
+import androidx.compose.animation.core.AnimationConstants
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,6 +20,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import nl.ncaj.theme.win9x.component.IcoImage
 import nl.ncaj.theme.win9x.controls.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -80,7 +90,7 @@ private fun ExampleItem(
     label: String,
     content: @Composable () -> Unit,
 ) {
-    Box(Modifier.size(200.dp).padding(4.dp)) {
+    Box(Modifier.size(220.dp).padding(4.dp)) {
         Grouping(
             label = label,
             modifier = Modifier.fillMaxSize(),
@@ -362,7 +372,13 @@ private fun TabsExample() {
 
 @Composable
 private fun ProgressIndicatorExample() {
-    ProgressIndicator(progress = 0.5f)
+    val infiniteTransition = rememberInfiniteTransition()
+    val progress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(animation = tween(durationMillis = 1000, easing = LinearEasing))
+    )
+    ProgressIndicator(progress)
 }
 
 @Composable
