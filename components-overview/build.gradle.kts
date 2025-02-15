@@ -62,15 +62,25 @@ compose.desktop {
 
 android {
     namespace = "nl.ncaj.win9x.example"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
+        targetSdk = 35
     }
 
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }

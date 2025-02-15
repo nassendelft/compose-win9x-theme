@@ -12,29 +12,22 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import win9x.components_overview.generated.resources.Res
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalResourceApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AndroidPreview()
-        }
-    }
-}
-
-@OptIn(ExperimentalResourceApi::class)
-@Preview
-@Composable
-fun AndroidPreview() {
-    Win9xTheme {
-        Window(
-            title = "Component Overview",
-            icon = { IcoImage({ Res.readBytes("files/directory_open.ico") }, null) },
-            statusBar = {
-                segment(weight = 1f) {
-                    Text("StatusBar")
-                }
-            },
-        ) {
-            Overview()
+            Win9xTheme {
+                Window(
+                    title = "Component Overview",
+                    icon = { IcoImage({ Res.readBytes("files/directory_open.ico") }, null) },
+                    statusBar = {
+                        segment(weight = 1f) {
+                            Text("StatusBar")
+                        }
+                    },
+                    content = { Overview(itemsPerRow = 1) }
+                )
+            }
         }
     }
 }

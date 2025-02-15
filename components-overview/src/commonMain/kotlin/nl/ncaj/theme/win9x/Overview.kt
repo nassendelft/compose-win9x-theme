@@ -1,10 +1,8 @@
 package nl.ncaj.theme.win9x
 
-import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -20,66 +18,49 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import nl.ncaj.theme.win9x.component.IcoImage
 import nl.ncaj.theme.win9x.controls.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import win9x.components_overview.generated.resources.Res
 
 @Composable
-fun Overview(modifier: Modifier = Modifier) {
+fun Overview(
+    modifier: Modifier = Modifier,
+    itemsPerRow: Int = 3
+) {
     val state = rememberLazyListState()
     val verticalScrollbarAdapter = rememberScrollbarAdapter(state)
 
+    val exampleItems = listOf<@Composable () -> Unit>(
+        @Composable { ExampleItem("Button") { ButtonExample() } },
+        @Composable { ExampleItem("Option set") { OptionSetButtonExample() } },
+        @Composable { ExampleItem("Menu button") { MenuButtonExample() } },
+        @Composable { ExampleItem("Option button") { OptionButtonExample() } },
+        @Composable { ExampleItem("CheckBox") { CheckboxExample() } },
+        @Composable { ExampleItem("TextBox") { TextBoxExample() } },
+        @Composable { ExampleItem("Slider") { SliderExample() } },
+        @Composable { ExampleItem("ListBox") { ListBoxExample() } },
+        @Composable { ExampleItem("Scrollbar") { ScrollbarExample() } },
+        @Composable { ExampleItem("SpinBox") { SpinBoxExample() } },
+        @Composable { ExampleItem("TreeView") { TreeViewExample() } },
+        @Composable { ExampleItem("Tabs") { TabsExample() } },
+        @Composable { ExampleItem("Progress Indicator") { ProgressIndicatorExample() } },
+        @Composable { ExampleItem("Dropdown ListBox") { DropDownListBoxExample() } },
+        @Composable { ExampleItem("ComboBox") { ComboBoxExample() } },
+        @Composable { ExampleItem("DropDownComboBox") { DropDownComboBoxExample() } },
+        @Composable { ExampleItem("ListView") { ListViewExample() } },
+    ).chunked(itemsPerRow)
+
     ScrollableHost(
-        modifier = Modifier.sunkenBorder(),
+        modifier = modifier.sunkenBorder(),
         verticalScrollbarAdapter = verticalScrollbarAdapter,
     ) {
         LazyColumn(
-            modifier = modifier,
             state = state,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                Row {
-                    ExampleItem("Button") { ButtonExample() }
-                    ExampleItem("Option set") { OptionSetButtonExample() }
-                    ExampleItem("Menu button") { MenuButtonExample() }
-                }
-            }
-            item {
-                Row {
-                    ExampleItem("Option button") { OptionButtonExample() }
-                    ExampleItem("CheckBox") { CheckboxExample() }
-                    ExampleItem("TextBox") { TextBoxExample() }
-                }
-            }
-            item {
-                Row {
-                    ExampleItem("Slider") { SliderExample() }
-                    ExampleItem("ListBox") { ListBoxExample() }
-                    ExampleItem("Scrollbar") { ScrollbarExample() }
-                }
-            }
-            item {
-                Row {
-                    ExampleItem("SpinBox") { SpinBoxExample() }
-                    ExampleItem("TreeView") { TreeViewExample() }
-                    ExampleItem("Tabs") { TabsExample() }
-                }
-            }
-            item {
-                Row {
-                    ExampleItem("Progress Indicator") { ProgressIndicatorExample() }
-                    ExampleItem("Dropdown ListBox") { DropDownListBoxExample() }
-                    ExampleItem("ComboBox") { ComboBoxExample() }
-                }
-            }
-            item {
-                Row {
-                    ExampleItem("DropDownComboBox") { DropDownComboBoxExample() }
-                    ExampleItem("ListView") { ListViewExample() }
-                }
+            exampleItems.forEach { items ->
+                item { Row { items.forEach { item -> item() } } }
             }
         }
     }
@@ -376,7 +357,10 @@ private fun ProgressIndicatorExample() {
     val progress by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(animation = tween(durationMillis = 1000, easing = LinearEasing))
+        animationSpec = infiniteRepeatable(
+            repeatMode = RepeatMode.Reverse,
+            animation = tween(durationMillis = 1000, easing = LinearEasing)
+        )
     )
     ProgressIndicator(progress)
 }
@@ -466,7 +450,7 @@ private fun DropDownComboBoxExample() {
 }
 
 enum class ListViewState { LargeIcon, SmallIcon, List, Details }
-class ListViewItem(val label: String, val description: String, val data: String, val icon: suspend () -> ByteArray)
+class ListViewItem(val label: String, val description: String, val data: String, val icon: (suspend () -> ByteArray)? = null)
 
 @OptIn(ExperimentalResourceApi::class)
 val listViewItems = (0 until 20)
@@ -485,7 +469,7 @@ private fun ListViewExample() {
                 listViewItems.forEach {
                     LargeIconListItem(
                         label = it.label,
-                        icon = { IcoImage(it.icon, null) },
+                        icon = { it.icon?.let { data -> IcoImage(data, null) } },
                     )
                 }
             }
@@ -496,7 +480,7 @@ private fun ListViewExample() {
                 listViewItems.forEach {
                     SmallIconListItem(
                         label = it.label,
-                        icon = { IcoImage(it.icon, null) },
+                        icon = { it.icon?.let { data -> IcoImage(data, null) } },
                     )
                 }
             }
@@ -507,7 +491,7 @@ private fun ListViewExample() {
                 listViewItems.forEach {
                     SmallIconListItem(
                         label = it.label,
-                        icon = { IcoImage(it.icon, null) },
+                        icon = { it.icon?.let { data -> IcoImage(data, null) } },
                     )
                 }
             }
@@ -531,7 +515,7 @@ private fun ListViewExample() {
                 listViewItems.forEach {
                     itemRow { column ->
                         when (column) {
-                            0 -> DetailsViewListItem(label = it.label, icon = { IcoImage(it.icon, null) })
+                            0 -> DetailsViewListItem(label = it.label, icon = { it.icon?.let { data -> IcoImage(data, null) } })
                             1 -> DetailsViewListItem(label = it.description)
                             2 -> DetailsViewListItem(label = it.data)
                             else -> error("Column data not found")
