@@ -3,13 +3,12 @@ package nl.ncaj.theme.win9x
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import nl.ncaj.theme.win9x.component.IcoImage
+import nl.ncaj.compose.resource.ico.IcoImage
+import nl.ncaj.theme.win9x.components_overview.generated.resources.Res
+import nl.ncaj.theme.win9x.components_overview.generated.resources.ico
 import nl.ncaj.theme.win9x.controls.Text
 import nl.ncaj.theme.win9x.controls.Window
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import win9x.components_overview.generated.resources.Res
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalResourceApi::class)
@@ -19,7 +18,7 @@ class MainActivity : ComponentActivity() {
             Win9xTheme {
                 Window(
                     title = "Component Overview",
-                    icon = { IcoImage({ Res.readBytes("files/directory_open.ico") }, null) },
+                    icon = { IcoImage(Res.ico.directory_open, null) },
                     statusBar = {
                         segment(weight = 1f) {
                             Text("StatusBar")

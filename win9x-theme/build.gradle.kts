@@ -37,9 +37,6 @@ kotlin {
             implementation(compose.components.resources)
             implementation(libs.kotlinx.io.core)
         }
-        commonTest.dependencies {
-            implementation(kotlin("test"))
-        }
         jvmMain.dependencies {
             implementation(compose.desktop.common)
         }

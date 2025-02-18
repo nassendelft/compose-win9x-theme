@@ -1,4 +1,4 @@
-package nl.ncaj.theme.win9x.component
+package nl.ncaj.compose.resource.ico
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -30,31 +30,6 @@ internal actual fun <T> rememberResourceState(
     block: suspend () -> T
 ): State<T> {
     return remember(key1) {
-        mutableStateOf(runBlocking { block() })
-    }
-}
-
-@Composable
-internal actual fun <T> rememberResourceState(
-    key1: Any,
-    key2: Any,
-    getDefault: () -> T,
-    block: suspend () -> T
-): State<T> {
-    return remember(key1, key2) {
-        mutableStateOf(runBlocking { block() })
-    }
-}
-
-@Composable
-internal actual fun <T> rememberResourceState(
-    key1: Any,
-    key2: Any,
-    key3: Any,
-    getDefault: () -> T,
-    block: suspend () -> T
-): State<T> {
-    return remember(key1, key2, key3) {
         mutableStateOf(runBlocking { block() })
     }
 }

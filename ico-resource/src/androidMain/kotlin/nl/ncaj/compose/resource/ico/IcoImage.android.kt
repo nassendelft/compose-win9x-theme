@@ -1,4 +1,4 @@
-package nl.ncaj.theme.win9x.component
+package nl.ncaj.compose.resource.ico
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
-
 
 internal actual suspend fun IntArray.encodeToPng(width: Int, height: Int): ByteArray {
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -25,31 +24,6 @@ internal actual fun <T> rememberResourceState(
     block: suspend () -> T
 ): State<T> {
     return remember(key1) {
-        mutableStateOf(runBlocking { block() })
-    }
-}
-
-@Composable
-internal actual fun <T> rememberResourceState(
-    key1: Any,
-    key2: Any,
-    getDefault: () -> T,
-    block: suspend () -> T
-): State<T> {
-    return remember(key1, key2) {
-        mutableStateOf(runBlocking { block() })
-    }
-}
-
-@Composable
-internal actual fun <T> rememberResourceState(
-    key1: Any,
-    key2: Any,
-    key3: Any,
-    getDefault: () -> T,
-    block: suspend () -> T
-): State<T> {
-    return remember(key1, key2, key3) {
         mutableStateOf(runBlocking { block() })
     }
 }

@@ -1,4 +1,4 @@
-package nl.ncaj.theme.win9x.component
+package nl.ncaj.compose.resource.ico
 
 import kotlinx.io.*
 import kotlin.math.ceil
@@ -33,6 +33,8 @@ class IcoImage internal constructor(
     val height: Int,
     val colorCount: Int,
 )
+
+internal val emptyIco = Ico(IconType.ICON, emptyList())
 
 // https://en.wikipedia.org/wiki/ICO_(file_format)
 // https://en.wikipedia.org/wiki/BMP_file_format

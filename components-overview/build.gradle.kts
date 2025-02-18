@@ -6,7 +6,10 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrainsCompose)
+    id("nl.ncaj.resource.ico")
 }
+
+group = "nl.ncaj.theme.win9x"
 
 kotlin {
     jvm()
@@ -32,6 +35,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":win9x-theme"))
+            implementation(project(":ico-resource"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.components.resources)

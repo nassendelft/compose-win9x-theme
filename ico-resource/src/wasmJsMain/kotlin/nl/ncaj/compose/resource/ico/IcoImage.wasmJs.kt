@@ -1,6 +1,10 @@
-package nl.ncaj.theme.win9x.component
+package nl.ncaj.compose.resource.ico
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
@@ -19,6 +23,7 @@ import kotlin.coroutines.suspendCoroutine
 private fun Uint8Array.copyInto(inputOffset: Int, output: ByteArray, outputOffset: Int, length: Int) {
     repeat(length) { index -> output[outputOffset + index] = this[inputOffset + index] }
 }
+
 private fun Uint8ClampedArray.copyInto(inputOffset: Int, output: ByteArray, outputOffset: Int, length: Int) {
     repeat(length) { index -> output[outputOffset + index] = this[inputOffset + index] }
 }
@@ -91,41 +96,6 @@ internal actual fun <T> rememberResourceState(
 ): State<T> {
     val scope = rememberCoroutineScope()
     return remember(key1) {
-        val mutableState = mutableStateOf(getDefault())
-        scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            mutableState.value = block()
-        }
-        mutableState
-    }
-}
-
-@Composable
-internal actual fun <T> rememberResourceState(
-    key1: Any,
-    key2: Any,
-    getDefault: () -> T,
-    block: suspend () -> T
-): State<T> {
-    val scope = rememberCoroutineScope()
-    return remember(key1, key2) {
-        val mutableState = mutableStateOf(getDefault())
-        scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            mutableState.value = block()
-        }
-        mutableState
-    }
-}
-
-@Composable
-internal actual fun <T> rememberResourceState(
-    key1: Any,
-    key2: Any,
-    key3: Any,
-    getDefault: () -> T,
-    block: suspend () -> T
-): State<T> {
-    val scope = rememberCoroutineScope()
-    return remember(key1, key2, key3) {
         val mutableState = mutableStateOf(getDefault())
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
             mutableState.value = block()

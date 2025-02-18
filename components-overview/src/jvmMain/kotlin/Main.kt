@@ -13,12 +13,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import nl.ncaj.compose.resource.ico.IcoImage
 import nl.ncaj.theme.win9x.Overview
 import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.component.IcoImage
+import nl.ncaj.theme.win9x.components_overview.generated.resources.Res
+import nl.ncaj.theme.win9x.components_overview.generated.resources.ico
 import nl.ncaj.theme.win9x.controls.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import win9x.components_overview.generated.resources.Res
 
 data object MainMenu
 
@@ -28,7 +29,7 @@ fun main() = application {
         var showAboutDialog by remember { mutableStateOf(false) }
         Window(
             title = "Win9x theme for Jetpack Compose - Component Overview",
-            icon = { IcoImage({ Res.readBytes("files/directory_open.ico") }, null) },
+            icon = { IcoImage(Res.ico.directory_open, null) },
             onCloseRequested = ::exitApplication,
             resizable = false,
             maximizable = false,

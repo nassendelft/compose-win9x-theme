@@ -1,11 +1,6 @@
 package nl.ncaj.theme.win9x
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -18,10 +13,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.component.IcoImage
+import nl.ncaj.compose.resource.ico.IcoImage
+import nl.ncaj.compose.resource.ico.IcoResource
+import nl.ncaj.theme.win9x.components_overview.generated.resources.Res
+import nl.ncaj.theme.win9x.components_overview.generated.resources.ico
 import nl.ncaj.theme.win9x.controls.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import win9x.components_overview.generated.resources.Res
 
 @Composable
 fun Overview(
@@ -272,10 +269,7 @@ private fun TreeViewExample() {
         TreeViewItem(
             label = label,
             enabled = enabled,
-            leadingIcon = {
-                val icon = suspend { Res.readBytes("files/directory_open.ico") }
-                IcoImage(icon, contentDescription = null)
-            },
+            leadingIcon = { IcoImage(Res.ico.directory_open, contentDescription = null) },
             onClick = { },
         )
     }
@@ -450,11 +444,11 @@ private fun DropDownComboBoxExample() {
 }
 
 enum class ListViewState { LargeIcon, SmallIcon, List, Details }
-class ListViewItem(val label: String, val description: String, val data: String, val icon: (suspend () -> ByteArray)? = null)
+class ListViewItem(val label: String, val description: String, val data: String, val icon: IcoResource)
 
 @OptIn(ExperimentalResourceApi::class)
 val listViewItems = (0 until 20)
-    .map { ListViewItem("Item $it", "Description", "data", suspend { Res.readBytes("files/directory_open.ico") }) }
+    .map { ListViewItem("Item $it", "Description", "data", Res.ico.directory_open) }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -469,7 +463,7 @@ private fun ListViewExample() {
                 listViewItems.forEach {
                     LargeIconListItem(
                         label = it.label,
-                        icon = { it.icon?.let { data -> IcoImage(data, null) } },
+                        icon = { IcoImage(it.icon, null) },
                     )
                 }
             }
@@ -480,7 +474,7 @@ private fun ListViewExample() {
                 listViewItems.forEach {
                     SmallIconListItem(
                         label = it.label,
-                        icon = { it.icon?.let { data -> IcoImage(data, null) } },
+                        icon = { IcoImage(it.icon, null) },
                     )
                 }
             }
@@ -491,7 +485,7 @@ private fun ListViewExample() {
                 listViewItems.forEach {
                     SmallIconListItem(
                         label = it.label,
-                        icon = { it.icon?.let { data -> IcoImage(data, null) } },
+                        icon = { IcoImage(it.icon, null) },
                     )
                 }
             }
@@ -515,7 +509,7 @@ private fun ListViewExample() {
                 listViewItems.forEach {
                     itemRow { column ->
                         when (column) {
-                            0 -> DetailsViewListItem(label = it.label, icon = { it.icon?.let { data -> IcoImage(data, null) } })
+                            0 -> DetailsViewListItem(label = it.label, icon = { IcoImage(it.icon, null) })
                             1 -> DetailsViewListItem(label = it.description)
                             2 -> DetailsViewListItem(label = it.data)
                             else -> error("Column data not found")
