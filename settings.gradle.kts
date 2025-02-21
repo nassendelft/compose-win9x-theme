@@ -4,7 +4,6 @@ pluginManagement {
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         mavenCentral()
         google()
-
     }
 }
 plugins {
@@ -21,3 +20,4 @@ dependencyResolutionManagement {
 rootProject.name = "win9x"
 include(":win9x-theme", ":components-overview", ":ico-resource")
 includeBuild("./ico-resource-plugin")
+includeBuild("./conventions")

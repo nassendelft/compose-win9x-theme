@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    id("org.jetbrains.kotlin.multiplatform")
+    id("com.android.application")
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrainsCompose)
     id("nl.ncaj.resource.ico")

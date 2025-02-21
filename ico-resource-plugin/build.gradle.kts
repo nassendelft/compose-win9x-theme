@@ -1,13 +1,17 @@
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
+    id("publishing-conventions")
 }
 
-group = "nl.ncaj"
-version = "unspecified"
+group = "nl.ncaj.compose.plugin"
 
 kotlin {
     jvmToolchain(17)
+}
+
+java {
+    withSourcesJar()
 }
 
 gradlePlugin {
@@ -20,6 +24,6 @@ gradlePlugin {
 }
 
 dependencies {
-    implementation("com.squareup:kotlinpoet:2.0.0")
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21")
+    implementation(libs.kotlinpoet)
+    compileOnly(libs.kotlin.gradle.plugin)
 }
