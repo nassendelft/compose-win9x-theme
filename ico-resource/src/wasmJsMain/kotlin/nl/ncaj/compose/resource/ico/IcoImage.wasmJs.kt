@@ -88,17 +88,25 @@ internal actual suspend fun IntArray.encodeToPng(
     .apply { putImageData(this@encodeToPng) }
     .toImage()
 
+private val resourceCache = mutableMapOf<Any, Any>()
+
 @Composable
-internal actual fun <T> rememberResourceState(
+internal actual fun <T: Any> rememberResourceState(
     key1: Any,
     getDefault: () -> T,
     block: suspend () -> T
 ): State<T> {
     val scope = rememberCoroutineScope()
     return remember(key1) {
+        @Suppress("UNCHECKED_CAST")
+        val cached = resourceCache[key1] as? T
+        if (cached != null) return@remember mutableStateOf(cached)
+
         val mutableState = mutableStateOf(getDefault())
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            mutableState.value = block()
+            val resource = block()
+            resourceCache[key1] = resource
+            mutableState.value = resource
         }
         mutableState
     }

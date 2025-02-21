@@ -18,7 +18,7 @@ internal actual suspend fun IntArray.encodeToPng(width: Int, height: Int): ByteA
 }
 
 @Composable
-internal actual fun <T> rememberResourceState(
+internal actual fun <T: Any> rememberResourceState(
     key1: Any,
     getDefault: () -> T,
     block: suspend () -> T

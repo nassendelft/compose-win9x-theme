@@ -46,7 +46,7 @@ private val IntSize.Companion.areaComparator
     get() = { a: IcoBitmap, b: IcoBitmap -> a.image.width * a.image.height - b.image.width * b.image.height }
 
 @Composable
-internal expect fun <T> rememberResourceState(
+internal expect fun <T: Any> rememberResourceState(
     key1: Any,
     getDefault: () -> T,
     block: suspend () -> T
