@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
@@ -20,14 +19,6 @@ kotlin {
         browser {
             commonWebpackConfig {
                 outputFileName = "win9xComponentsOverview.js"
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(project.rootDir.path)
-                        // Includes resources from lib module
-                        add("${project.project(":win9x-theme").projectDir.path}/src/commonMain/resources")
-                    }
-                }
             }
         }
     }
