@@ -2,12 +2,12 @@ package nl.ncaj.theme.win9x
 
 import androidx.compose.foundation.IndicationNodeFactory
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.*
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.focus.FocusEventModifierNode
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -16,83 +16,82 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.node.*
-import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Dp
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 
-// we use our own `indication` function, as the default one filters out focus states, which we don't want.
-internal fun Modifier.indication(
-    interactionSource: InteractionSource,
-    indication: IndicationNodeFactory
-) = this.then(IndicationModifierElement(interactionSource, indication))
-
-/**
- * ModifierNodeElement to create [IndicationNodeFactory] instances. More complicated modifiers such
- * as [clickable] should manually delegate to the node returned by [IndicationNodeFactory]
- * internally.
- */
-private class IndicationModifierElement(
-    private val interactionSource: InteractionSource,
-    private val indication: IndicationNodeFactory
-) : ModifierNodeElement<IndicationModifierNode>() {
-    override fun create(): IndicationModifierNode {
-        return IndicationModifierNode(indication.create(interactionSource))
-    }
-
-    override fun InspectorInfo.inspectableProperties() {
-        name = "indication"
-        properties["interactionSource"] = interactionSource
-        properties["indication"] = indication
-    }
-
-    override fun update(node: IndicationModifierNode) {
-        node.update(indication.create(interactionSource))
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is IndicationModifierElement) return false
-
-        if (interactionSource != other.interactionSource) return false
-        if (indication != other.indication) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = interactionSource.hashCode()
-        result = 31 * result + indication.hashCode()
-        return result
-    }
-}
-
-/**
- * Wrapper [DelegatableNode] that allows us to replace the wrapped node fully when a new node is
- * provided.
- */
-private class IndicationModifierNode(
-    private var indicationNode: DelegatableNode
-) : DelegatingNode() {
-
-    init {
-        delegate(indicationNode)
-    }
-
-    fun update(indicationNode: DelegatableNode) {
-        undelegate(this.indicationNode)
-        this.indicationNode = indicationNode
-        delegate(indicationNode)
-    }
-}
+//// we use our own `indication` function, as the default one filters out focus states, which we don't want.
+//internal fun Modifier.indication(
+//    interactionSource: InteractionSource,
+//    indication: IndicationNodeFactory
+//) = this.then(IndicationModifierElement(interactionSource, indication))
+//
+///**
+// * ModifierNodeElement to create [IndicationNodeFactory] instances. More complicated modifiers such
+// * as [clickable] should manually delegate to the node returned by [IndicationNodeFactory]
+// * internally.
+// */
+//private class IndicationModifierElement(
+//    private val interactionSource: InteractionSource,
+//    private val indication: IndicationNodeFactory
+//) : ModifierNodeElement<IndicationModifierNode>() {
+//    override fun create(): IndicationModifierNode {
+//        return IndicationModifierNode(indication.create(interactionSource))
+//    }
+//
+//    override fun InspectorInfo.inspectableProperties() {
+//        name = "indication"
+//        properties["interactionSource"] = interactionSource
+//        properties["indication"] = indication
+//    }
+//
+//    override fun update(node: IndicationModifierNode) {
+//        node.update(indication.create(interactionSource))
+//    }
+//
+//    override fun equals(other: Any?): Boolean {
+//        if (this === other) return true
+//        if (other !is IndicationModifierElement) return false
+//
+//        if (interactionSource != other.interactionSource) return false
+//        if (indication != other.indication) return false
+//
+//        return true
+//    }
+//
+//    override fun hashCode(): Int {
+//        var result = interactionSource.hashCode()
+//        result = 31 * result + indication.hashCode()
+//        return result
+//    }
+//}
+//
+///**
+// * Wrapper [DelegatableNode] that allows us to replace the wrapped node fully when a new node is
+// * provided.
+// */
+//private class IndicationModifierNode(
+//    private var indicationNode: DelegatableNode
+//) : DelegatingNode() {
+//
+//    init {
+//        delegate(indicationNode)
+//    }
+//
+//    fun update(indicationNode: DelegatableNode) {
+//        undelegate(this.indicationNode)
+//        this.indicationNode = indicationNode
+//        delegate(indicationNode)
+//    }
+//}
 
 // Draws a selection color box underneath the content
-class FocusSelectionIndication private constructor(private val color: Color) : IndicationNodeFactory {
+class FocusSelectionIndication internal constructor(private val color: Color) : IndicationNodeFactory {
 
     override fun create(interactionSource: InteractionSource): DelegatableNode =
-        FocusSelectionIndicationNode(interactionSource, color)
+        FocusSelectionIndicationNode(color)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -104,52 +103,34 @@ class FocusSelectionIndication private constructor(private val color: Color) : I
     }
 
     override fun hashCode() = color.hashCode()
+}
 
-    private class FocusSelectionIndicationNode(
-        private val interactionSource: InteractionSource,
-        private val color: Color
-    ) : Modifier.Node(), DrawModifierNode {
-        private var isFocused = false
+private class FocusSelectionIndicationNode(
+    private val color: Color
+) : Modifier.Node(), DrawModifierNode, CompositionLocalConsumerModifierNode, FocusEventModifierNode {
+    private var isFocused = false
 
-        override fun onAttach() {
-            coroutineScope.launch {
-                interactionSource.interactions
-                    .filter { it is FocusInteraction }
-                    .collectLatest { interaction ->
-                        isFocused = interaction is FocusInteraction.Focus
-                        invalidateDraw()
-                    }
-            }
-        }
+    private val colorScheme get() = currentValueOf(LocalColorScheme)
 
-        override fun ContentDrawScope.draw() {
-            if (isFocused) drawRect(color, size = size)
-            drawContent()
-        }
+    override fun ContentDrawScope.draw() {
+        if (isFocused) drawRect(if(color == Color.Unspecified) colorScheme.selection else color, size = size)
+        drawContent()
     }
 
-    companion object {
-        @Composable
-        fun Modifier.focusSelectionIndication(
-            interactionSource: MutableInteractionSource,
-            color: Color = Win9xTheme.colorScheme.selection,
-        ) = this then indication(interactionSource, FocusSelectionIndication(color))
-
-        @Composable
-        fun create(
-            color: Color = Win9xTheme.colorScheme.selection
-        ) = FocusSelectionIndication(color)
+    override fun onFocusEvent(focusState: FocusState) {
+        if (isFocused != focusState.isFocused) {
+            isFocused = focusState.isFocused
+            invalidateDraw()
+        }
     }
 }
 
+fun Modifier.focusSelectionIndication(
+    interactionSource: MutableInteractionSource,
+    color: Color = Color.Unspecified,
+) = this then indication(interactionSource, FocusSelectionIndication(color))
 
 // Draws a selection color box underneath the content
-fun Modifier.hoverSelection(
-    interactionSource: MutableInteractionSource,
-    enabled: Boolean = true,
-) = hoverable(interactionSource, enabled)
-    .indication(interactionSource, HoverSelectionIndication())
-
 class HoverSelectionIndication internal constructor() : IndicationNodeFactory {
 
     override fun create(interactionSource: InteractionSource): DelegatableNode =
@@ -164,35 +145,38 @@ class HoverSelectionIndication internal constructor() : IndicationNodeFactory {
     override fun hashCode(): Int {
         return this::class.hashCode()
     }
+}
 
-    private class HoverSelectionIndicationNode(
-        private val interactionSource: InteractionSource,
-    ) : Modifier.Node(), DrawModifierNode, CompositionLocalConsumerModifierNode {
-        private var isHovered = false
+private class HoverSelectionIndicationNode(
+    private val interactionSource: InteractionSource,
+) : Modifier.Node(), DrawModifierNode, CompositionLocalConsumerModifierNode {
+    private var isHovered = false
 
-        override fun onAttach() {
-            coroutineScope.launch {
-                interactionSource.interactions
-                    .filter { it is HoverInteraction }
-                    .collectLatest { interaction ->
-                        isHovered = interaction is HoverInteraction.Enter
-                        invalidateDraw()
-                    }
-            }
+    private val colorScheme get() = currentValueOf(LocalColorScheme)
+
+    override fun onAttach() {
+        coroutineScope.launch {
+            interactionSource.interactions
+                .filter { it is HoverInteraction }
+                .collectLatest { interaction ->
+                    isHovered = interaction is HoverInteraction.Enter
+                    invalidateDraw()
+                }
         }
+    }
 
-        override fun ContentDrawScope.draw() {
-            val color = currentValueOf(LocalColorScheme).selection
-            if (isHovered) drawRect(color, size = size)
-            drawContent()
-        }
+    override fun ContentDrawScope.draw() {
+        if (isHovered) drawRect(colorScheme.selection, size = size)
+        drawContent()
     }
 }
 
+fun Modifier.hoverIndication(
+    interactionSource: MutableInteractionSource,
+) = indication(interactionSource, HoverSelectionIndication())
+
 // draws a dotted line border *over* the content
-class FocusDashIndication(
-    private val padding: Dp = Dp.Unspecified
-) : IndicationNodeFactory {
+class FocusDashIndication internal constructor(private val padding: Dp) : IndicationNodeFactory {
 
     override fun create(interactionSource: InteractionSource): DelegatableNode =
         DashIndicationNode(interactionSource, padding)
@@ -207,43 +191,39 @@ class FocusDashIndication(
     }
 
     override fun hashCode(): Int = padding.hashCode()
+}
 
-    private class DashIndicationNode(
-        private val interactionSource: InteractionSource,
-        private val padding: Dp
-    ) : Modifier.Node(), DrawModifierNode {
-        private var isFocused = false
+private class DashIndicationNode(
+    private val interactionSource: InteractionSource,
+    private val padding: Dp
+) : Modifier.Node(), DrawModifierNode {
+    private var isFocused = false
 
-        override fun onAttach() {
-            coroutineScope.launch {
-                interactionSource.interactions
-                    .filter { it is FocusInteraction }
-                    .collectLatest { interaction ->
-                        isFocused = interaction is FocusInteraction.Focus
-                        invalidateDraw()
-                    }
-            }
-        }
-
-        override fun ContentDrawScope.draw() {
-            drawContent()
-            if (isFocused) drawDashFocus(padding)
+    override fun onAttach() {
+        coroutineScope.launch {
+            interactionSource.interactions
+                .filter { it is FocusInteraction }
+                .collectLatest { interaction ->
+                    isFocused = interaction is FocusInteraction.Focus
+                    invalidateDraw()
+                }
         }
     }
 
-    companion object {
-        fun Modifier.focusDashIndication(
-            interactionSource: InteractionSource,
-            padding: Dp = Dp.Unspecified,
-        ) = this.indication(interactionSource, FocusDashIndication(padding))
-
-        val FocusDashIndicationNoPadding = FocusDashIndication()
+    override fun ContentDrawScope.draw() {
+        drawContent()
+        if (isFocused) drawDashFocus(padding)
     }
 }
 
-class PressColorIndication private constructor(
-    private val pressColor: Color = Color.Unspecified,
-    private val backgroundColor: Color = Color.Unspecified
+fun Modifier.focusDashIndication(
+    interactionSource: InteractionSource,
+    padding: Dp = Dp.Unspecified,
+) = this.indication(interactionSource, FocusDashIndication(padding))
+
+class PressColorIndication internal constructor(
+    private val pressColor: Color,
+    private val backgroundColor: Color
 ) : IndicationNodeFactory {
 
     override fun create(interactionSource: InteractionSource): DelegatableNode =
@@ -266,41 +246,43 @@ class PressColorIndication private constructor(
         result = 31 * result + backgroundColor.hashCode()
         return result
     }
+}
 
-    private class PressColorIndicationNode(
-        private val interactionSource: InteractionSource,
-        private val pressedColor: Color,
-        private val backgroundColor: Color,
-    ) : Modifier.Node(), DrawModifierNode {
-        private var isPressed = false
+private class PressColorIndicationNode(
+    private val interactionSource: InteractionSource,
+    private val pressedColor: Color,
+    private val backgroundColor: Color,
+) : Modifier.Node(), DrawModifierNode, CompositionLocalConsumerModifierNode {
+    private var isPressed = false
 
-        override fun onAttach() {
-            coroutineScope.launch {
-                interactionSource.interactions
-                    .filter { it is PressInteraction }
-                    .collectLatest { interaction ->
-                        isPressed = interaction is PressInteraction.Press
-                        invalidateDraw()
-                    }
-            }
-        }
+    private val colorScheme get() = currentValueOf(LocalColorScheme)
 
-        override fun ContentDrawScope.draw() {
-            if (isPressed) drawRect(pressedColor)
-            else drawRect(backgroundColor)
-            drawContent()
+    override fun onAttach() {
+        coroutineScope.launch {
+            interactionSource.interactions
+                .filter { it is PressInteraction }
+                .collectLatest { interaction ->
+                    isPressed = interaction is PressInteraction.Press
+                    invalidateDraw()
+                }
         }
     }
 
-    companion object {
-        @Composable
-        fun Modifier.pressColorIndication(
-            interactionSource: InteractionSource,
-            pressColor: Color = Win9xTheme.colorScheme.buttonShadow,
-            backgroundColor: Color = Win9xTheme.colorScheme.windowFrame
-        ) = this.indication(interactionSource, PressColorIndication(pressColor, backgroundColor))
+    override fun ContentDrawScope.draw() {
+        if (isPressed) {
+            drawRect(if (pressedColor == Color.Unspecified) colorScheme.buttonShadow else pressedColor)
+        } else {
+            drawRect(if (backgroundColor == Color.Unspecified) colorScheme.windowFrame else backgroundColor)
+        }
+        drawContent()
     }
 }
+
+fun Modifier.pressColorIndication(
+    interactionSource: InteractionSource,
+    pressColor: Color = Color.Unspecified,
+    backgroundColor: Color = Color.Unspecified,
+) = this.indication(interactionSource, PressColorIndication(pressColor, backgroundColor))
 
 internal fun DrawScope.drawDashFocus(padding: Dp = Dp.Unspecified) {
     val size = if (padding == Dp.Unspecified) size

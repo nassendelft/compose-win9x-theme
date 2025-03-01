@@ -17,8 +17,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.FocusDashIndication.Companion.focusDashIndication
-import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.focusDashIndication
 import nl.ncaj.theme.win9x.selectionBackground
 import nl.ncaj.theme.win9x.sunkenBorder
 

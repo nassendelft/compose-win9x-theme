@@ -41,7 +41,7 @@ fun MenuBar(
     selectedMenu: Any?,
     onMenuSelected: (Any?) -> Unit,
     modifier: Modifier = Modifier,
-    menu: @Composable MenuScope.(key: Any) -> Unit,
+    menu: @Composable MenuScope.(menuId: Any) -> Unit,
     content: @Composable MenuBarScope.() -> Unit,
 ) {
     val positions = remember { mutableMapOf<Any, Float>() }
@@ -54,8 +54,7 @@ fun MenuBar(
                 PopupMenu(
                     offset = IntOffset(positions[menuKey]!!.toInt(), 0),
                     onDismissRequested = { onMenuSelected(null) },
-                    subMenu = { menu(it) },
-                    content = { menu(menuKey) }
+                    menu = { menu(if(it == MenuIdRoot) menuKey else it) },
                 )
             }
         }

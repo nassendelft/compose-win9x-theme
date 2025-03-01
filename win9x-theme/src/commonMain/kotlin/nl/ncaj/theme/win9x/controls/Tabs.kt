@@ -3,6 +3,7 @@ package nl.ncaj.theme.win9x.controls
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -25,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import nl.ncaj.theme.win9x.FocusDashIndication
 import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.indication
+import nl.ncaj.theme.win9x.focusDashIndication
 import nl.ncaj.theme.win9x.win9xBorder
 import kotlin.math.max
 import kotlin.math.min
@@ -63,7 +64,7 @@ fun TabHost(
                             onClick = { onTabSelected(i) }
                         )
                         .then(
-                            if(i == selectedTabIndex) Modifier.indication(interactionSource, FocusDashIndication())
+                            if(i == selectedTabIndex) Modifier.focusDashIndication(interactionSource)
                             else Modifier
                         )
                         .then(

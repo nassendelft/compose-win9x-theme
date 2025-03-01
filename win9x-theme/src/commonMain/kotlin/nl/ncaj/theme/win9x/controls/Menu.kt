@@ -1,43 +1,46 @@
 package nl.ncaj.theme.win9x.controls
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Node
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.FocusRequesterModifierNode
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.requestFocus
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.input.key.*
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInParent
-import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.node.TraversableNode
-import androidx.compose.ui.node.traverseAncestors
+import androidx.compose.ui.node.*
 import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalInputModeManager
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
-import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.hoverSelection
+import nl.ncaj.theme.win9x.*
 import nl.ncaj.theme.win9x.vector.*
-import nl.ncaj.theme.win9x.windowBorder
 
 
 @Composable
@@ -46,17 +49,21 @@ fun MenuItemCascade(
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true,
+    selected: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
     val image = if (enabled) rememberVectorPainter(Icons.ArrowDown)
     else rememberVectorPainter(Icons.ArrowDownDisabled)
 
     val isHovered by interactionSource.collectIsHoveredAsState()
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
     MenuItemLabel(
         modifier = modifier,
         interactionSource = interactionSource,
         label = label,
         enabled = enabled,
+        selected = selected,
         trailingIcon = {
             Image(
                 painter = image,
@@ -64,14 +71,14 @@ fun MenuItemCascade(
                 modifier = Modifier.rotate(-90f),
                 colorFilter = ColorFilter.tint(
                     when {
-                        isHovered -> Color.White
+                        isHovered || isFocused || selected -> Color.White
                         enabled -> Color.Black
                         else -> Color(0xFF808080)
                     }
                 ),
             )
         },
-        onClick = {}
+        onClick = onClick
     )
 }
 
@@ -85,11 +92,13 @@ fun MenuItemOptionButton(
     onCheckChanged: (Boolean) -> Unit,
 ) {
     val isHover by interactionSource.collectIsHoveredAsState()
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
     MenuItemLabel(
         label = label,
-        modifier = modifier.hoverable(interactionSource),
+        modifier = modifier,
         enabled = enabled,
+        interactionSource = interactionSource,
         leadingIcon = {
             if (checked) {
                 Image(
@@ -97,7 +106,7 @@ fun MenuItemOptionButton(
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(
                         when {
-                            isHover -> Color.White
+                            isHover || isFocused -> Color.White
                             enabled -> Color.Black
                             else -> Color(0xFF808080)
                         }
@@ -119,11 +128,13 @@ fun MenuItemCheckBox(
     onCheckChanged: (Boolean) -> Unit,
 ) {
     val isHover by interactionSource.collectIsHoveredAsState()
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
     MenuItemLabel(
         label = label,
-        modifier = modifier.hoverable(interactionSource),
+        modifier = modifier,
         enabled = enabled,
+        interactionSource = interactionSource,
         leadingIcon = {
             if (checked) {
                 Image(
@@ -131,7 +142,7 @@ fun MenuItemCheckBox(
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(
                         when {
-                            isHover -> Color.White
+                            isHover || isFocused -> Color.White
                             enabled -> Color.Black
                             else -> Color(0xFF808080)
                         }
@@ -149,14 +160,16 @@ fun MenuItemLabel(
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true,
+    selected: Boolean = false,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {
-    MenuItem(
-        modifier = modifier.clickable(interactionSource = interactionSource, indication = null) { onClick() },
-        interactionSource = interactionSource,
-        verticalAlignment = Alignment.CenterVertically
+    Row(
+        modifier = modifier
+            .menuItem(interactionSource, selected, onClick)
+            .padding(horizontal = 1.dp, vertical = 3.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             modifier = Modifier.size(15.dp),
@@ -168,7 +181,8 @@ fun MenuItemLabel(
             text = label,
             interactionSource = interactionSource,
             enabled = enabled,
-            hoverable = true
+            selected = selected,
+            hoverable = true,
         )
         Spacer(modifier = Modifier.weight(1f))
         Box(
@@ -179,27 +193,9 @@ fun MenuItemLabel(
     }
 }
 
-@Composable
-fun MenuItem(
-    modifier: Modifier = Modifier,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
-    verticalAlignment: Alignment.Vertical = Alignment.Top,
-    content: @Composable RowScope.() -> Unit,
-) {
-    Row(
-        modifier = modifier
-            .padding(Win9xTheme.borderWidthDp)
-            .menuItem(interactionSource)
-            .padding(horizontal = 1.dp, vertical = 3.dp),
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-        content = content
-    )
-}
-
-class MenuState internal constructor() {
+internal class MenuState {
     val selectedMenuStack = mutableStateListOf<Any>()
+    val subMenuLocations = mutableMapOf<Any, Offset>()
 
     fun showSubMenu(id: Any) {
         val current = selectedMenuStack.indexOf(id)
@@ -209,44 +205,65 @@ class MenuState internal constructor() {
         selectedMenuStack.add(id)
     }
 
-    fun hideSubMenu(menuId: Any) {
+    fun hideSubMenuStack(menuId: Any) {
         if (menuId == MenuIdRoot) {
             selectedMenuStack.clear()
             return
         }
+
         val current = selectedMenuStack.indexOf(menuId)
         if (current != -1) {
             selectedMenuStack.removeRange(current + 1, selectedMenuStack.size)
         }
     }
 
-    internal val subMenuLocations = mutableMapOf<Any, Offset>()
+    fun popMenu() {
+        selectedMenuStack.removeLastOrNull()
+    }
 }
 
 @LayoutScopeMarker
 class MenuScope internal constructor(private val state: MenuState) {
-    fun Modifier.cascade(menuId: Any): Modifier = composed {
-        val interactionSource = remember { MutableInteractionSource() }
+    val visibleMenus: List<Any> get() = state.selectedMenuStack
+
+    fun Modifier.cascade(
+        menuId: Any,
+        interactionSource: MutableInteractionSource? = null,
+    ): Modifier = composed {
+        val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
         val isHovered by interactionSource.collectIsHoveredAsState()
 
         LaunchedEffect(isHovered) {
-            delay(500)
+            delay(300)
             if (isHovered) state.showSubMenu(menuId)
         }
 
-        this.hoverable(interactionSource).onPlaced { layoutCoordinates ->
-            val positionInParent = layoutCoordinates.positionInParent()
-            state.subMenuLocations[menuId] =
-                positionInParent.copy(x = positionInParent.x + layoutCoordinates.size.width)
-        }
+        this.hoverable(interactionSource)
+            .onPlaced { layoutCoordinates ->
+                val positionInParent = layoutCoordinates.positionInParent()
+                state.subMenuLocations[menuId] =
+                    positionInParent.copy(x = positionInParent.x + layoutCoordinates.size.width)
+            }
+            .onKeyEvent {
+                if (it.type == KeyEventType.KeyUp) {
+                    when (it.key) {
+                        Key.DirectionRight -> {
+                            state.showSubMenu(menuId)
+                            true
+                        }
+
+                        else -> false
+                    }
+                } else false
+            }
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Menu(
     modifier: Modifier = Modifier,
-    subMenu: @Composable MenuScope.(subMenuId: Any) -> Unit = {},
-    content: @Composable MenuScope.() -> Unit
+    menu: @Composable MenuScope.(menuId: Any) -> Unit = {},
 ) {
     val state = remember { MenuState() }
     val scope = MenuScope(state)
@@ -254,9 +271,15 @@ fun Menu(
     Layout(
         modifier = modifier,
         content = {
-            MenuContent(Modifier.menu(MenuIdRoot, state)) { scope.content() }
+            MenuContent(
+                modifier = Modifier.menu(MenuIdRoot, state),
+                content = { scope.menu(MenuIdRoot) },
+            )
             state.selectedMenuStack.forEach { id ->
-                MenuContent(modifier = Modifier.menu(id, state).layoutId(id), content = { scope.subMenu(id) })
+                MenuContent(
+                    modifier = Modifier.menu(id, state).layoutId(id),
+                    content = { scope.menu(id) },
+                )
             }
         },
         measurePolicy = { measurables, constraints ->
@@ -287,6 +310,7 @@ fun Menu(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private inline fun MenuContent(
     modifier: Modifier = Modifier,
@@ -296,17 +320,29 @@ private inline fun MenuContent(
         modifier = modifier
             .width(IntrinsicSize.Max)
             .background(Win9xTheme.colorScheme.buttonFace)
-            .windowBorder(),
-        content = { content() }
+            .windowBorder()
+            .padding(Win9xTheme.borderWidthDp),
+        content = content
     )
 }
 
-private fun Modifier.menuItem(interactionSource: MutableInteractionSource) =
-    this.hoverSelection(interactionSource)
-        .then(MenuItemElement(interactionSource))
+private fun Modifier.menuItem(
+    interactionSource: MutableInteractionSource,
+    selected: Boolean,
+    onClick: () -> Unit,
+) = focusSelectionIndication(interactionSource)
+    .hoverIndication(interactionSource)
+    .then(MenuItemElement(interactionSource))
+    .focusable(interactionSource = interactionSource)
+    .selectionBackground(selected)
+    .clickable(
+        interactionSource = interactionSource,
+        indication = null,
+        onClick = onClick
+    )
 
 private class MenuItemElement(
-    private val interactionSource: MutableInteractionSource?
+    private val interactionSource: MutableInteractionSource?,
 ) : ModifierNodeElement<MenuItemNode>() {
     override fun create() = MenuItemNode(interactionSource)
 
@@ -332,16 +368,26 @@ private class MenuItemElement(
     }
 }
 
-private data object MenuIdRoot
+data object MenuIdRoot
 private data object MenuKey
 
-private class MenuItemNode(var interactionSource: MutableInteractionSource?) : Node() {
+private class MenuItemNode(
+    private var interactionSource: MutableInteractionSource?,
+) : KeyInputModifierNode, FocusRequesterModifierNode, PointerInputModifierNode, CompositionLocalConsumerModifierNode,
+    Node() {
     private var job: Job? = null
+    private var hoverInteraction: HoverInteraction.Enter? = null
+
+    private val inputModeManager get() = currentValueOf(LocalInputModeManager)
+    private val focusManager get() = currentValueOf(LocalFocusManager)
 
     fun update(interactionSource: MutableInteractionSource?) {
-        this.interactionSource = interactionSource
-        job?.cancel()
-        interactionSource?.let { listen(it) }
+        if (this.interactionSource != interactionSource) {
+            tryEmitExit()
+            this.interactionSource = interactionSource
+            job?.cancel()
+            interactionSource?.let { listen(it) }
+        }
     }
 
     @OptIn(FlowPreview::class)
@@ -349,8 +395,8 @@ private class MenuItemNode(var interactionSource: MutableInteractionSource?) : N
         job = coroutineScope.launch {
             interactionSource.interactions
                 .filter { it is HoverInteraction.Enter }
-                .debounce(300)
                 .collect {
+                    requestFocus()
                     traverseAncestors(MenuKey) {
                         (it as MenuNode).onItemHover()
                         false
@@ -362,6 +408,93 @@ private class MenuItemNode(var interactionSource: MutableInteractionSource?) : N
     override fun onAttach() {
         super.onAttach()
         interactionSource?.let { listen(it) }
+    }
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    override fun onKeyEvent(event: KeyEvent): Boolean {
+        if (event.key == Key.DirectionLeft || event.key == Key.DirectionRight
+            || event.key == Key.DirectionUp || event.key == Key.DirectionDown
+        ) {
+            if(inputModeManager.inputMode == InputMode.Touch) {
+                inputModeManager.requestInputMode(InputMode.Keyboard)
+                coroutineScope.launch { emitExit() }
+            }
+        }
+        return if (event.type == KeyEventType.KeyUp) {
+            when (event.key) {
+                Key.DirectionLeft -> {
+                    traverseAncestors(MenuKey) {
+                        (it as MenuNode).onItemLeftKeyPressed()
+                        false
+                    }
+                    true
+                }
+
+                Key.DirectionUp -> {
+                    focusManager.moveFocus(FocusDirection.Up)
+                    true
+                }
+
+                Key.DirectionDown -> {
+                    focusManager.moveFocus(FocusDirection.Down)
+                    true
+                }
+
+                else -> false
+            }
+        } else false
+    }
+
+    override fun onPreKeyEvent(event: KeyEvent) = false
+
+    override fun onPointerEvent(
+        pointerEvent: PointerEvent,
+        pass: PointerEventPass,
+        bounds: IntSize
+    ) {
+        if (pass == PointerEventPass.Main) {
+            when (pointerEvent.type) {
+                PointerEventType.Enter -> coroutineScope
+                    .launch(start = CoroutineStart.UNDISPATCHED) { emitEnter() }
+
+                PointerEventType.Exit -> coroutineScope
+                    .launch(start = CoroutineStart.UNDISPATCHED) { emitExit() }
+            }
+        }
+    }
+
+    override fun onCancelPointerInput() {
+        tryEmitExit()
+    }
+
+    override fun onDetach() {
+        tryEmitExit()
+    }
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    private suspend fun emitEnter() {
+        inputModeManager.requestInputMode(InputMode.Touch)
+        if (hoverInteraction == null) {
+            val interaction = HoverInteraction.Enter()
+            interactionSource?.emit(interaction)
+            hoverInteraction = interaction
+        }
+    }
+
+    private suspend fun emitExit() {
+        hoverInteraction?.let { oldValue ->
+            val interaction = HoverInteraction.Exit(oldValue)
+            interactionSource?.emit(interaction)
+            hoverInteraction = null
+        }
+    }
+
+    private fun tryEmitExit() {
+        hoverInteraction?.let { oldValue ->
+            val interaction = HoverInteraction.Exit(oldValue)
+            interactionSource?.tryEmit(interaction)
+            hoverInteraction = null
+        }
     }
 }
 
@@ -399,11 +532,22 @@ private class MenuElement(
 
 private class MenuNode(private var id: Any, private var state: MenuState) : TraversableNode, Node() {
     override val traverseKey = MenuKey
+    private var job: Job? = null
 
     fun update(id: Any, state: MenuState) {
         this.id = id
         this.state = state
     }
 
-    fun onItemHover() = state.hideSubMenu(id)
+    fun onItemLeftKeyPressed() {
+        state.popMenu()
+    }
+
+    fun onItemHover() {
+        job?.cancel()
+        job = coroutineScope.launch {
+            delay(300)
+            state.hideSubMenuStack(id)
+        }
+    }
 }

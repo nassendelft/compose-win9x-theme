@@ -18,8 +18,8 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.FocusDashIndication.Companion.focusDashIndication
 import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.focusDashIndication
 import nl.ncaj.theme.win9x.vector.Icons
 import nl.ncaj.theme.win9x.vector.SliderThumb
 import nl.ncaj.theme.win9x.win9xBorder

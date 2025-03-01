@@ -2,7 +2,6 @@ package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -16,9 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nl.ncaj.theme.win9x.DashedHorizontalLine
 import nl.ncaj.theme.win9x.DashedVerticalLine
-import nl.ncaj.theme.win9x.FocusDashIndication.Companion.focusDashIndication
-import nl.ncaj.theme.win9x.FocusSelectionIndication.Companion.focusSelectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.focusDashIndication
+import nl.ncaj.theme.win9x.focusSelectionIndication
 import nl.ncaj.theme.win9x.sunkenBorder
 
 

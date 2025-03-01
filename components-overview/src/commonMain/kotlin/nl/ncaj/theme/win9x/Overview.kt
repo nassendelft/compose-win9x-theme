@@ -4,14 +4,18 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 import nl.ncaj.compose.resource.ico.IcoImage
 import nl.ncaj.compose.resource.ico.IcoResource
@@ -113,39 +117,54 @@ private fun OptionSetButtonExample() {
     }
 }
 
-data object SubMenuID1
-data object SubMenuID2
-data object SubMenuID3
+private data object MenuId1
+private data object MenuId2
+private data object MenuId3
 
 @Composable
 private fun MenuButtonExample() {
-    MenuButton(
-        label = { Text("Menu") },
-        subMenu = { id ->
-            when (id) {
-                SubMenuID1 -> {
-                    MenuItemLabel("Sub command 1") {}
-                    MenuItemCascade("Sub menu3", modifier = Modifier.cascade(SubMenuID3))
-                }
+    MenuButton(label = { Text("Menu") }) { id ->
+        when (id) {
+            MenuIdRoot -> {
+                var optionChecked by remember { mutableStateOf(true) }
+                var boxChecked by remember { mutableStateOf(true) }
 
-                SubMenuID2 -> {
-                    MenuItemLabel("Sub command 2") {}
-                }
+                val interactionSource = remember { MutableInteractionSource() }
+                val isHovered by interactionSource.collectIsHoveredAsState()
+                val isFocused by interactionSource.collectIsFocusedAsState()
+                println("hovered $isHovered, focused $isFocused")
+                MenuItemLabel("Command", interactionSource = interactionSource) {}
+                MenuItemOptionButton("Option button", optionChecked) { optionChecked = it }
+                MenuItemCascade(
+                    label = "Sub menu1",
+                    modifier = Modifier.cascade(MenuId1),
+                    selected = visibleMenus.contains(MenuId1),
+                )
+                MenuItemCheckBox("Checkbox", boxChecked) { boxChecked = it }
+                MenuItemCascade(
+                    label = "Sub menu2",
+                    modifier = Modifier.cascade(MenuId2),
+                    selected = visibleMenus.contains(MenuId2),
+                )
+            }
 
-                SubMenuID3 -> {
-                    MenuItemLabel("Sub command 3") {}
-                }
+            MenuId1 -> {
+                MenuItemLabel("Sub command 1") {}
+                MenuItemCascade(
+                    label = "Sub menu3",
+                    modifier = Modifier.cascade(MenuId3),
+                    selected = visibleMenus.contains(MenuId3),
+                )
+            }
+
+            MenuId2 -> {
+                MenuItemLabel("Sub command 2") {}
+            }
+
+            MenuId3 -> {
+                MenuItemLabel("Sub command 3") {}
             }
         }
-    ) {
-        var optionChecked by remember { mutableStateOf(true) }
-        var boxChecked by remember { mutableStateOf(true) }
-
-        MenuItemLabel("Command") {}
-        MenuItemOptionButton("Option button", optionChecked) { optionChecked = it }
-        MenuItemCascade("Sub menu1", modifier = Modifier.cascade(SubMenuID1))
-        MenuItemCheckBox("Checkbox", boxChecked) { boxChecked = it }
-        MenuItemCascade("Sub menu2", modifier = Modifier.cascade(SubMenuID2))
     }
 }
 

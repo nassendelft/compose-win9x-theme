@@ -7,7 +7,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import nl.ncaj.theme.win9x.FocusDashIndication.Companion.FocusDashIndicationNoPadding
 import nl.ncaj.theme.win9x.controls.TypographyTokens
 
 @Stable
@@ -87,7 +86,7 @@ fun Win9xTheme(
     CompositionLocalProvider(
         LocalColorScheme provides rememberedColorScheme,
         LocalTypography provides typography,
-        LocalIndication provides FocusDashIndicationNoPadding,
+        LocalIndication provides FocusDashIndication(Dp.Unspecified),
         content = content
     )
 }

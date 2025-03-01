@@ -11,9 +11,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import nl.ncaj.theme.win9x.FocusDashIndication.Companion.focusDashIndication
-import nl.ncaj.theme.win9x.FocusSelectionIndication.Companion.focusSelectionIndication
 import nl.ncaj.theme.win9x.Win9xTheme
+import nl.ncaj.theme.win9x.focusDashIndication
+import nl.ncaj.theme.win9x.focusSelectionIndication
 import nl.ncaj.theme.win9x.sunkenBorder
 
 

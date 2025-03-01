@@ -11,13 +11,12 @@ import androidx.compose.ui.window.PopupProperties
 actual fun PopupMenu(
     offset: IntOffset,
     onDismissRequested: () -> Unit,
-    subMenu: @Composable MenuScope.(subMenuId: Any) -> Unit,
-    content: @Composable MenuScope.() -> Unit
+    menu: @Composable MenuScope.(menuId: Any) -> Unit,
 )  {
     Popup(
         offset = offset,
         onDismissRequest = onDismissRequested,
-        content = { Menu(content = content, subMenu = subMenu) },
+        content = { Menu(menu = menu) },
         properties = PopupProperties(
             focusable = true,
             usePlatformDefaultWidth = false

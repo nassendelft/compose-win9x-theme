@@ -92,7 +92,8 @@ fun Text(
     enabled: Boolean = true,
     hoverable: Boolean = false,
     selected: Boolean = false,
-    style: TextStyle = TextDefaults.style(interactionSource, enabled, hoverable, selected),
+    focusable: Boolean = true,
+    style: TextStyle = TextDefaults.style(interactionSource, focusable, enabled, hoverable, selected),
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
@@ -117,6 +118,7 @@ object TextDefaults {
     @Composable
     fun style(
         interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+        focusable: Boolean = true,
         enabled: Boolean = true,
         hoverable: Boolean = false,
         selected: Boolean = false,
@@ -127,7 +129,7 @@ object TextDefaults {
             !enabled -> Win9xTheme.typography.disabled
             selected -> Win9xTheme.typography.focused
             hovered && hoverable -> Win9xTheme.typography.focused
-            focused -> Win9xTheme.typography.focused
+            focused && focusable -> Win9xTheme.typography.focused
             else -> Win9xTheme.typography.default
         }
     }

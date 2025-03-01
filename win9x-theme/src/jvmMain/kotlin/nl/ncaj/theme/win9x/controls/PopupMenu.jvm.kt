@@ -15,8 +15,7 @@ import androidx.compose.ui.window.PopupProperties
 actual fun PopupMenu(
     offset: IntOffset,
     onDismissRequested: () -> Unit,
-    subMenu: @Composable MenuScope.(subMenuId: Any) -> Unit,
-    content: @Composable MenuScope.() -> Unit
+    menu: @Composable MenuScope.(menuId: Any) -> Unit,
 ) {
     Popup(
         offset = offset,
@@ -24,8 +23,7 @@ actual fun PopupMenu(
         content = {
             Menu(
                 modifier = Modifier.clickable { onDismissRequested() },
-                content = content,
-                subMenu = subMenu
+                menu = menu
             )
         },
         properties = PopupProperties(
