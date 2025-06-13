@@ -12,6 +12,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -123,8 +125,9 @@ object TextDefaults {
         hoverable: Boolean = false,
         selected: Boolean = false,
     ): TextStyle {
-        val hovered by interactionSource.collectIsHoveredAsState()
+        val _hovered by interactionSource.collectIsHoveredAsState()
         val focused by interactionSource.collectIsFocusedAsState()
+        val hovered = _hovered && LocalInputModeManager.current.inputMode == InputMode.Touch
         return when {
             !enabled -> Win9xTheme.typography.disabled
             selected -> Win9xTheme.typography.focused

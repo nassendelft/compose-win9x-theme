@@ -4,7 +4,9 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.focusDashIndication
-import nl.ncaj.theme.win9x.focusSelectionIndication
+import nl.ncaj.theme.win9x.selectionBackground
 import nl.ncaj.theme.win9x.sunkenBorder
 
 
@@ -35,26 +37,32 @@ fun LargeIconListItem(
     }
 
     Column(
-        modifier = modifier.size(80.dp)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null
-            ) { onclick() },
+        modifier = modifier.size(80.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(Modifier.sizeIn(maxWidth = 36.dp, maxHeight = 36.dp)) {
-            icon()
-        }
+        Box(
+            Modifier.sizeIn(maxWidth = 36.dp, maxHeight = 36.dp)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) { onclick() },
+            content = { icon() }
+        )
         Spacer(Modifier.height(4.dp))
         Text(
             text = label,
             style = textStyle.copy(fontSize = 12.sp),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
+            interactionSource = interactionSource,
             modifier = Modifier
-                .focusSelectionIndication(interactionSource)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) { onclick() }
                 .focusDashIndication(interactionSource)
                 .padding(horizontal = 1.dp, vertical = 2.dp)
+                .selectionBackground(isFocused)
         )
     }
 }
@@ -80,7 +88,7 @@ fun SmallIconListItem(
         Row(
             modifier = Modifier.clickable(
                 interactionSource = interactionSource,
-                indication = null
+                indication = null,
             ) { onclick() },
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -91,10 +99,11 @@ fun SmallIconListItem(
             Text(
                 text = label,
                 style = textStyle.copy(fontSize = 12.sp),
+                interactionSource = interactionSource,
                 modifier = Modifier
-                    .focusSelectionIndication(interactionSource)
                     .focusDashIndication(interactionSource)
                     .padding(horizontal = 1.dp, vertical = 2.dp)
+                    .selectionBackground(isFocused)
             )
         }
     }
@@ -114,7 +123,8 @@ fun HorizontalListView(
         FlowColumn(
             modifier = modifier
                 .background(Color.White)
-                .horizontalScroll(horizontalScroll),
+                .horizontalScroll(horizontalScroll)
+                .clickable {}, // forces focus to be removed from child if not directly clicked on a child
             content = { content() }
         )
     }
@@ -134,7 +144,8 @@ fun VerticalListView(
         FlowRow(
             modifier = modifier
                 .background(Color.White)
-                .verticalScroll(verticalScroll),
+                .verticalScroll(verticalScroll)
+                .clickable {}, // forces focus to be removed from child if not directly clicked on a child
             content = { content() },
         )
     }

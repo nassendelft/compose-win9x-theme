@@ -9,12 +9,15 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
@@ -23,14 +26,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import nl.ncaj.theme.win9x.DashedVerticalLine
-import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.focusDashIndication
-import nl.ncaj.theme.win9x.focusSelectionIndication
-import nl.ncaj.theme.win9x.sunkenBorder
-import nl.ncaj.theme.win9x.win9xBorder
+import nl.ncaj.theme.win9x.*
 
-class DetailsListViewScope internal constructor(){
+class DetailsListViewScope internal constructor() {
     internal val heading = mutableListOf<@Composable (column: Int) -> Unit>()
     internal val rows = mutableListOf<@Composable (column: Int) -> Unit>()
 
@@ -166,7 +164,10 @@ fun DetailsListView(
         verticalScrollbarAdapter = rememberScrollbarAdapter(verticalScroll),
         modifier = modifier.sunkenBorder(),
     ) {
-        Box(modifier.background(Color.White)) {
+        Box(
+            modifier.background(Color.White)
+                .clickable {} // forces focus to be removed from child if not directly clicked on a child
+        ) {
             Column(
                 modifier = Modifier.horizontalScroll(horizontalScroll)
                     .verticalScroll(verticalScroll)
@@ -236,6 +237,7 @@ fun DetailsViewListItem(
     modifier: Modifier = Modifier,
     icon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
+    selectable: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onclick: () -> Unit = {},
 ) {
@@ -248,16 +250,21 @@ fun DetailsViewListItem(
     }
 
     Row(
-        modifier = modifier.clickable(
-            interactionSource = interactionSource,
-            indication = null
-        ) { onclick() },
+        modifier = modifier
+            .then(
+                if (selectable) Modifier.clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                ) { onclick() }
+                else Modifier
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         icon?.let {
-            Box(Modifier.sizeIn(maxWidth = 18.dp, maxHeight = 18.dp)) {
-                icon()
-            }
+            Box(
+                modifier = Modifier.sizeIn(maxWidth = 18.dp, maxHeight = 18.dp),
+                content = { icon() }
+            )
             Spacer(Modifier.width(4.dp))
         }
         Text(
@@ -266,9 +273,11 @@ fun DetailsViewListItem(
             maxLines = 1,
             minLines = 1,
             overflow = TextOverflow.Ellipsis,
+            interactionSource = interactionSource,
+            focusable = selectable,
             modifier = Modifier
-                .focusSelectionIndication(interactionSource)
                 .focusDashIndication(interactionSource)
+                .selectionBackground(isFocused)
                 .padding(horizontal = 1.dp, vertical = 2.dp)
         )
     }

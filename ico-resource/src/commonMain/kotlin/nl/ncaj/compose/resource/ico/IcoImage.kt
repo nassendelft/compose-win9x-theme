@@ -19,7 +19,7 @@ fun IcoImage(
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Fit,
     alpha: Float = DefaultAlpha,
-    colorFilter: ColorFilter? = null
+    colorFilter: ColorFilter? = null,
 ) = with(LocalDensity.current) {
     BoxWithConstraints {
         Image(

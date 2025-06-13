@@ -25,8 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
@@ -115,17 +116,18 @@ fun DropDownListBox(
 }
 
 @Composable
-fun DropDownListBoxItem(
+fun DropDownItem(
     text: String,
+    selected: Boolean,
+    onSelectionChange: (Boolean) -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    selected: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     Text(
         text = text,
-        interactionSource =interactionSource,
+        interactionSource = interactionSource,
         enabled = enabled,
         selected = selected,
         modifier = modifier
@@ -135,9 +137,20 @@ fun DropDownListBoxItem(
                 interactionSource = interactionSource,
                 indication = null
             )
-            .onFocusChanged { if(it.isFocused) onClick() }
             .fillMaxWidth()
             .selectionBackground(selected)
+            .pointerInput(PointerEventType.Enter) {
+                awaitPointerEventScope {
+                    while (true) {
+                        val event = awaitPointerEvent()
+                        if (event.type == PointerEventType.Enter) {
+                            onSelectionChange(true)
+                        } else if (event.type == PointerEventType.Exit) {
+                            onSelectionChange(false)
+                        }
+                    }
+                }
+            }
             .padding(horizontal = 6.dp, vertical = 4.dp)
     )
 }

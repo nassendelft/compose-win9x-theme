@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextLayoutResult
@@ -96,30 +98,4 @@ fun DropDownComboBox(
             }
         }
     }
-}
-
-@Composable
-fun DropDownComboBoxItem(
-    label: String,
-    modifier: Modifier = Modifier,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    enabled: Boolean = true,
-    selected: Boolean = false,
-    onClick: () -> Unit,
-) {
-    Text(
-        modifier = modifier
-            .fillMaxWidth()
-            .selectionBackground(selected)
-            .padding(4.dp)
-            .clickable(
-                onClick = onClick,
-                interactionSource = interactionSource,
-                indication = null,
-                enabled = enabled,
-            ),
-        text = label,
-        enabled = enabled,
-        selected = selected,
-    )
 }

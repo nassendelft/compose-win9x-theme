@@ -2,12 +2,14 @@ package nl.ncaj.theme.win9x.controls
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
@@ -18,6 +20,7 @@ import nl.ncaj.theme.win9x.DashedVerticalLine
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.focusDashIndication
 import nl.ncaj.theme.win9x.focusSelectionIndication
+import nl.ncaj.theme.win9x.selectionBackground
 import nl.ncaj.theme.win9x.sunkenBorder
 
 
@@ -57,10 +60,10 @@ fun TreeViewItem(
     modifier: Modifier = Modifier,
     leadingIcon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: (() -> Unit)? = null,
 ) {
-    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
-
+    val isFocused by interactionSource.collectIsFocusedAsState()
     Row(
         modifier = modifier.then(
             if (onClick == null) Modifier
@@ -90,6 +93,7 @@ fun TreeViewItem(
             modifier = Modifier
                 .focusSelectionIndication(interactionSource)
                 .focusDashIndication(interactionSource)
+                .selectionBackground(isFocused)
                 .padding(horizontal = 1.dp, vertical = 2.dp)
         )
     }

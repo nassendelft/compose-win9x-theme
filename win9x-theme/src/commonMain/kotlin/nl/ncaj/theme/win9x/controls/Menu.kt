@@ -14,9 +14,7 @@ import androidx.compose.ui.Modifier.Node
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusRequesterModifierNode
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.requestFocus
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -37,8 +35,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 import nl.ncaj.theme.win9x.*
 import nl.ncaj.theme.win9x.vector.*
 
@@ -55,8 +56,9 @@ fun MenuItemCascade(
     val image = if (enabled) rememberVectorPainter(Icons.ArrowDown)
     else rememberVectorPainter(Icons.ArrowDownDisabled)
 
-    val isHovered by interactionSource.collectIsHoveredAsState()
+    val _hover by interactionSource.collectIsHoveredAsState()
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val isHovered = _hover && LocalInputModeManager.current.inputMode == InputMode.Touch
 
     MenuItemLabel(
         modifier = modifier,
@@ -91,8 +93,9 @@ fun MenuItemOptionButton(
     enabled: Boolean = true,
     onCheckChanged: (Boolean) -> Unit,
 ) {
-    val isHover by interactionSource.collectIsHoveredAsState()
+    val _hover by interactionSource.collectIsHoveredAsState()
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val isHover = _hover && LocalInputModeManager.current.inputMode == InputMode.Touch
 
     MenuItemLabel(
         label = label,
@@ -127,8 +130,9 @@ fun MenuItemCheckBox(
     enabled: Boolean = true,
     onCheckChanged: (Boolean) -> Unit,
 ) {
-    val isHover by interactionSource.collectIsHoveredAsState()
+    val _hover by interactionSource.collectIsHoveredAsState()
     val isFocused by interactionSource.collectIsFocusedAsState()
+    val isHover = _hover && LocalInputModeManager.current.inputMode == InputMode.Touch
 
     MenuItemLabel(
         label = label,
@@ -259,7 +263,6 @@ class MenuScope internal constructor(private val state: MenuState) {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Menu(
     modifier: Modifier = Modifier,
@@ -310,7 +313,6 @@ fun Menu(
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private inline fun MenuContent(
     modifier: Modifier = Modifier,
@@ -330,7 +332,8 @@ private fun Modifier.menuItem(
     interactionSource: MutableInteractionSource,
     selected: Boolean,
     onClick: () -> Unit,
-) = focusSelectionIndication(interactionSource)
+) = this
+    .focusSelectionIndication(interactionSource)
     .hoverIndication(interactionSource)
     .then(MenuItemElement(interactionSource))
     .focusable(interactionSource = interactionSource)
@@ -390,7 +393,6 @@ private class MenuItemNode(
         }
     }
 
-    @OptIn(FlowPreview::class)
     fun listen(interactionSource: MutableInteractionSource) {
         job = coroutineScope.launch {
             interactionSource.interactions

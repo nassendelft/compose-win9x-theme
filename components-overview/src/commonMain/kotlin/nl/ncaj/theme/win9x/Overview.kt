@@ -2,6 +2,7 @@ package nl.ncaj.theme.win9x
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -278,10 +279,19 @@ private fun TreeViewExample() {
         enabled: Boolean = true,
         children: (TreeViewScope.() -> Unit)? = null
     ) = item(label, children) {
+        val interactionSource = remember { MutableInteractionSource() }
         TreeViewItem(
             label = label,
             enabled = enabled,
-            leadingIcon = { IcoImage(Res.ico.directory_open, contentDescription = null) },
+            interactionSource = interactionSource,
+            leadingIcon = {
+                IcoImage(
+                    resource = Res.ico.directory_open,
+                    contentDescription = null,
+                    modifier = Modifier.focusable(interactionSource = interactionSource),
+                    colorFilter = Win9xOverlayColorFilter(interactionSource)
+                )
+            },
             onClick = { },
         )
     }
@@ -375,24 +385,33 @@ private fun ProgressIndicatorExample() {
 private fun DropDownListBoxExample() {
     var expanded by remember { mutableStateOf(false) }
     var currentValue by remember { mutableStateOf("Value") }
+    var selectedItem by remember { mutableIntStateOf(0) }
     DropDownListBox(
         text = currentValue,
         expanded = expanded,
         onExpandChange = { expanded = it },
         modifier = Modifier.fillMaxWidth()
     ) {
-        DropDownListBoxItem(
+        DropDownItem(
             text = "Value",
-            selected = currentValue == "Value",
+            selected = selectedItem == 0,
+            onSelectionChange = { if (it) selectedItem = 0 },
             onClick = {
                 currentValue = "Value"
                 expanded = false
             }
         )
-        DropDownListBoxItem(text = "Value (disabled)", onClick = {}, enabled = false)
-        DropDownListBoxItem(
+        DropDownItem(
+            text = "Value (disabled)",
+            selected = false,
+            onSelectionChange = {},
+            onClick = {},
+            enabled = false
+        )
+        DropDownItem(
             text = "Longer value",
-            selected = currentValue == "Longer value",
+            selected = selectedItem == 1,
+            onSelectionChange = { if (it) selectedItem = 1 },
             onClick = {
                 currentValue = "Longer value"
                 expanded = false
@@ -404,7 +423,7 @@ private fun DropDownListBoxExample() {
 @Composable
 private fun ComboBoxExample() {
     var value by remember { mutableStateOf("") }
-    var state = rememberListBoxState(itemCount = 3, defaultIndex = -1) { index -> value = "Value ${index+1}" }
+    var state = rememberListBoxState(itemCount = 3, defaultIndex = -1) { index -> value = "Value ${index + 1}" }
     Column(Modifier.fillMaxSize(0.6f)) {
         TextBox(
             value = value,
@@ -421,7 +440,7 @@ private fun ComboBoxExample() {
                     .listBoxItem(enabled = index != 1)
                     .fillMaxWidth()
                     .padding(4.dp),
-                text = "Value ${index+1}",
+                text = "Value ${index + 1}",
                 enabled = index != 1,
                 selected = state.selectedIndex == index,
             )
@@ -433,6 +452,7 @@ private fun ComboBoxExample() {
 private fun DropDownComboBoxExample() {
     var value by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+    var selected by remember { mutableStateOf(0) }
 
     DropDownComboBox(
         value = value,
@@ -441,13 +461,14 @@ private fun DropDownComboBoxExample() {
         onExpandChange = { expanded = it },
     ) {
         for (index in 0 until 3) {
-            val label = "Value ${index+1}"
-            DropDownComboBoxItem(
-                label = label,
+            val label = "Value ${index + 1}"
+            DropDownItem(
+                text = label,
                 enabled = index != 1,
-                selected = value == label,
+                selected = index != 1 && selected == index,
+                onSelectionChange = { selected = index },
                 onClick = {
-                    value = "Value ${index+1}"
+                    value = "Value ${index + 1}"
                     expanded = false
                 }
             )
@@ -458,7 +479,6 @@ private fun DropDownComboBoxExample() {
 enum class ListViewState { LargeIcon, SmallIcon, List, Details }
 class ListViewItem(val label: String, val description: String, val data: String, val icon: IcoResource)
 
-@OptIn(ExperimentalResourceApi::class)
 val listViewItems = (0 until 20)
     .map { ListViewItem("Item $it", "Description", "data", Res.ico.directory_open) }
 
@@ -473,9 +493,18 @@ private fun ListViewExample() {
                 modifier = Modifier.weight(1f)
             ) {
                 listViewItems.forEach {
+                    val interactionSource = remember { MutableInteractionSource() }
                     LargeIconListItem(
                         label = it.label,
-                        icon = { IcoImage(it.icon, null) },
+                        interactionSource = interactionSource,
+                        icon = {
+                            IcoImage(
+                                resource = it.icon,
+                                contentDescription = null,
+                                modifier = Modifier.focusable(interactionSource = interactionSource),
+                                colorFilter = Win9xOverlayColorFilter(interactionSource)
+                            )
+                        },
                     )
                 }
             }
@@ -484,9 +513,18 @@ private fun ListViewExample() {
                 modifier = Modifier.weight(1f)
             ) {
                 listViewItems.forEach {
+                    val interactionSource = remember { MutableInteractionSource() }
                     SmallIconListItem(
                         label = it.label,
-                        icon = { IcoImage(it.icon, null) },
+                        interactionSource = interactionSource,
+                        icon = {
+                            IcoImage(
+                                resource = it.icon,
+                                contentDescription = null,
+                                modifier = Modifier.focusable(interactionSource = interactionSource),
+                                colorFilter = Win9xOverlayColorFilter(interactionSource)
+                            )
+                        },
                     )
                 }
             }
@@ -495,9 +533,18 @@ private fun ListViewExample() {
                 modifier = Modifier.weight(1f)
             ) {
                 listViewItems.forEach {
+                    val interactionSource = remember { MutableInteractionSource() }
                     SmallIconListItem(
                         label = it.label,
-                        icon = { IcoImage(it.icon, null) },
+                        interactionSource = interactionSource,
+                        icon = {
+                            IcoImage(
+                                resource = it.icon,
+                                contentDescription = null,
+                                modifier = Modifier.focusable(interactionSource = interactionSource),
+                                colorFilter = Win9xOverlayColorFilter(interactionSource)
+                            )
+                        },
                     )
                 }
             }
@@ -520,8 +567,22 @@ private fun ListViewExample() {
                 }
                 listViewItems.forEach {
                     itemRow { column ->
+                        val interactionSource = remember { MutableInteractionSource() }
                         when (column) {
-                            0 -> DetailsViewListItem(label = it.label, icon = { IcoImage(it.icon, null) })
+                            0 -> DetailsViewListItem(
+                                label = it.label,
+                                interactionSource = interactionSource,
+                                icon = {
+                                    IcoImage(
+                                        resource = it.icon,
+                                        contentDescription = null,
+                                        modifier = Modifier.focusable(interactionSource = interactionSource),
+                                        colorFilter = Win9xOverlayColorFilter(interactionSource)
+                                    )
+                                },
+                                selectable = true,
+                            )
+
                             1 -> DetailsViewListItem(label = it.description)
                             2 -> DetailsViewListItem(label = it.data)
                             else -> error("Column data not found")
