@@ -38,11 +38,10 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation("org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.8.15")
-            implementation("androidx.collection:collection:1.4.5")
-            implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-            implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.7")
-            implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
-            implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+            implementation("androidx.collection:collection:1.5.0")
+            implementation("androidx.lifecycle:lifecycle-viewmodel:2.9.1")
+            implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.1")
+            implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.1")
         }
     }
 
