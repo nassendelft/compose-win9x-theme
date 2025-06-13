@@ -4,18 +4,14 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 import nl.ncaj.compose.resource.ico.IcoImage
 import nl.ncaj.compose.resource.ico.IcoResource
@@ -128,11 +124,8 @@ private fun MenuButtonExample() {
             MenuIdRoot -> {
                 var optionChecked by remember { mutableStateOf(true) }
                 var boxChecked by remember { mutableStateOf(true) }
-
                 val interactionSource = remember { MutableInteractionSource() }
-                val isHovered by interactionSource.collectIsHoveredAsState()
-                val isFocused by interactionSource.collectIsFocusedAsState()
-                println("hovered $isHovered, focused $isFocused")
+
                 MenuItemLabel("Command", interactionSource = interactionSource) {}
                 MenuItemOptionButton("Option button", optionChecked) { optionChecked = it }
                 MenuItemCascade(
