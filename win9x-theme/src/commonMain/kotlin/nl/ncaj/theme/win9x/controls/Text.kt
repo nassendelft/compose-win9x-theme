@@ -1,19 +1,12 @@
 package nl.ncaj.theme.win9x.controls
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.input.InputMode
-import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -90,12 +83,9 @@ fun Text(
 fun Text(
     text: String,
     modifier: Modifier = Modifier,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true,
-    hoverable: Boolean = false,
     selected: Boolean = false,
-    focusable: Boolean = true,
-    style: TextStyle = TextDefaults.style(interactionSource, focusable, enabled, hoverable, selected),
+    style: TextStyle = TextDefaults.style(enabled, selected),
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
@@ -119,20 +109,12 @@ fun Text(
 object TextDefaults {
     @Composable
     fun style(
-        interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-        focusable: Boolean = true,
         enabled: Boolean = true,
-        hoverable: Boolean = false,
         selected: Boolean = false,
     ): TextStyle {
-        val _hovered by interactionSource.collectIsHoveredAsState()
-        val focused by interactionSource.collectIsFocusedAsState()
-        val hovered = _hovered && LocalInputModeManager.current.inputMode == InputMode.Touch
         return when {
             !enabled -> Win9xTheme.typography.disabled
             selected -> Win9xTheme.typography.focused
-            hovered && hoverable -> Win9xTheme.typography.focused
-            focused && focusable -> Win9xTheme.typography.focused
             else -> Win9xTheme.typography.default
         }
     }

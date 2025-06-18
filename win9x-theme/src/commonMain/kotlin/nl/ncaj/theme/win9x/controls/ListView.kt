@@ -54,7 +54,6 @@ fun LargeIconListItem(
             style = textStyle.copy(fontSize = 12.sp),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            interactionSource = interactionSource,
             modifier = Modifier
                 .clickable(
                     interactionSource = interactionSource,
@@ -99,7 +98,6 @@ fun SmallIconListItem(
             Text(
                 text = label,
                 style = textStyle.copy(fontSize = 12.sp),
-                interactionSource = interactionSource,
                 modifier = Modifier
                     .focusDashIndication(interactionSource)
                     .padding(horizontal = 1.dp, vertical = 2.dp)

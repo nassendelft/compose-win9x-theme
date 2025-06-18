@@ -120,44 +120,72 @@ private data object MenuId3
 
 @Composable
 private fun MenuButtonExample() {
-    MenuButton(label = { Text("Menu") }) { id ->
-        when (id) {
-            MenuIdRoot -> {
-                var optionChecked by remember { mutableStateOf(true) }
-                var boxChecked by remember { mutableStateOf(true) }
-                val interactionSource = remember { MutableInteractionSource() }
+    MenuButton(label = { Text("Menu") }) { state ->
+        var optionChecked by remember { mutableStateOf(true) }
+        var boxChecked by remember { mutableStateOf(true) }
+        val selected = state.selectedItem
 
-                MenuItemLabel("Command", interactionSource = interactionSource) {}
-                MenuItemOptionButton("Option button", optionChecked) { optionChecked = it }
-                MenuItemCascade(
-                    label = "Sub menu1",
-                    modifier = Modifier.cascade(MenuId1),
-                    selected = visibleMenus.contains(MenuId1),
+        MenuItemLabel(
+            label = "Command",
+            modifier = Modifier.menuItem(key = 0),
+            selected = selected == 0,
+            onClick = {}
+        )
+        MenuItemOptionButton(
+            label = "Option button",
+            modifier = Modifier.menuItem(key = 1),
+            selected = selected == 1,
+            checked = optionChecked,
+            onCheckChanged = { optionChecked = it },
+        )
+        MenuItemCascade(
+            label = "Sub menu1",
+            modifier = Modifier.menuItem(key = 2, cascadeMenuId = MenuId1),
+            selected = state.visibleMenus.contains(MenuId1) || selected == 2,
+        )
+        MenuItemCheckBox(
+            label = "Checkbox",
+            modifier = Modifier.menuItem(key = 3),
+            selected = selected == 3,
+            checked = boxChecked,
+            onCheckChanged = { boxChecked = it },
+        )
+        MenuItemCascade(
+            label = "Sub menu2",
+            modifier = Modifier.menuItem(key = 4, cascadeMenuId = MenuId2),
+            selected = state.visibleMenus.contains(MenuId2) || selected == 4,
+        )
+
+        cascadeMenu(MenuId1) {
+            MenuItemLabel(
+                label = "Sub command 1",
+                modifier = Modifier.menuItem(key = 5),
+                selected = selected == 5,
+                onClick = {},
+            )
+            MenuItemCascade(
+                label = "Sub menu3",
+                modifier = Modifier.menuItem(key = 6, cascadeMenuId = MenuId3),
+                selected = state.visibleMenus.contains(MenuId3) || selected == 6,
+            )
+
+            cascadeMenu(MenuId3) {
+                MenuItemLabel(
+                    label = "Sub command 3",
+                    modifier = Modifier.menuItem(key = 8),
+                    selected = selected == 8,
+                    onClick = {},
                 )
-                MenuItemCheckBox("Checkbox", boxChecked) { boxChecked = it }
-                MenuItemCascade(
-                    label = "Sub menu2",
-                    modifier = Modifier.cascade(MenuId2),
-                    selected = visibleMenus.contains(MenuId2),
-                )
             }
+        }
 
-            MenuId1 -> {
-                MenuItemLabel("Sub command 1") {}
-                MenuItemCascade(
-                    label = "Sub menu3",
-                    modifier = Modifier.cascade(MenuId3),
-                    selected = visibleMenus.contains(MenuId3),
-                )
-            }
-
-            MenuId2 -> {
-                MenuItemLabel("Sub command 2") {}
-            }
-
-            MenuId3 -> {
-                MenuItemLabel("Sub command 3") {}
-            }
+        cascadeMenu(MenuId2) {
+            MenuItemLabel(
+                label = "Sub command 2",
+                modifier = Modifier.menuItem(key = 7),
+                selected = selected == 7,
+                onClick = {},
+            )
         }
     }
 }
@@ -223,7 +251,6 @@ private fun ListBoxExample() {
                 .fillMaxWidth()
                 .padding(4.dp),
             text = "Value ${index + 1}",
-            interactionSource = interactionSource,
             enabled = index != 2,
             selected = state.selectedIndex == index,
         )

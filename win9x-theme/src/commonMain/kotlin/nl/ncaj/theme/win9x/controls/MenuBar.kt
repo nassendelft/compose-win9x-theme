@@ -11,6 +11,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import nl.ncaj.theme.win9x.onHover
 import nl.ncaj.theme.win9x.selectionBackground
 
 
@@ -22,6 +23,7 @@ class MenuBarScope internal constructor(
     fun Modifier.menuBarItem(
         key: Any,
         selected: Boolean,
+        onSelectionChanged: (Boolean) -> Unit,
         interactionSource: MutableInteractionSource? = null,
         enabled: Boolean = true,
         onClick: () -> Unit = {},
@@ -34,6 +36,7 @@ class MenuBarScope internal constructor(
         }
         .selectionBackground(selected)
         .padding(horizontal = 4.dp, vertical = 2.dp)
+        .onHover(enabled, onSelectionChanged)
 }
 
 @Composable
@@ -41,20 +44,21 @@ fun MenuBar(
     selectedMenu: Any?,
     onMenuSelected: (Any?) -> Unit,
     modifier: Modifier = Modifier,
-    menu: @Composable MenuScope.(menuId: Any) -> Unit,
-    content: @Composable MenuBarScope.() -> Unit,
+    menu: @Composable MenuScope.(MenuState) -> Unit,
+    content: @Composable MenuBarScope.(MenuState) -> Unit,
 ) {
+    val state = remember(menu) { MenuState() }
     val positions = remember { mutableMapOf<Any, Float>() }
     val onToggleMenu: (Any) -> Unit = { onMenuSelected(if (selectedMenu == null) it else null) }
 
     Column(modifier) {
-        Row { MenuBarScope(positions, onToggleMenu, this).apply { content() } }
+        Row { MenuBarScope(positions, onToggleMenu, this).apply { content(state) } }
         selectedMenu?.let { menuKey ->
             Box { // box is needed to get PopupMenu aligned properly
                 PopupMenu(
                     offset = IntOffset(positions[menuKey]!!.toInt(), 0),
                     onDismissRequested = { onMenuSelected(null) },
-                    menu = { menu(if(it == MenuIdRoot) menuKey else it) },
+                    menu = menu,
                 )
             }
         }

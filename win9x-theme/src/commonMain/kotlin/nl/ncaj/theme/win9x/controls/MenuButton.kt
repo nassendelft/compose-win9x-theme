@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.IntOffset
 fun MenuButton(
     label: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    menu: @Composable MenuScope.(menuId: Any) -> Unit = {},
+    menu: @Composable MenuScope.(MenuState) -> Unit = {},
 ) {
     var displayMenu by remember { mutableStateOf(false) }
     var buttonSet by remember { mutableStateOf(false) }

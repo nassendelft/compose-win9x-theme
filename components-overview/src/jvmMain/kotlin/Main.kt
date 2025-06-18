@@ -1,4 +1,3 @@
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.getValue
@@ -39,19 +38,27 @@ fun main() = application {
                 MenuBar(
                     selectedMenu = selectedMenu,
                     onMenuSelected = { selectedMenu = it },
-                    menu = {
-                        MenuItemLabel("About") {
+                    menu = { state ->
+                        MenuItemLabel(
+                            label = "About",
+                            modifier = Modifier.menuItem(0),
+                            selected = state.selectedItem == 0,
+                        ) {
                             showAboutDialog = true
                             selectedMenu = null
                         }
                     },
                 ) {
-                    val interactionSource = remember { MutableInteractionSource() }
-                    val selected = selectedMenu == MainMenu
+                    var selection by remember { mutableStateOf(-1) }
+                    val selected = selection == 0 || selectedMenu == MainMenu
                     Text(
                         text = "Help",
-                        modifier = Modifier.menuBarItem(MainMenu, selected, interactionSource),
-                        style = TextDefaults.style(interactionSource, selected = selected).copy(fontSize = 12.sp),
+                        modifier = Modifier.menuBarItem(
+                            key = MainMenu,
+                            selected = selected,
+                            onSelectionChanged = { selection = if (it) 0 else -1 },
+                        ),
+                        style = TextDefaults.style(selected = selected).copy(fontSize = 12.sp),
                     )
                 }
             },

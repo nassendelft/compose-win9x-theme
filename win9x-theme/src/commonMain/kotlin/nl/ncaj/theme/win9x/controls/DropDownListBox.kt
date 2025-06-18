@@ -26,8 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
@@ -37,6 +35,7 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import nl.ncaj.theme.win9x.Win9xTheme
 import nl.ncaj.theme.win9x.focusDashIndication
+import nl.ncaj.theme.win9x.onHover
 import nl.ncaj.theme.win9x.selectionBackground
 import nl.ncaj.theme.win9x.sunkenBorder
 import nl.ncaj.theme.win9x.vector.ArrowDown
@@ -127,7 +126,6 @@ fun DropDownItem(
 ) {
     Text(
         text = text,
-        interactionSource = interactionSource,
         enabled = enabled,
         selected = selected,
         modifier = modifier
@@ -139,18 +137,7 @@ fun DropDownItem(
             )
             .fillMaxWidth()
             .selectionBackground(selected)
-            .pointerInput(PointerEventType.Enter) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        if (event.type == PointerEventType.Enter) {
-                            onSelectionChange(true)
-                        } else if (event.type == PointerEventType.Exit) {
-                            onSelectionChange(false)
-                        }
-                    }
-                }
-            }
+            .onHover(enabled, onSelectionChange)
             .padding(horizontal = 6.dp, vertical = 4.dp)
     )
 }

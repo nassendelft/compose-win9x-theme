@@ -22,71 +22,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 
-//// we use our own `indication` function, as the default one filters out focus states, which we don't want.
-//internal fun Modifier.indication(
-//    interactionSource: InteractionSource,
-//    indication: IndicationNodeFactory
-//) = this.then(IndicationModifierElement(interactionSource, indication))
-//
-///**
-// * ModifierNodeElement to create [IndicationNodeFactory] instances. More complicated modifiers such
-// * as [clickable] should manually delegate to the node returned by [IndicationNodeFactory]
-// * internally.
-// */
-//private class IndicationModifierElement(
-//    private val interactionSource: InteractionSource,
-//    private val indication: IndicationNodeFactory
-//) : ModifierNodeElement<IndicationModifierNode>() {
-//    override fun create(): IndicationModifierNode {
-//        return IndicationModifierNode(indication.create(interactionSource))
-//    }
-//
-//    override fun InspectorInfo.inspectableProperties() {
-//        name = "indication"
-//        properties["interactionSource"] = interactionSource
-//        properties["indication"] = indication
-//    }
-//
-//    override fun update(node: IndicationModifierNode) {
-//        node.update(indication.create(interactionSource))
-//    }
-//
-//    override fun equals(other: Any?): Boolean {
-//        if (this === other) return true
-//        if (other !is IndicationModifierElement) return false
-//
-//        if (interactionSource != other.interactionSource) return false
-//        if (indication != other.indication) return false
-//
-//        return true
-//    }
-//
-//    override fun hashCode(): Int {
-//        var result = interactionSource.hashCode()
-//        result = 31 * result + indication.hashCode()
-//        return result
-//    }
-//}
-//
-///**
-// * Wrapper [DelegatableNode] that allows us to replace the wrapped node fully when a new node is
-// * provided.
-// */
-//private class IndicationModifierNode(
-//    private var indicationNode: DelegatableNode
-//) : DelegatingNode() {
-//
-//    init {
-//        delegate(indicationNode)
-//    }
-//
-//    fun update(indicationNode: DelegatableNode) {
-//        undelegate(this.indicationNode)
-//        this.indicationNode = indicationNode
-//        delegate(indicationNode)
-//    }
-//}
-
 // Draws a selection color box underneath the content
 class FocusSelectionIndication internal constructor(private val color: Color) : IndicationNodeFactory {
 
@@ -129,51 +64,6 @@ fun Modifier.focusSelectionIndication(
     interactionSource: MutableInteractionSource,
     color: Color = Color.Unspecified,
 ) = this then indication(interactionSource, FocusSelectionIndication(color))
-
-// Draws a selection color box underneath the content
-class HoverSelectionIndication internal constructor() : IndicationNodeFactory {
-
-    override fun create(interactionSource: InteractionSource): DelegatableNode =
-        HoverSelectionIndicationNode(interactionSource)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return this::class.hashCode()
-    }
-}
-
-private class HoverSelectionIndicationNode(
-    private val interactionSource: InteractionSource,
-) : Modifier.Node(), DrawModifierNode, CompositionLocalConsumerModifierNode {
-    private var isHovered = false
-
-    private val colorScheme get() = currentValueOf(LocalColorScheme)
-
-    override fun onAttach() {
-        coroutineScope.launch {
-            interactionSource.interactions
-                .filter { it is HoverInteraction }
-                .collectLatest { interaction ->
-                    isHovered = interaction is HoverInteraction.Enter
-                    invalidateDraw()
-                }
-        }
-    }
-
-    override fun ContentDrawScope.draw() {
-        if (isHovered) drawRect(colorScheme.selection, size = size)
-        drawContent()
-    }
-}
-
-fun Modifier.hoverIndication(
-    interactionSource: MutableInteractionSource,
-) = indication(interactionSource, HoverSelectionIndication())
 
 // draws a dotted line border *over* the content
 class FocusDashIndication internal constructor(private val padding: Dp) : IndicationNodeFactory {

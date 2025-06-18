@@ -273,8 +273,6 @@ fun DetailsViewListItem(
             maxLines = 1,
             minLines = 1,
             overflow = TextOverflow.Ellipsis,
-            interactionSource = interactionSource,
-            focusable = selectable,
             modifier = Modifier
                 .focusDashIndication(interactionSource)
                 .selectionBackground(isFocused)
