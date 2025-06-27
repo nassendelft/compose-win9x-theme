@@ -89,6 +89,7 @@ fun TreeViewItem(
         Text(
             text = label,
             enabled = enabled,
+            selected = isFocused,
             modifier = Modifier
                 .focusSelectionIndication(interactionSource)
                 .focusDashIndication(interactionSource)
