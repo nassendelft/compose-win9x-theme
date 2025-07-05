@@ -174,7 +174,10 @@ fun Modifier.pressColorIndication(
     backgroundColor: Color = Color.Unspecified,
 ) = this.indication(interactionSource, PressColorIndication(pressColor, backgroundColor))
 
-internal fun DrawScope.drawDashFocus(padding: Dp = Dp.Unspecified) {
+internal fun DrawScope.drawDashFocus(
+    padding: Dp = Dp.Unspecified,
+    stroke: Dp = Dp.Unspecified,
+) {
     val size = if (padding == Dp.Unspecified) size
     else Size(size.width - (padding.toPx() * 2), size.height - (padding.toPx() * 2))
     val offset = if (padding == Dp.Unspecified) Offset.Zero
@@ -184,7 +187,7 @@ internal fun DrawScope.drawDashFocus(padding: Dp = Dp.Unspecified) {
         size = size,
         topLeft = offset,
         style = Stroke(
-            width = 1f,
+            width = if (stroke == Dp.Unspecified) 1f else stroke.toPx(),
             pathEffect = PathEffect.dashPathEffect(floatArrayOf(2f, 2f), 0f)
         )
     )

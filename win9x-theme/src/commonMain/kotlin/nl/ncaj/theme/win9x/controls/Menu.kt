@@ -173,6 +173,11 @@ fun MenuItemLabel(
     }
 }
 
+@Composable
+fun MenuItemDivider() {
+    HorizontalDivider(Modifier.fillMaxWidth().padding(vertical = 4.dp))
+}
+
 internal class CascadeMenuItem(
     val key: Any,
     val content: @Composable MenuScope.() -> Unit,
