@@ -1,26 +1,22 @@
 # Win9x Theme for Jetpack Compose UI
 
-Welcome to **Win9x Theme for Jetpack Compose UI**, a distinctive and self-contained theme engineered
-exclusively for Jetpack Compose UI. This project diverges from the standard Material Design paradigm
-by offering a comprehensive suite of custom-built components that are intricately woven from Jetpack
-Compose primitives.
+Welcome to the Win9x Theme for Jetpack Compose UI. This is a unique, self-contained theme designed specifically for
+Jetpack Compose UI. Unlike standard Material Design themes, this project offers a complete set of custom components, all
+built directly from Jetpack Compose primitives.
 
-## Features
+## Key Features
 
-- **Standalone Components**: Each component is independently designed, eliminating dependencies on
-  the Material Design theme, and ensuring extensive customization options.
-- **Multiplatform Compatibility**: With targets set for JVM, Android, and JSWasm, the theme is
-  prepared for versatile deployment across various platforms. However, the primary emphasis is on
-  the JVM target, with iOS compatibility forthcoming.
-- **Development Stage**: Currently in its pre-release stage, the project acknowledges that it may
-  include breaking changes until reaching version 1.0.0. Early adopters are encouraged to experiment
-  and offer valuable feedback.
+- Standalone Components: Each component is designed independently, without relying on the Material Design theme. This
+  gives you extensive customization options.
+- Multiplatform Compatibility: The theme supports JVM, Android, and JSWasm targets, making it versatile for various
+  platforms. While the primary focus is currently on the JVM target, iOS compatibility is planned for the future.
+- Development Stage: This project is currently in a pre-release stage. This means you might encounter breaking changes
+  before we reach version 1.0.0. We encourage early adopters to experiment with it and provide valuable feedback.
 
 ## Live demo
 
-For a glimpse of the `win9x-theme` library in action, visit the live JSWasm demo
-at http://win9x-compose.ncaj.nl/. Please note that the JSWasm demo is experimental and does not
-fully represent the capabilities of the JVM target.
+You can see the `win9x-theme` library in action by visiting our live JSWasm demo at http://win9x-compose.ncaj.nl/. 
+Please note that this JSWasm demo is experimental and doesn't fully represent all the capabilities of the JVM target.
 
 ## Screenshots
 
@@ -49,7 +45,8 @@ Integration into a Jetpack Compose project is straightforward:
 
 First, you need to add the repository that hosts the `win9x-theme` library to your
 project's `build.gradle.kts` file. Replace `VERSION` with the current version of the library.
-Make sure you configure [authentication properly](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages).
+Make sure you
+configure [authentication properly](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages).
 
 ```kotlin
 repositories {
@@ -77,10 +74,6 @@ download the library and make it available for use in your project.
 Now, you can import and use the `win9x-theme` library in your Kotlin code:
 
 ```kotlin
-import androidx.compose.ui.window.application
-import nl.ncaj.theme.win9x.Win9xTheme
-import nl.ncaj.theme.win9x.controls.Window
-
 fun main() = application {
     Win9xTheme {
         Window(
@@ -125,17 +118,33 @@ A MenuButton displays a menu when clicked, allowing users to select from multipl
 Usage example:
 
 ```kotlin
+private data object MenuId1
 MenuButton(
+    label = "Menu",
     menu = {
-        label("Command") {}
-        divider()
-        cascade("Check Box") {
-            label("Command") {}
-        }
+      val selected = state.selectedItem
+      MenuItemLabel(
+        label = "Command",
+        modifier = Modifier.menuItem(key = 0),
+        selected = selected == 0,
+        onClick = {}
+      )
+      MenuItemDivider()
+      MenuItemCascade(
+        label = "Sub menu=",
+        modifier = Modifier.menuItem(key = 1, cascadeMenuId = MenuId1),
+        selected = state.visibleMenus.contains(MenuId1) || selected == 1,
+      )
+      cascadeMenu(MenuId1) {
+        MenuItemLabel(
+          label = "Sub command",
+          modifier = Modifier.menuItem(key = 2),
+          selected = selected == 2,
+          onClick = {},
+        )
+      }
     }
-) {
-    Text("Menu")
-}
+)
 ```
 
 ### Option Button
@@ -193,23 +202,21 @@ A ListBox presents a list of selectable items, often used for dropdown menus or 
 Usage example:
 
 ```kotlin
- var selection by remember { mutableIntStateOf(0) }
-ListBox {
-    item {
-        DropDownListBoxItem(
-            label = "Value 1",
-            onSelected = { selection = 0 },
-            selected = selection == 0
-        )
-    }
-    item {
-        DropDownListBoxItem(
-            label = "Value 2 (Disabled)",
-            enabled = false,
-            onSelected = { selection = 1 },
-            selected = selection == 1
-        )
-    }
+val state = rememberListBoxState(itemCount = 5)
+ListBox(
+  state = state,
+  modifier = Modifier.fillMaxSize(0.6f),
+) { index ->
+  val interactionSource = remember { MutableInteractionSource() }
+  Text(
+    modifier = Modifier
+      .listBoxItem(enabled = index != 2, interactionSource)
+      .fillMaxWidth()
+      .padding(4.dp),
+    text = "Value ${index + 1}",
+    enabled = index != 2,
+    selected = state.selectedIndex == index,
+  )
 }
 ```
 
@@ -312,13 +319,38 @@ Usage example:
 ```kotlin
 var expanded by remember { mutableStateOf(false) }
 var currentValue by remember { mutableStateOf("Value") }
+var selectedItem by remember { mutableIntStateOf(0) }
 DropDownListBox(
-    text = currentValue,
-    expanded = expanded,
-    onExpandChange = { expanded = it },
+  text = currentValue,
+  expanded = expanded,
+  onExpandChange = { expanded = it },
+  modifier = Modifier.fillMaxWidth()
 ) {
-    item { DropDownListBoxItem(text = "Value", onSelection = { currentValue = "Value" }) }
-    item { DropDownListBoxItem(text = "Value (disabled)", onSelection = { }, enabled = false) }
+  DropDownItem(
+    text = "Value",
+    selected = selectedItem == 0,
+    onSelectionChange = { if (it) selectedItem = 0 },
+    onClick = {
+      currentValue = "Value"
+      expanded = false
+    }
+  )
+  DropDownItem(
+    text = "Value (disabled)",
+    selected = false,
+    onSelectionChange = {},
+    onClick = {},
+    enabled = false
+  )
+  DropDownItem(
+    text = "Longer value",
+    selected = selectedItem == 1,
+    onSelectionChange = { if (it) selectedItem = 1 },
+    onClick = {
+      currentValue = "Longer value"
+      expanded = false
+    }
+  )
 }
 ```
 
@@ -331,19 +363,28 @@ Usage example:
 
 ```kotlin
 var value by remember { mutableStateOf("") }
-Column {
-    TextBox(value = value, onValueChange = { value = it }, modifier = Modifier.fillMaxWidth())
-    ListBox {
-        listOf("Value 1", "Value 2", "Value 3").forEach {
-            item {
-                DropDownListBoxItem(
-                    label = it,
-                    onSelected = { value = it },
-                    selected = value == it
-                )
-            }
-        }
-    }
+val state = rememberListBoxState(itemCount = 3, defaultIndex = -1) { index -> value = "Value ${index + 1}" }
+Column(Modifier.fillMaxSize(0.6f)) {
+  TextBox(
+    value = value,
+    onValueChange = { value = it },
+    singleLine = true,
+    modifier = Modifier.fillMaxWidth()
+  )
+  ListBox(
+    state = state,
+    modifier = Modifier.fillMaxSize(),
+  ) { index ->
+    Text(
+      modifier = Modifier
+        .listBoxItem(enabled = index != 1)
+        .fillMaxWidth()
+        .padding(4.dp),
+      text = "Value ${index + 1}",
+      enabled = index != 1,
+      selected = state.selectedIndex == index,
+    )
+  }
 }
 ```
 
@@ -356,19 +397,28 @@ Usage example:
 
 ```kotlin
 var value by remember { mutableStateOf("") }
+var expanded by remember { mutableStateOf(false) }
+var selected by remember { mutableStateOf(0) }
+
 DropDownComboBox(
-    value = value,
-    onValueChange = { value = it }
+  value = value,
+  onValueChange = { value = it },
+  expanded = expanded,
+  onExpandChange = { expanded = it },
 ) {
-    listOf("Value 1", "Value 2", "Value 3").forEach {
-        item {
-            DropDownListBoxItem(
-                label = it,
-                onSelected = { value = it },
-                selected = value == it
-            )
-        }
-    }
+  for (index in 0 until 3) {
+    val label = "Value ${index + 1}"
+    DropDownItem(
+      text = label,
+      enabled = index != 1,
+      selected = index != 1 && selected == index,
+      onSelectionChange = { selected = index },
+      onClick = {
+        value = "Value ${index + 1}"
+        expanded = false
+      }
+    )
+  }
 }
 ```
 
