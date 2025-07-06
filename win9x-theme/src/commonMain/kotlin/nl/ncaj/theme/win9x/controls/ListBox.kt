@@ -40,7 +40,7 @@ fun ListBox(
                 .weight(1f)
                 .padding(2.dp)
                 .verticalScroll(scrollState)
-                .focusProperties { enter = { state.focusRequesters[state.selectedIndex] } }
+                .focusProperties { onEnter = { state.focusRequesters[state.selectedIndex] } }
                 .onKeyEvent {
                     if (it.type == KeyEventType.KeyUp) {
                         if (it.key == Key.DirectionUp) {
