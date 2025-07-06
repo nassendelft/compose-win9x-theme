@@ -1,15 +1,14 @@
 [versions]
 agp = "8.10.0"
-kotlin = "2.1.20"
+kotlin = "2.2.0"
 activity-compose = "1.10.1"
-compose-plugin = "1.7.0"
-kotlin-gradle-plugin = "2.0.21"
+compose-plugin = "1.8.2"
 kotlinpoet = "2.0.0"
 kotlinx-io-core = "0.6.0"
 
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-gradle-plugin" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io-core" }
 kotlin-multiplatform-plugin = { module = "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
