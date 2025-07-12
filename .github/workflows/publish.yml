@@ -23,7 +23,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Publish
-        run: ./gradlew publishAllPublicationsToSonatype -PpublishVersion="${GITHUB_REF_NAME}"
+        run: ./gradlew publishAllPublicationsToSonatype publishAllPublicationsToGitHubPackagesRepository -PpublishVersion="${GITHUB_REF_NAME}"
         env:
           PGP_KEY: ${{ secrets.PGP_KEY }}
           PGP_PASSWORD: ${{ secrets.PGP_PASSWORD }}

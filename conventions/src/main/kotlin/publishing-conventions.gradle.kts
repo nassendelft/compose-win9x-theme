@@ -62,6 +62,7 @@ val publishAllPublicationsToSonatype by tasks.registering {
 
 publishing.publications.withType<MavenPublication>().all {
     val capitalizedName = name.capitalize()
+    println("Configuring publication \"$name\" for task \"publish${capitalizedName}PublicationToSonatype\".")
     publishing.repositories {
         maven {
             name = "Sonatype${capitalizedName}Intermediate"
@@ -85,4 +86,17 @@ publishing.publications.withType<MavenPublication>().all {
     }
 
     publishAllPublicationsToSonatype.dependsOn(publishTask)
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/nassendelft/compose-win9x-theme")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("nassendelft")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
