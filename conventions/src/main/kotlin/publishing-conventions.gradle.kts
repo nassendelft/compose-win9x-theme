@@ -94,7 +94,7 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/nassendelft/compose-win9x-theme")
             credentials {
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("nassendelft")
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
                 password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
             }
         }
