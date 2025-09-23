@@ -5,7 +5,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.CanvasBasedWindow
+import androidx.compose.ui.window.ComposeViewport
 import nl.ncaj.compose.resource.ico.IcoImage
 import nl.ncaj.theme.win9x.Overview
 import nl.ncaj.theme.win9x.Win9xTheme
@@ -16,7 +16,7 @@ import nl.ncaj.theme.win9x.controls.Window
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalResourceApi::class)
-fun main() = CanvasBasedWindow(canvasElementId = "ComposeTarget") {
+fun main() = ComposeViewport(viewportContainerId = "ComposeTarget") {
     Win9xTheme {
         Box(
             contentAlignment = Alignment.Center,

@@ -1,6 +1,6 @@
 # Win9x Theme for Jetpack Compose UI
 
-Welcome to the Win9x Theme for Jetpack Compose UI. This is a unique, self-contained theme designed specifically for
+This is a Win9x Theme library for Jetpack Compose UI. This is a unique, self-contained theme designed specifically for
 Jetpack Compose UI. Unlike standard Material Design themes, this project offers a complete set of custom components, all
 built directly from Jetpack Compose primitives.
 
@@ -15,7 +15,7 @@ built directly from Jetpack Compose primitives.
 
 ## Live demo
 
-You can see the `win9x-theme` library in action by visiting our live JSWasm demo at http://win9x-compose.ncaj.nl/. 
+You can see the `win9x-theme` library in action by visiting our live JSWasm demo at http://win9x-compose.ncaj.nl/.
 Please note that this JSWasm demo is experimental and doesn't fully represent all the capabilities of the JVM target.
 
 ## Screenshots
@@ -43,8 +43,10 @@ Integration into a Jetpack Compose project is straightforward:
 
 ### Step 1: Adding the Repository
 
-First, you need to add the repository that hosts the `win9x-theme` library to your
-project's `build.gradle.kts` file. Replace `VERSION` with the current version of the library.
+This library is published to both GitHub Packages and Maven Central.
+
+#### Using GitHub packages
+
 Make sure you
 configure [authentication properly](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages).
 
@@ -54,9 +56,17 @@ repositories {
 }
 ```
 
+#### Using Maven Central packages
+
+```kotlin
+repositories {
+    mavenCentral()
+}
+```
+
 ### Step 2: Adding the Dependency
 
-Next, add the `win9x-theme` library as a dependency in your module's `build.gradle` file:
+Add the `win9x-theme` dependency to your project's `build.gradle.kts` file:
 
 ```kotlin
 dependencies {
@@ -122,27 +132,27 @@ private data object MenuId1
 MenuButton(
     label = "Menu",
     menu = {
-      val selected = state.selectedItem
-      MenuItemLabel(
-        label = "Command",
-        modifier = Modifier.menuItem(key = 0),
-        selected = selected == 0,
-        onClick = {}
-      )
-      MenuItemDivider()
-      MenuItemCascade(
-        label = "Sub menu=",
-        modifier = Modifier.menuItem(key = 1, cascadeMenuId = MenuId1),
-        selected = state.visibleMenus.contains(MenuId1) || selected == 1,
-      )
-      cascadeMenu(MenuId1) {
+        val selected = state.selectedItem
         MenuItemLabel(
-          label = "Sub command",
-          modifier = Modifier.menuItem(key = 2),
-          selected = selected == 2,
-          onClick = {},
+            label = "Command",
+            modifier = Modifier.menuItem(key = 0),
+            selected = selected == 0,
+            onClick = {}
         )
-      }
+        MenuItemDivider()
+        MenuItemCascade(
+            label = "Sub menu=",
+            modifier = Modifier.menuItem(key = 1, cascadeMenuId = MenuId1),
+            selected = state.visibleMenus.contains(MenuId1) || selected == 1,
+        )
+        cascadeMenu(MenuId1) {
+            MenuItemLabel(
+                label = "Sub command",
+                modifier = Modifier.menuItem(key = 2),
+                selected = selected == 2,
+                onClick = {},
+            )
+        }
     }
 )
 ```
@@ -204,19 +214,19 @@ Usage example:
 ```kotlin
 val state = rememberListBoxState(itemCount = 5)
 ListBox(
-  state = state,
-  modifier = Modifier.fillMaxSize(0.6f),
+    state = state,
+    modifier = Modifier.fillMaxSize(0.6f),
 ) { index ->
-  val interactionSource = remember { MutableInteractionSource() }
-  Text(
-    modifier = Modifier
-      .listBoxItem(enabled = index != 2, interactionSource)
-      .fillMaxWidth()
-      .padding(4.dp),
-    text = "Value ${index + 1}",
-    enabled = index != 2,
-    selected = state.selectedIndex == index,
-  )
+    val interactionSource = remember { MutableInteractionSource() }
+    Text(
+        modifier = Modifier
+            .listBoxItem(enabled = index != 2, interactionSource)
+            .fillMaxWidth()
+            .padding(4.dp),
+        text = "Value ${index + 1}",
+        enabled = index != 2,
+        selected = state.selectedIndex == index,
+    )
 }
 ```
 
@@ -321,36 +331,36 @@ var expanded by remember { mutableStateOf(false) }
 var currentValue by remember { mutableStateOf("Value") }
 var selectedItem by remember { mutableIntStateOf(0) }
 DropDownListBox(
-  text = currentValue,
-  expanded = expanded,
-  onExpandChange = { expanded = it },
-  modifier = Modifier.fillMaxWidth()
+    text = currentValue,
+    expanded = expanded,
+    onExpandChange = { expanded = it },
+    modifier = Modifier.fillMaxWidth()
 ) {
-  DropDownItem(
-    text = "Value",
-    selected = selectedItem == 0,
-    onSelectionChange = { if (it) selectedItem = 0 },
-    onClick = {
-      currentValue = "Value"
-      expanded = false
-    }
-  )
-  DropDownItem(
-    text = "Value (disabled)",
-    selected = false,
-    onSelectionChange = {},
-    onClick = {},
-    enabled = false
-  )
-  DropDownItem(
-    text = "Longer value",
-    selected = selectedItem == 1,
-    onSelectionChange = { if (it) selectedItem = 1 },
-    onClick = {
-      currentValue = "Longer value"
-      expanded = false
-    }
-  )
+    DropDownItem(
+        text = "Value",
+        selected = selectedItem == 0,
+        onSelectionChange = { if (it) selectedItem = 0 },
+        onClick = {
+            currentValue = "Value"
+            expanded = false
+        }
+    )
+    DropDownItem(
+        text = "Value (disabled)",
+        selected = false,
+        onSelectionChange = {},
+        onClick = {},
+        enabled = false
+    )
+    DropDownItem(
+        text = "Longer value",
+        selected = selectedItem == 1,
+        onSelectionChange = { if (it) selectedItem = 1 },
+        onClick = {
+            currentValue = "Longer value"
+            expanded = false
+        }
+    )
 }
 ```
 
@@ -365,26 +375,26 @@ Usage example:
 var value by remember { mutableStateOf("") }
 val state = rememberListBoxState(itemCount = 3, defaultIndex = -1) { index -> value = "Value ${index + 1}" }
 Column(Modifier.fillMaxSize(0.6f)) {
-  TextBox(
-    value = value,
-    onValueChange = { value = it },
-    singleLine = true,
-    modifier = Modifier.fillMaxWidth()
-  )
-  ListBox(
-    state = state,
-    modifier = Modifier.fillMaxSize(),
-  ) { index ->
-    Text(
-      modifier = Modifier
-        .listBoxItem(enabled = index != 1)
-        .fillMaxWidth()
-        .padding(4.dp),
-      text = "Value ${index + 1}",
-      enabled = index != 1,
-      selected = state.selectedIndex == index,
+    TextBox(
+        value = value,
+        onValueChange = { value = it },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
     )
-  }
+    ListBox(
+        state = state,
+        modifier = Modifier.fillMaxSize(),
+    ) { index ->
+        Text(
+            modifier = Modifier
+                .listBoxItem(enabled = index != 1)
+                .fillMaxWidth()
+                .padding(4.dp),
+            text = "Value ${index + 1}",
+            enabled = index != 1,
+            selected = state.selectedIndex == index,
+        )
+    }
 }
 ```
 
@@ -401,33 +411,32 @@ var expanded by remember { mutableStateOf(false) }
 var selected by remember { mutableStateOf(0) }
 
 DropDownComboBox(
-  value = value,
-  onValueChange = { value = it },
-  expanded = expanded,
-  onExpandChange = { expanded = it },
+    value = value,
+    onValueChange = { value = it },
+    expanded = expanded,
+    onExpandChange = { expanded = it },
 ) {
-  for (index in 0 until 3) {
-    val label = "Value ${index + 1}"
-    DropDownItem(
-      text = label,
-      enabled = index != 1,
-      selected = index != 1 && selected == index,
-      onSelectionChange = { selected = index },
-      onClick = {
-        value = "Value ${index + 1}"
-        expanded = false
-      }
-    )
-  }
+    for (index in 0 until 3) {
+        val label = "Value ${index + 1}"
+        DropDownItem(
+            text = label,
+            enabled = index != 1,
+            selected = index != 1 && selected == index,
+            onSelectionChange = { selected = index },
+            onClick = {
+                value = "Value ${index + 1}"
+                expanded = false
+            }
+        )
+    }
 }
 ```
 
-For more detailed information and examples, please refer to the source code of the win9x-theme
-library.
+For more detailed information and examples, please refer to the source code of the win9x-theme library.
 
 ## Contributions
 
-Contributions from the community are warmly welcomed! To share ideas, report bugs, or propose
+Contributions are welcomed! To share ideas, report bugs, or propose
 enhancements, simply open an issue or contribute via a pull request.
 
 ## Licensing

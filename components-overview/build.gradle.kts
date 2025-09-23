@@ -56,11 +56,10 @@ compose.desktop {
 
 android {
     namespace = "nl.ncaj.win9x.example"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 35
     }
 
     packaging {
