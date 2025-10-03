@@ -234,7 +234,11 @@ private fun TextBoxExample() {
 
 @Composable
 private fun SliderExample() {
-    Slider(steps = 4, onStep = { })
+    Column {
+        Slider(steps = 4, onStep = { })
+        Spacer(modifier = Modifier.height(2.dp))
+        Slider(steps = 4, onStep = { }, initialStep = 2)
+    }
 }
 
 @Composable
