@@ -30,12 +30,12 @@ import kotlin.math.roundToInt
 @Stable
 private class SliderState(
     private val steps: Int,
+    initialPosition: Float,
     private val thumbWidth: Int,
     private val parentWidth: Int,
-    private val initialPosition: Float,
     private val onStep: (Int) -> Unit,
 ) {
-    var position by mutableStateOf(initialPosition)
+    var position by mutableStateOf(snapToClosestStep(initialPosition).second.toFloat())
     private var dragPosition = initialPosition
 
     private fun snapToClosestStep(point: Float): Pair<Float, Int> {
@@ -69,7 +69,7 @@ private fun Modifier.thumbDrag(
 fun Slider(
     modifier: Modifier = Modifier,
     steps: Int = 10,
-    initialPosition: Float = 0f
+    initialPosition: Float = 0f,
     onStep: (Int) -> Unit,
 ) {
     require(steps >= 2) { "Number of steps must be 2 or larger" }
