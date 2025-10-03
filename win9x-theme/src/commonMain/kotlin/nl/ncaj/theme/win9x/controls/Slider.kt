@@ -32,10 +32,11 @@ private class SliderState(
     private val steps: Int,
     private val thumbWidth: Int,
     private val parentWidth: Int,
+    private val initialPosition: Float,
     private val onStep: (Int) -> Unit,
 ) {
-    var position by mutableStateOf(0f)
-    private var dragPosition = 0f
+    var position by mutableStateOf(initialPosition)
+    private var dragPosition = initialPosition
 
     private fun snapToClosestStep(point: Float): Pair<Float, Int> {
         val stepSize = (parentWidth - thumbWidth) / (steps - 1)
@@ -68,6 +69,7 @@ private fun Modifier.thumbDrag(
 fun Slider(
     modifier: Modifier = Modifier,
     steps: Int = 10,
+    initialPosition: Float = 0f
     onStep: (Int) -> Unit,
 ) {
     require(steps >= 2) { "Number of steps must be 2 or larger" }
@@ -78,7 +80,7 @@ fun Slider(
     val interactionSource = remember { MutableInteractionSource() }
 
     val state = remember(steps, onStep, parentWidth, thumbWidth) {
-        SliderState(steps, thumbWidth, parentWidth, onStep)
+        SliderState(steps, initialPosition, thumbWidth, parentWidth, onStep)
     }
 
     val policy = remember(state) {
