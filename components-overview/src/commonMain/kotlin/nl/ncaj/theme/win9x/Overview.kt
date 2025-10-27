@@ -234,7 +234,8 @@ private fun TextBoxExample() {
 
 @Composable
 private fun SliderExample() {
-    Slider(steps = 4, onStep = { })
+    var step by remember { mutableIntStateOf(0) }
+    Slider(step = step, steps = 4, onStep = { step = it })
 }
 
 @Composable

@@ -29,26 +29,32 @@ import kotlin.math.roundToInt
 
 @Stable
 private class SliderState(
+    step: Int,
     private val steps: Int,
     private val thumbWidth: Int,
     private val parentWidth: Int,
     private val onStep: (Int) -> Unit,
 ) {
-    var position by mutableStateOf(0f)
-    private var dragPosition = 0f
+    var position by mutableStateOf((((parentWidth - thumbWidth) / (steps - 1)) * step).toFloat())
+        private set
+    private var dragPosition = position
 
-    private fun snapToClosestStep(point: Float): Pair<Float, Int> {
+    private fun snapToClosestStep(point: Float): Float {
         val stepSize = (parentWidth - thumbWidth) / (steps - 1)
-        if (stepSize == 0) return point to 0
+        if (stepSize == 0) return point
         val step = (point / stepSize).roundToInt()
-        return (step * stepSize).toFloat() to step
+        return (step * stepSize).toFloat()
     }
 
-    fun updatePosition(delta: Float) {
+    fun onDragStopped() {
+        val stepSize = (parentWidth - thumbWidth) / (steps - 1)
+        val step = (position / stepSize).roundToInt()
+        onStep(step)
+    }
+
+    fun onDrag(delta: Float) {
         dragPosition += delta
-        val (offset, step) = snapToClosestStep(dragPosition)
-        if (offset != position) onStep(step)
-        position = offset.coerceIn(
+        position = snapToClosestStep(dragPosition).coerceIn(
             minimumValue = 0f,
             maximumValue = parentWidth - thumbWidth.toFloat()
         )
@@ -60,13 +66,15 @@ private fun Modifier.thumbDrag(
 ) = composed {
     this.draggable(
         orientation = Orientation.Horizontal,
-        state = rememberDraggableState { delta -> state.updatePosition(delta) }
+        state = rememberDraggableState { delta -> state.onDrag(delta) },
+        onDragStopped = { state.onDragStopped() }
     )
 }
 
 @Composable
 fun Slider(
     modifier: Modifier = Modifier,
+    step: Int,
     steps: Int = 10,
     onStep: (Int) -> Unit,
 ) {
@@ -77,8 +85,8 @@ fun Slider(
 
     val interactionSource = remember { MutableInteractionSource() }
 
-    val state = remember(steps, onStep, parentWidth, thumbWidth) {
-        SliderState(steps, thumbWidth, parentWidth, onStep)
+    val state = remember(step, steps, onStep, parentWidth, thumbWidth) {
+        SliderState(step, steps, thumbWidth, parentWidth, onStep)
     }
 
     val policy = remember(state) {
