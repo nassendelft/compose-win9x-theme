@@ -9,7 +9,7 @@ plugins {
 group = "nl.ncaj.theme.win9x"
 
 android {
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 26
@@ -24,7 +24,7 @@ android {
 
 kotlin {
     androidTarget {
-        publishAllLibraryVariants()
+        publishLibraryVariants()
     }
     jvm()
     @OptIn(ExperimentalWasmDsl::class)
