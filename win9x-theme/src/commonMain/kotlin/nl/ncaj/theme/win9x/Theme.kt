@@ -65,16 +65,34 @@ internal fun ColorScheme.updateColorSchemeFrom(other: ColorScheme) {
 
 @Stable
 class Typography(
-    val default: TextStyle,
-    val disabled: TextStyle,
-    val caption: TextStyle,
-    val focused: TextStyle,
-)
+    default: TextStyle = TextStyle(),
+    disabled: TextStyle = TextStyle(),
+    caption: TextStyle = TextStyle(),
+    focused: TextStyle = TextStyle(),
+) {
+    var default by mutableStateOf(default, structuralEqualityPolicy())
+    var disabled by mutableStateOf(disabled, structuralEqualityPolicy())
+    var caption by mutableStateOf(caption, structuralEqualityPolicy())
+    var focused by mutableStateOf(focused, structuralEqualityPolicy())
+
+    fun copy(
+        default: TextStyle = this.default,
+        disabled: TextStyle = this.disabled,
+        caption: TextStyle = this.caption,
+    ) = Typography(default, disabled, caption)
+}
+
+internal fun Typography.updateTextStyleFrom(other: Typography) {
+    default = other.default
+    disabled = other.disabled
+    caption = other.caption
+    focused = other.focused
+}
 
 @Composable
 fun Win9xTheme(
-    colorScheme: ColorScheme = Win9xTheme.colorScheme,
-    typography: Typography = Win9xTheme.typography,
+    colorScheme: ColorScheme = ColorScheme(),
+    typography: Typography = defaultTypography,
     content: @Composable () -> Unit
 ) {
     val rememberedColorScheme = remember {
@@ -83,23 +101,32 @@ fun Win9xTheme(
         colorScheme.copy()
     }.apply { updateColorSchemeFrom(colorScheme) }
 
+    val rememberedTypography = remember {
+        // Explicitly creating a new object here so we don't mutate the initial [colorScheme]
+        // provided, and overwrite the values set in it.
+        typography.copy()
+    }.apply { updateTextStyleFrom(typography) }
+
     CompositionLocalProvider(
         LocalColorScheme provides rememberedColorScheme,
-        LocalTypography provides typography,
+        LocalTypography provides rememberedTypography,
         LocalIndication provides FocusDashIndication(Dp.Unspecified),
         content = content
     )
 }
 
-internal val LocalColorScheme = staticCompositionLocalOf { ColorScheme() }
-internal val LocalTypography: ProvidableCompositionLocal<Typography>
-    @Composable get() {
+internal val defaultTypography: Typography
+    @Composable
+    get() {
         val default = TypographyTokens.defaultTextStyle
         val disabled = TypographyTokens.disabledTextStyle
         val caption = TypographyTokens.captionTextStyle
         val focused = TypographyTokens.focusedTextStyle
-        return staticCompositionLocalOf { Typography(default, disabled, caption, focused ) }
+        return Typography(default, disabled, caption, focused )
     }
+
+internal val LocalColorScheme = staticCompositionLocalOf { ColorScheme() }
+internal val LocalTypography = staticCompositionLocalOf { Typography() }
 
 object Win9xTheme {
     val colorScheme: ColorScheme
